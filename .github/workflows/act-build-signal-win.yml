@@ -1,0 +1,103 @@
+# Copyright 2020 Signal Messenger, LLC
+# SPDX-License-Identifier: AGPL-3.0-only
+
+# 2023-06-23 07:00
+name: 0-act-release
+
+on:
+#  push:
+#    branches:
+#      - development
+#      - main
+#      - '[0-9]+.[0-9]+.x'
+#  pull_request:
+  workflow_dispatch:
+
+env:
+  VERSION: "v.1.0.0"
+  DEBUG_LS: true
+
+jobs:
+  windows:
+    runs-on: windows-latest
+#    timeout-minutes: 30
+
+    steps:
+    - run: systeminfo
+    - run: git config --global core.autocrlf false
+    - run: git config --global core.eol lf
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '16.17.1'
+    - run: npm install -g yarn@1.22.10
+
+    - name: Cache Desktop node_modules
+      id: cache-desktop-modules
+      uses: actions/cache@v3
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-${{ hashFiles('package.json', 'yarn.lock', 'patches/**') }}
+    - name: Install Desktop node_modules
+      if: steps.cache-desktop-modules.outputs.cache-hit != 'true'
+      run: yarn install --frozen-lockfile
+      env:
+        NPM_CONFIG_LOGLEVEL: verbose
+
+    - run: yarn generate
+    - run: yarn test-node
+    - run: copy package.json temp.json
+    - run: del package.json
+    - run: type temp.json | findstr /v certificateSubjectName | findstr /v certificateSha1 > package.json
+    - run: yarn prepare-beta-build
+
+    - name: Create bundle
+      run: yarn build:esbuild:prod
+
+    - name: Build with NSIS
+      run: yarn build:release
+      if: github.ref == 'refs/heads/main'
+      env:
+        DISABLE_INSPECT_FUSE: on
+    - name: Build without NSIS
+      run: yarn build:release --win dir
+      if: github.ref != 'refs/heads/main'
+      env:
+        DISABLE_INSPECT_FUSE: on
+
+    - run: yarn test-electron
+      timeout-minutes: 5
+    - run: yarn test-release
+      env:
+        SIGNAL_ENV: production
+
+###
+# arc-all begin
+    - name: Create arc-all archive
+#        if: ${{ env.BUILD_FAILED }}
+      continue-on-error: true
+      shell: bash
+      run: |
+        staging="release-all-${{ env.VERSION }}-${{ runner.os }}"
+        touch "$staging.tar.xz"
+        #tar -cfJ "$staging.tar.xz" --exclude "$staging.tar.xz" .
+        tar --exclude=*.tar* --exclude=target/* --exclude=node_modules/*  -cv release/ | xz -9 > "$staging.tar.xz"
+        echo "ASSET_ARC_ALL=$staging.tar.xz" >> $GITHUB_ENV
+        if [ "${{ env.DEBUG_LS }}" = "yes" ]; then
+          echo "ASSET_ARC_ALL archive name: "
+          ls -l "$staging.tar.xz"
+        fi
+        if [ "${{ env.DEBUG_LS }}" = "yes" ]; then
+          ls -l
+        fi
+
+    - name: Publish arc-all archive
+#        if: ${{ env.BUILD_FAILED }}
+      continue-on-error: true
+      uses: deep-soft/action-gh-release@v1
+      with:
+        draft: true
+        tag_name: release-all-${{ env.VERSION }}-${{ runner.os }}
+        files: |
+          ${{ env.ASSET_ARC_ALL }}
+# arc-all end
