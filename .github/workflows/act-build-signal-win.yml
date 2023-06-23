@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 
 # 2023-06-23 07:00
-name: 0-act-release
+name: 0-act-release-win
 
 on:
 #  push:
