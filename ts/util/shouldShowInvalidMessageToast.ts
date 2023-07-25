@@ -20,13 +20,14 @@ export function shouldShowInvalidMessageToast(
   messageText?: string
 ): AnyToast | undefined {
   const state = window.reduxStore.getState();
-  if (hasExpired(state)) {
-    if (isOSUnsupported(state)) {
-      return { toastType: ToastType.UnsupportedOS };
-    }
-    return { toastType: ToastType.Expired };
-  }
-
+//1  if (hasExpired(state)) {
+//1    if (isOSUnsupported(state)) {
+//1      return { toastType: ToastType.UnsupportedOS };
+//1    }
+//1    return { toastType: ToastType.Expired };
+//1  }
+  return undefined;
+  
   const isValid =
     isDirectConversation(conversationAttributes) ||
     isGroupV1(conversationAttributes) ||
