@@ -212,13 +212,17 @@ const mapStateToProps = (state: StateType) => {
   let unsupportedOSDialogType: 'error' | 'warning' | undefined;
   if (hasExpired(state)) {
     if (hasUnsupportedOS) {
-      unsupportedOSDialogType = 'error';
+//1      unsupportedOSDialogType = 'error';
+      unsupportedOSDialogType = 'undefined';
     } else {
-      hasExpiredDialog = true;
+//1      hasExpiredDialog = true;
+      hasExpiredDialog = false;      
     }
   } else if (hasUnsupportedOS) {
-    unsupportedOSDialogType = 'warning';
+    unsupportedOSDialogType = 'undefined';
   }
+//1  
+  let hasExpiredDialog = false;
 
   return {
     hasNetworkDialog: hasNetworkDialog(state),
