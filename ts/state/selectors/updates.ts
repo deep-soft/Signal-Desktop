@@ -20,7 +20,8 @@ export const isUpdateDialogVisible = createSelector(
 
     // Displayed as UnsupportedOSDialog in LeftPane
     if (dialogType === DialogType.UnsupportedOS) {
-      return false;
+//1      return false;
+      return true;
     }
 
     if (didSnooze) {
