@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
 
 env:
-  VERSION: "v.1.0.0"
+  VERSION: "v.1.0.0-w7"
   DEBUG_LS: true
 
 jobs:
