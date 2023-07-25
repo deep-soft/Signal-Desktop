@@ -222,7 +222,6 @@ const mapStateToProps = (state: StateType) => {
     unsupportedOSDialogType = 'undefined';
   }
 //1  
-  let hasExpiredDialog = false;
 
   return {
     hasNetworkDialog: hasNetworkDialog(state),
