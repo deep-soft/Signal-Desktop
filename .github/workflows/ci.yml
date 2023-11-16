@@ -3,12 +3,13 @@
 
 name: CI
 on:
-  push:
-    branches:
-      - development
-      - main
-      - '[0-9]+.[0-9]+.x'
-  pull_request:
+  workflow_dispatch
+#  push:
+#    branches:
+#      - development
+#      - main
+#      - '[0-9]+.[0-9]+.x'
+#  pull_request:
 
 jobs:
   lint:
