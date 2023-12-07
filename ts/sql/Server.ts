@@ -1749,6 +1749,11 @@ async function searchMessages({
 
   const db = getUnsafeWritableInstance('only temp table use');
 
+  const normalizedQuery = db
+    .signalTokenize(query)
+    .map(token => `"${token.replace(/"/g, '""')}"*`)
+    .join(' ');
+
   // sqlite queries with a join on a virtual table (like FTS5) are de-optimized
   // and can't use indices for ordering results. Instead an in-memory index of
   // the join rows is sorted on the fly, and this becomes substantially
@@ -1778,7 +1783,7 @@ async function searchMessages({
         WHERE
           messages_fts.body MATCH $query;
       `
-    ).run({ query });
+    ).run({ query: normalizedQuery });
 
     if (conversationId === undefined) {
       db.prepare<Query>(
@@ -1829,7 +1834,7 @@ async function searchMessages({
       INNER JOIN messages
         ON messages.rowid = tmp_filtered_results.rowid
       WHERE
-        messages_fts.body MATCH ${query}
+        messages_fts.body MATCH ${normalizedQuery}
       ORDER BY messages.received_at DESC, messages.sent_at DESC
       LIMIT ${limit}
     `;
@@ -1861,7 +1866,7 @@ async function searchMessages({
         ON
           messages.id = mentions.messageId
           AND mentions.mentionAci IN (
-            ${sqlJoin(contactServiceIdsMatchingQuery, ', ')}
+            ${sqlJoin(contactServiceIdsMatchingQuery)}
           )
           AND ${
             conversationId
@@ -2944,7 +2949,7 @@ async function getNearbyMessageFromDeletedSet({
         conversationId = ${conversationId} AND
         (${_storyIdPredicate(storyId, includeStoryReplies)}) AND
         isStory IS 0 AND
-        id NOT IN (${sqlJoin(deletedMessageIds, ', ')}) AND
+        id NOT IN (${sqlJoin(deletedMessageIds)}) AND
         type IN ('incoming', 'outgoing')
         AND (
           (received_at = ${received_at} AND sent_at ${compare} ${sent_at}) OR
@@ -3495,10 +3500,7 @@ function getCallHistoryGroupDataSync(
       db.exec(createTempTable);
 
       batchMultiVarQuery(db, conversationIds, ids => {
-        const idList = sqlJoin(
-          ids.map(id => sqlFragment`${id}`),
-          ','
-        );
+        const idList = sqlJoin(ids.map(id => sqlFragment`${id}`));
 
         const [insertQuery, insertParams] = sql`
           INSERT INTO temp_callHistory_filtered_conversations
@@ -5499,7 +5501,7 @@ function modifyStoryDistributionMembersSync(
     db,
     toRemove,
     (serviceIds: ReadonlyArray<ServiceIdString>) => {
-      const serviceIdSet = sqlJoin(serviceIds, '?');
+      const serviceIdSet = sqlJoin(serviceIds);
       const [sqlQuery, sqlParams] = sql`
         DELETE FROM storyDistributionMembers
         WHERE listId = ${listId} AND serviceId IN (${serviceIdSet});

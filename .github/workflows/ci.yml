@@ -22,7 +22,7 @@ jobs:
     - uses: actions/checkout@v3
     - uses: actions/setup-node@v3
       with:
-        node-version: '18.15.0'
+        node-version: '18.17.1'
     - run: npm install -g yarn@1.22.10
 
     - name: Cache Desktop node_modules
@@ -73,7 +73,12 @@ jobs:
     - uses: actions/checkout@v3
     - uses: actions/setup-node@v3
       with:
-        node-version: '18.15.0'
+        node-version: '18.17.1'
+    
+    # The version of node-gyp bundled with our node/npm version does not support python 3.12, which the runner uses
+    # When we update node again, we can probably remove this
+    - run: npm install -g npm@latest
+
     - run: npm install -g yarn@1.22.10
 
     - name: Cache Desktop node_modules
@@ -122,7 +127,7 @@ jobs:
     - uses: actions/checkout@v3
     - uses: actions/setup-node@v3
       with:
-        node-version: '18.15.0'
+        node-version: '18.17.1'
     - run: sudo apt-get install xvfb
     - run: npm install -g yarn@1.22.10
 
@@ -188,7 +193,7 @@ jobs:
     - uses: actions/checkout@v3
     - uses: actions/setup-node@v3
       with:
-        node-version: '18.15.0'
+        node-version: '18.17.1'
     - run: npm install -g yarn@1.22.10
 
     # Set things up so @nodert-win10-rs4 dependencies build properly
@@ -263,7 +268,7 @@ jobs:
     - name: Setup node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '18.15.0'
+        node-version: '18.17.1'
     - name: Install global dependencies
       run: npm install -g yarn@1.22.10
 
