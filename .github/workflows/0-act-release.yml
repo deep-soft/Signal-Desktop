@@ -18,7 +18,7 @@ on:
 env:
   VERSION: "v.1.0.0"
   DEBUG_LS: true
-  NODE_VERSION: '18.15.0'
+  NODE_VERSION: '18.17.1'
   YARN_VERSION: '1.22.10'
 
 jobs:
