@@ -3956,6 +3956,10 @@ button.module-image__border-overlay:focus {
     transition: top 200ms linear, inset-inline-start 200ms linear,
       transform 200ms linear, width 200ms linear, height 200ms linear;
 
+    @media (prefers-reduced-motion) {
+      transition: none;
+    }
+
     &:after {
       content: '';
       position: absolute;
@@ -3969,6 +3973,7 @@ button.module-image__border-overlay:focus {
       transition-duration: 300ms;
       transition-delay: 1000ms;
       transition-timing-function: ease-in-out;
+      pointer-events: none;
     }
     &--speaking:after {
       border-width: 3px;
@@ -4038,7 +4043,12 @@ button.module-image__border-overlay:focus {
         overflow: hidden;
         text-overflow: ellipsis;
         visibility: hidden;
+        direction: inherit;
         white-space: nowrap;
+      }
+
+      &--clickable {
+        @include button-reset;
       }
     }
 
@@ -7074,14 +7084,6 @@ button.module-image__border-overlay:focus {
 
 // Module: Chat Session Refreshed Dialog
 
-.module-chat-session-refreshed-dialog {
-  @include light-theme {
-    background-color: $color-white;
-  }
-  @include dark-theme {
-    background-color: $color-gray-95;
-  }
-}
 .module-chat-session-refreshed-dialog__image {
   text-align: center;
 }
@@ -7089,24 +7091,6 @@ button.module-image__border-overlay:focus {
   @include font-body-1-bold;
   margin-top: 10px;
   margin-bottom: 3px;
-}
-.module-chat-session-refreshed-dialog__buttons {
-  text-align: end;
-  margin-top: 20px;
-  padding: 3px;
-}
-.module-chat-session-refreshed-dialog__button {
-  @include font-body-1-bold;
-  @include button-reset;
-  @include button-primary;
-
-  border-radius: 4px;
-  padding-block: 7px;
-  padding-inline: 14px;
-  margin-inline-start: 12px;
-}
-.module-chat-session-refreshed-dialog__button--secondary {
-  @include button-secondary;
 }
 
 // Module: Delivery Issue Dialog
@@ -7134,6 +7118,14 @@ button.module-image__border-overlay:focus {
   user-select: none;
   visibility: hidden;
 
+  // style a menu with only one option
+  &:not(:has(:nth-child(2))) {
+    padding-block: 0;
+    .react-contextmenu-item {
+      padding-block: 9px;
+      border-radius: 4px;
+    }
+  }
   @include light-theme {
     background-color: $color-white;
   }

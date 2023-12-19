@@ -17,15 +17,15 @@
   },
   "icu:AddCaptionModal__title": {
     "messageformat": "Add a message",
-    "description": "Shown as the title of the dialog that allows you to add a caption to a story"
+    "description": "(Deleted 12/14/2023) Shown as the title of the dialog that allows you to add a caption to a story"
   },
   "icu:AddCaptionModal__placeholder": {
     "messageformat": "Message",
-    "description": "Placeholder text for textarea when adding a caption/message (we don't know which yet so we default to message)"
+    "description": "(Deleted 12/14/2023) Placeholder text for textarea when adding a caption/message (we don't know which yet so we default to message)"
   },
   "icu:AddCaptionModal__submit-button": {
     "messageformat": "Done",
-    "description": "Label on the button that submits changes to a story's caption in the add-caption dialog"
+    "description": "(Deleted 12/14/2023) Label on the button that submits changes to a story's caption in the add-caption dialog"
   },
   "icu:AddUserToAnotherGroupModal__title": {
     "messageformat": "Add to a group",
@@ -1805,7 +1805,7 @@
     "description": "Shown in the calling lobby to describe who is in the call"
   },
   "icu:calling__pre-call-info--many-people-in-call": {
-    "messageformat": "{first}, {second}, and {others} others are in this call",
+    "messageformat": "{first}, {second}, and {others, plural, other {#}} others are in this call",
     "description": "Shown in the calling lobby to describe who is in the call"
   },
   "icu:calling__pre-call-info--will-ring-1": {
@@ -1821,7 +1821,7 @@
     "description": "Shown in the calling lobby to describe who will be rang"
   },
   "icu:calling__pre-call-info--will-ring-many": {
-    "messageformat": "Signal will ring {first}, {second}, and {others} others",
+    "messageformat": "Signal will ring {first}, {second}, and {others, plural, other {#}} others",
     "description": "Shown in the calling lobby to describe who will be rang"
   },
   "icu:calling__pre-call-info--will-notify-1": {
@@ -1837,7 +1837,7 @@
     "description": "Shown in the calling lobby to describe who will be notified"
   },
   "icu:calling__pre-call-info--will-notify-many": {
-    "messageformat": "{first}, {second}, and {others} others will be notified",
+    "messageformat": "{first}, {second}, and {others, plural, other {#}} others will be notified",
     "description": "Shown in the calling lobby to describe who will be notified"
   },
   "icu:calling__in-this-call--zero": {
@@ -1977,15 +1977,15 @@
     "description": "Description for the automatic launch setting"
   },
   "icu:clearDataHeader": {
-    "messageformat": "Clear application data",
+    "messageformat": "Delete application data",
     "description": "Header in the settings dialog for the section dealing with data deletion"
   },
   "icu:clearDataExplanation": {
-    "messageformat": "This will clear all data in the application, removing all messages and saved account information.",
+    "messageformat": "This will delete all data in the application, removing all messages and saved account information.",
     "description": "Text describing what the clear data button will do."
   },
   "icu:clearDataButton": {
-    "messageformat": "Clear data",
+    "messageformat": "Delete data",
     "description": "Button in the settings dialog starting process to delete all data"
   },
   "icu:deleteAllDataHeader": {
@@ -1993,7 +1993,7 @@
     "description": "Header of the full-screen delete data confirmation screen"
   },
   "icu:deleteAllDataBody": {
-    "messageformat": "You are about to delete all of this application's saved account information, including all contacts and all messages. You can always link with your mobile device again, but that will not restore deleted messages.",
+    "messageformat": "Delete all data and messages from this version of Signal Desktop? You can always relink this desktop, but your messages will not restore. Your Signal account and data on your phone or other linked devices will not be deleted.",
     "description": "Text describing what exactly will happen if the user clicks the button to delete all data"
   },
   "icu:deleteAllDataButton": {
@@ -3428,7 +3428,7 @@
     "description": "Shown in the conversation hero to indicate this user is a member of four mutual groups"
   },
   "icu:member-of-more-than-3-groups--multiple-more": {
-    "messageformat": "Member of {group1}, {group2}, {group3} and {remainingCount, number} more",
+    "messageformat": "Member of {group1}, {group2}, {group3} and {remainingCount, plural, other {#}} more",
     "description": "Shown in the conversation hero to indicate this user is a member of 5+ mutual groups."
   },
   "icu:ConversationHero--membership-added": {
@@ -3608,7 +3608,7 @@
     "description": "Shown in a call when 2 persons raise their hands."
   },
   "icu:CallControls__RaiseHandsToast--more": {
-    "messageformat": "{name}, {otherName}, and {overflowCount, number} more raised a hand.",
+    "messageformat": "{name}, {otherName}, and {overflowCount, plural, other {#}} more raised a hand.",
     "description": "Shown in a call when 3 or more persons raise their hands."
   },
   "icu:CallControls__RaiseHands--open-queue": {
@@ -3792,7 +3792,7 @@
     "description": "Title in popup dialog when attempting to edit a message too many times."
   },
   "icu:MessageMaxEditsModal__Description": {
-    "messageformat": "Only {max, number} edits can be applied to this message.",
+    "messageformat": "Only {max, plural, other {#}} edits can be applied to this message.",
     "description": "Description text in popup dialog when attempting to edit a message too many times."
   },
   "icu:unknown-sgnl-link": {
@@ -4216,7 +4216,7 @@
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--pending-add--many--other": {
-    "messageformat": "{memberName} invited {count, number} people to the group.",
+    "messageformat": "{memberName} invited {count, plural, other {#}} people to the group.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--pending-add--many--you": {
@@ -4224,7 +4224,7 @@
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--pending-add--many--unknown": {
-    "messageformat": "{count, number} people were invited to the group.",
+    "messageformat": "{count, plural, other {#}} people were invited to the group.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--pending-remove--decline--other": {
@@ -4300,7 +4300,7 @@
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--other": {
-    "messageformat": "{adminName} revoked invitations to the group for {count, number} people invited by {memberName}.",
+    "messageformat": "{adminName} revoked invitations to the group for {count, plural, other {#}} people invited by {memberName}.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--you": {
@@ -4540,7 +4540,7 @@
     "description": "Shown in timeline when a group is upgraded and one person was removed entirely during the upgrade"
   },
   "icu:GroupV1--Migration--removed--many": {
-    "messageformat": "{count, number} members were removed from the group.",
+    "messageformat": "{count, plural, other {#}} members were removed from the group.",
     "description": "Shown in timeline when a group is upgraded and some people were removed entirely during the upgrade"
   },
   "icu:close": {
@@ -4928,7 +4928,7 @@
     "description": "conversation > in select mode > composition area actions > exit select mode > accessibility label"
   },
   "icu:SelectModeActions--selectedMessages": {
-    "messageformat": "{count, number} selected",
+    "messageformat": "{count, plural, other {#}} selected",
     "description": "conversation > in select mode > composition area actions > count of selected messsages"
   },
   "icu:SelectModeActions--deleteSelectedMessages": {
@@ -6336,7 +6336,7 @@
     "description": "Input label to create a block list"
   },
   "icu:StoriesSettings__mine__exclude--description": {
-    "messageformat": "{num, number} people excluded",
+    "messageformat": "{num, plural, other {#}} people excluded",
     "description": "Description of how many people are excluded in a list"
   },
   "icu:StoriesSettings__mine__only--label": {
@@ -7019,22 +7019,22 @@
     "messageformat": "Small tweaks, bug fixes, and performance enhancements. Thanks for using Signal!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.39--0": {
-    "messageformat": "Now you can change your selected language in Signal without changing your system settings (Signal Settings > Appearance > Language)."
-  },
-  "icu:WhatsNew__v6.39--1": {
-    "messageformat": "We fixed a brief delay that sometimes occurred while joining a call lobby on macOS devices, which should get rid of at least one excuse for being a half-second late to the meeting."
-  },
-  "icu:WhatsNew__v6.41--0": {
-    "messageformat": "We fixed the transition animation for video tiles when someone joins or leaves a group call. When you see a friend's face slide into view, that's a social movement."
-  },
-  "icu:WhatsNew__v6.41--1": {
-    "messageformat": "Now you can click on a profile photo or group avatar in the chat header to quickly access chat settings or view any unseen stories from that chat. Thanks, {linkToGithub}!"
-  },
   "icu:WhatsNew__v6.42--0": {
     "messageformat": "We fixed a bug that displayed quoted replies to videos as though they were quoted replies to photos, even though every video is really just a sequence of photos if you think about it."
   },
   "icu:WhatsNew__v6.42--1": {
     "messageformat": "Thanks to {linkToGithub1} and {linkToGithub2} for their help with this release."
+  },
+  "icu:WhatsNew__v6.43--0": {
+    "messageformat": "Turn a missed call into something that won't be missed. Now you can right-click on any call event and delete it from a chat."
+  },
+  "icu:WhatsNew__v6.43--1": {
+    "messageformat": "The default font for Persian has been updated to Vazirmatn to improve readability when that language is selected (Signal Settings > Appearance > Language). Thanks, {linkToGithub1}!"
+  },
+  "icu:WhatsNew__v6.43--2": {
+    "messageformat": "The playback speed indicators in voice messages have a slightly new look. X marks the spot. Thanks, {linkToGithub1}!"
+  },
+  "icu:WhatsNew__v6.43--3": {
+    "messageformat": "We would also like to thank {linkToGithub1}, {linkToGithub2}, and {linkToGithub3} for their contributions to this release."
   }
 }

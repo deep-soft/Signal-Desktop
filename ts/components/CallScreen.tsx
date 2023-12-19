@@ -335,7 +335,6 @@ export function CallScreen({
   let hasCallStarted: boolean;
   let isConnected: boolean;
   let participantCount: number;
-  let remoteParticipantsElement: ReactNode;
   let conversationsByDemuxId: ConversationsByDemuxIdType;
   let localDemuxId: number | undefined;
 
@@ -348,17 +347,6 @@ export function CallScreen({
       isConnected = activeCall.callState === CallState.Accepted;
       participantCount = isConnected ? 2 : 0;
       conversationsByDemuxId = new Map();
-      remoteParticipantsElement = hasCallStarted ? (
-        <DirectCallRemoteParticipant
-          conversation={conversation}
-          hasRemoteVideo={hasRemoteVideo}
-          i18n={i18n}
-          isReconnecting={isReconnecting}
-          setRendererCanvas={setRendererCanvas}
-        />
-      ) : (
-        <div className="module-ongoing-call__direct-call-ringing-spacer" />
-      );
       break;
     }
     case CallMode.Group:
@@ -373,17 +361,6 @@ export function CallScreen({
 
       isConnected =
         activeCall.connectionState === GroupCallConnectionState.Connected;
-      remoteParticipantsElement = (
-        <GroupCallRemoteParticipants
-          callViewMode={activeCall.viewMode}
-          getGroupCallVideoFrameSource={getGroupCallVideoFrameSource}
-          i18n={i18n}
-          remoteParticipants={activeCall.remoteParticipants}
-          setGroupCallVideoRequest={setGroupCallVideoRequest}
-          remoteAudioLevels={activeCall.remoteAudioLevels}
-          isCallReconnecting={isReconnecting}
-        />
-      );
       break;
     default:
       throw missingCaseError(activeCall);
@@ -567,8 +544,8 @@ export function CallScreen({
           });
       }
       return (
-        <div className="CallingReactionsToast__Content">
-          <span className="CallingReactionsToast__HandIcon" />
+        <div className="CallingRaisedHandsToast__Content">
+          <span className="CallingRaisedHandsToast__HandIcon" />
           {message}
           {buttonOverride || (
             <button
@@ -626,6 +603,44 @@ export function CallScreen({
     hasLocalAudio,
     toggleParticipants,
   ]);
+
+  let remoteParticipantsElement: ReactNode;
+  switch (activeCall.callMode) {
+    case CallMode.Direct: {
+      remoteParticipantsElement = hasCallStarted ? (
+        <DirectCallRemoteParticipant
+          conversation={conversation}
+          hasRemoteVideo={hasRemoteVideo}
+          i18n={i18n}
+          isReconnecting={isReconnecting}
+          setRendererCanvas={setRendererCanvas}
+        />
+      ) : (
+        <div className="module-ongoing-call__direct-call-ringing-spacer" />
+      );
+      break;
+    }
+    case CallMode.Group:
+      remoteParticipantsElement = (
+        <GroupCallRemoteParticipants
+          callViewMode={activeCall.viewMode}
+          getGroupCallVideoFrameSource={getGroupCallVideoFrameSource}
+          i18n={i18n}
+          remoteParticipants={activeCall.remoteParticipants}
+          setGroupCallVideoRequest={setGroupCallVideoRequest}
+          remoteAudioLevels={activeCall.remoteAudioLevels}
+          isCallReconnecting={isReconnecting}
+          onClickRaisedHand={
+            raisedHandsCount > 0
+              ? () => setShowRaisedHandsList(true)
+              : undefined
+          }
+        />
+      );
+      break;
+    default:
+      throw missingCaseError(activeCall);
+  }
 
   return (
     <div
@@ -709,12 +724,6 @@ export function CallScreen({
       )}
       {remoteParticipantsElement}
       {lonelyInCallNode}
-      <CallingReactionsToastsContainer
-        reactions={reactions}
-        conversationsByDemuxId={conversationsByDemuxId}
-        localDemuxId={localDemuxId}
-        i18n={i18n}
-      />
       {raisedHands && raisedHandsCount > 0 && (
         <>
           <button
@@ -748,6 +757,19 @@ export function CallScreen({
           )}
         </>
       )}
+      <CallingReactionsToastsContainer
+        reactions={reactions}
+        conversationsByDemuxId={conversationsByDemuxId}
+        localDemuxId={localDemuxId}
+        i18n={i18n}
+      />
+      <CallingButtonToastsContainer
+        hasLocalAudio={hasLocalAudio}
+        outgoingRing={undefined}
+        raisedHands={raisedHands}
+        renderRaisedHandsToast={renderRaisedHandsToast}
+        i18n={i18n}
+      />
       <div className="module-ongoing-call__footer">
         <div className="module-calling__spacer CallControls__OuterSpacer" />
         <div
@@ -761,14 +783,6 @@ export function CallScreen({
             <div className="CallControls__CallTitle">{conversation.title}</div>
             <div className="CallControls__Status">{callStatus}</div>
           </div>
-
-          <CallingButtonToastsContainer
-            hasLocalAudio={hasLocalAudio}
-            outgoingRing={undefined}
-            raisedHands={raisedHands}
-            renderRaisedHandsToast={renderRaisedHandsToast}
-            i18n={i18n}
-          />
 
           {showMoreOptions && (
             <div className="CallControls__MoreOptionsContainer">
