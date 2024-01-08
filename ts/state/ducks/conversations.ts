@@ -308,6 +308,7 @@ export type ConversationType = ReadonlyDeep<
     typingContactIdTimestamps?: Record<string, number>;
     recentMediaItems?: ReadonlyArray<MediaItemType>;
     profileSharing?: boolean;
+    notSharingPhoneNumber?: boolean;
 
     shouldShowDraft?: boolean;
     // Full information for re-hydrating composition area
@@ -4017,6 +4018,7 @@ function showConversation({
         )
       );
     }
+    window.ConversationController.get(conversationId)?.onOpenStart();
 
     dispatch({
       type: TARGETED_CONVERSATION_CHANGED,
@@ -4046,8 +4048,6 @@ function onConversationOpened(
     if (!conversation) {
       throw new Error('onConversationOpened: Conversation not found');
     }
-
-    conversation.onOpenStart();
 
     if (messageId) {
       const message = await __DEPRECATED$getMessageById(messageId);
