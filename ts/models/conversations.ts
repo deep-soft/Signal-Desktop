@@ -88,6 +88,7 @@ import {
 } from '../services/notifications';
 import { storageServiceUploadJob } from '../services/storage';
 import { getSendOptions } from '../util/getSendOptions';
+import type { IsConversationAcceptedOptionsType } from '../util/isConversationAccepted';
 import { isConversationAccepted } from '../util/isConversationAccepted';
 import {
   getNumber,
@@ -1858,7 +1859,7 @@ export class ConversationModel extends window.Backbone
     this.set('e164', e164 || undefined);
 
     // This user changed their phone number
-    if (oldValue && e164 && !this.get('notSharingPhoneNumber')) {
+    if (oldValue && e164 && this.get('sharingPhoneNumber')) {
       void this.addChangeNumberNotification(oldValue, e164);
     }
 
@@ -2801,8 +2802,8 @@ export class ConversationModel extends window.Backbone
    * Determine if this conversation should be considered "accepted" in terms
    * of message requests
    */
-  getAccepted(): boolean {
-    return isConversationAccepted(this.attributes);
+  getAccepted(options?: IsConversationAcceptedOptionsType): boolean {
+    return isConversationAccepted(this.attributes, options);
   }
 
   onMemberVerifiedChange(): void {
@@ -3184,6 +3185,8 @@ export class ConversationModel extends window.Backbone
 
     const serviceId = this.getServiceId();
     if (isDirectConversation(this.attributes) && serviceId) {
+      this.set({ profileLastUpdatedAt: Date.now() });
+
       void window.ConversationController.getAllGroupsInvolvingServiceId(
         serviceId
       ).then(groups => {

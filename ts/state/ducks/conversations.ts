@@ -83,7 +83,6 @@ import {
 import { isMessageUnread } from '../../util/isMessageUnread';
 import { toggleSelectedContactForGroupAddition } from '../../groups/toggleSelectedContactForGroupAddition';
 import type { GroupNameCollisionsWithIdsByTitle } from '../../util/groupMemberNameCollisions';
-import { ContactSpoofingType } from '../../util/contactSpoofing';
 import { writeProfile } from '../../services/writeProfile';
 import {
   getConversationServiceIdsStoppingSend,
@@ -237,6 +236,7 @@ export type ConversationType = ReadonlyDeep<
     familyName?: string;
     firstName?: string;
     profileName?: string;
+    profileLastUpdatedAt?: number;
     username?: string;
     about?: string;
     aboutText?: string;
@@ -308,7 +308,7 @@ export type ConversationType = ReadonlyDeep<
     typingContactIdTimestamps?: Record<string, number>;
     recentMediaItems?: ReadonlyArray<MediaItemType>;
     profileSharing?: boolean;
-    notSharingPhoneNumber?: boolean;
+    sharingPhoneNumber?: boolean;
 
     shouldShowDraft?: boolean;
     // Full information for re-hydrating composition area
@@ -464,17 +464,6 @@ type ComposerStateType = ReadonlyDeep<
       ))
 >;
 
-type ContactSpoofingReviewStateType = ReadonlyDeep<
-  | {
-      type: ContactSpoofingType.DirectConversationWithSameTitle;
-      safeConversationId: string;
-    }
-  | {
-      type: ContactSpoofingType.MultipleGroupMembersWithSameTitle;
-      groupConversationId: string;
-    }
->;
-
 // eslint-disable-next-line local-rules/type-alias-readonlydeep -- FIXME
 export type ConversationsStateType = Readonly<{
   preJoinConversation?: PreJoinConversationType;
@@ -502,7 +491,7 @@ export type ConversationsStateType = Readonly<{
 
   showArchived: boolean;
   composer?: ComposerStateType;
-  contactSpoofingReview?: ContactSpoofingReviewStateType;
+  hasContactSpoofingReview: boolean;
 
   /**
    * Each key is a conversation ID. Each value is a value representing the state of
@@ -850,17 +839,8 @@ export type TargetedConversationChangedActionType = ReadonlyDeep<{
     switchToAssociatedView?: boolean;
   };
 }>;
-type ReviewGroupMemberNameCollisionActionType = ReadonlyDeep<{
-  type: 'REVIEW_GROUP_MEMBER_NAME_COLLISION';
-  payload: {
-    groupConversationId: string;
-  };
-}>;
-type ReviewMessageRequestNameCollisionActionType = ReadonlyDeep<{
-  type: 'REVIEW_MESSAGE_REQUEST_NAME_COLLISION';
-  payload: {
-    safeConversationId: string;
-  };
+type ReviewConversationNameCollisionActionType = ReadonlyDeep<{
+  type: 'REVIEW_CONVERSATION_NAME_COLLISION';
 }>;
 type ShowInboxActionType = ReadonlyDeep<{
   type: 'SHOW_INBOX';
@@ -989,8 +969,7 @@ export type ConversationActionType =
   | RepairNewestMessageActionType
   | RepairOldestMessageActionType
   | ReplaceAvatarsActionType
-  | ReviewGroupMemberNameCollisionActionType
-  | ReviewMessageRequestNameCollisionActionType
+  | ReviewConversationNameCollisionActionType
   | ScrollToMessageActionType
   | TargetedConversationChangedActionType
   | SetComposeGroupAvatarActionType
@@ -1092,8 +1071,7 @@ export const actions = {
   copyMessageText,
   retryDeleteForEveryone,
   retryMessageSend,
-  reviewGroupMemberNameCollision,
-  reviewMessageRequestNameCollision,
+  reviewConversationNameCollision,
   revokePendingMembershipsFromGroupV2,
   saveAttachment,
   saveAttachmentFromMessage,
@@ -2051,7 +2029,7 @@ function saveAvatarToDisk(
 
 function myProfileChanged(
   profileData: ProfileDataType,
-  avatar: AvatarUpdateType
+  avatarUpdate: AvatarUpdateType
 ): ThunkAction<
   void,
   RootStateType,
@@ -2067,7 +2045,9 @@ function myProfileChanged(
           ...conversation,
           ...profileData,
         },
-        avatar
+        {
+          avatarUpdate,
+        }
       );
 
       // writeProfile above updates the backbone model which in turn updates
@@ -2885,21 +2865,10 @@ function repairOldestMessage(
   };
 }
 
-function reviewGroupMemberNameCollision(
-  groupConversationId: string
-): ReviewGroupMemberNameCollisionActionType {
+function reviewConversationNameCollision(): ReviewConversationNameCollisionActionType {
   return {
-    type: 'REVIEW_GROUP_MEMBER_NAME_COLLISION',
-    payload: { groupConversationId },
+    type: 'REVIEW_CONVERSATION_NAME_COLLISION',
   };
-}
-
-function reviewMessageRequestNameCollision(
-  payload: Readonly<{
-    safeConversationId: string;
-  }>
-): ReviewMessageRequestNameCollisionActionType {
-  return { type: 'REVIEW_MESSAGE_REQUEST_NAME_COLLISION', payload };
 }
 
 // eslint-disable-next-line local-rules/type-alias-readonlydeep
@@ -4208,6 +4177,7 @@ export function getEmptyState(): ConversationsStateType {
     lastSelectedMessage: undefined,
     selectedMessageIds: undefined,
     showArchived: false,
+    hasContactSpoofingReview: false,
     targetedConversationPanels: {
       isAnimating: false,
       wasAnimated: false,
@@ -4591,7 +4561,10 @@ export function reducer(
   }
 
   if (action.type === 'CLOSE_CONTACT_SPOOFING_REVIEW') {
-    return omit(state, 'contactSpoofingReview');
+    return {
+      ...state,
+      hasContactSpoofingReview: false,
+    };
   }
 
   if (action.type === 'CLOSE_MAXIMUM_GROUP_SIZE_MODAL') {
@@ -4713,6 +4686,7 @@ export function reducer(
     }
 
     const keysToOmit: Array<keyof ConversationsStateType> = [];
+    const keyValuesToAdd: { hasContactSpoofingReview?: false } = {};
 
     if (selectedConversationId === id) {
       // Archived -> Inbox: we go back to the normal inbox view
@@ -4728,12 +4702,13 @@ export function reducer(
       }
 
       if (!existing.isBlocked && data.isBlocked) {
-        keysToOmit.push('contactSpoofingReview');
+        keyValuesToAdd.hasContactSpoofingReview = false;
       }
     }
 
     return {
       ...omit(state, keysToOmit),
+      ...keyValuesToAdd,
       selectedConversationId,
       showArchived,
       conversationLookup: {
@@ -4775,7 +4750,8 @@ export function reducer(
         : undefined;
 
     return {
-      ...omit(state, 'contactSpoofingReview'),
+      ...state,
+      hasContactSpoofingReview: false,
       selectedConversationId,
       targetedConversationPanels: {
         isAnimating: false,
@@ -5494,23 +5470,10 @@ export function reducer(
     };
   }
 
-  if (action.type === 'REVIEW_GROUP_MEMBER_NAME_COLLISION') {
+  if (action.type === 'REVIEW_CONVERSATION_NAME_COLLISION') {
     return {
       ...state,
-      contactSpoofingReview: {
-        type: ContactSpoofingType.MultipleGroupMembersWithSameTitle,
-        ...action.payload,
-      },
-    };
-  }
-
-  if (action.type === 'REVIEW_MESSAGE_REQUEST_NAME_COLLISION') {
-    return {
-      ...state,
-      contactSpoofingReview: {
-        type: ContactSpoofingType.DirectConversationWithSameTitle,
-        ...action.payload,
-      },
+      hasContactSpoofingReview: true,
     };
   }
 
@@ -5683,7 +5646,8 @@ export function reducer(
     }
 
     const nextState = {
-      ...omit(state, 'contactSpoofingReview'),
+      ...state,
+      hasContactSpoofingReview: false,
       selectedConversationId: conversationId,
       targetedMessage: messageId,
       targetedMessageSource: TargetedMessageSource.NavigateToMessage,

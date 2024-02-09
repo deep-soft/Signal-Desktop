@@ -101,6 +101,7 @@ export type PropsDataType = {
   hasTypingIndicators: boolean;
   lastSyncTime?: number;
   notificationContent: NotificationSettingType;
+  phoneNumber: string | undefined;
   selectedCamera?: string;
   selectedMicrophone?: AudioDevice;
   selectedSpeaker?: AudioDevice;
@@ -325,6 +326,7 @@ export function Preferences({
   onWhoCanSeeMeChange,
   onWhoCanFindMeChange,
   onZoomFactorChange,
+  phoneNumber = '',
   preferredSystemLocales,
   removeCustomColor,
   removeCustomColorOnConversations,
@@ -531,6 +533,10 @@ export function Preferences({
           </div>
         </div>
         <SettingsRow>
+          <Control
+            left={i18n('icu:Preferences--phone-number')}
+            right={phoneNumber}
+          />
           <Control
             left={i18n('icu:Preferences--device-name')}
             right={deviceName}
@@ -1416,6 +1422,21 @@ export function Preferences({
       </>
     );
   } else if (page === Page.PNP) {
+    let sharingDescription: string;
+
+    if (whoCanSeeMe === PhoneNumberSharingMode.Everybody) {
+      sharingDescription = i18n(
+        'icu:Preferences__pnp__sharing--description--everyone'
+      );
+    } else if (whoCanFindMe === PhoneNumberDiscoverability.Discoverable) {
+      sharingDescription = i18n(
+        'icu:Preferences__pnp__sharing--description--nobody'
+      );
+    } else {
+      sharingDescription = i18n(
+        'icu:Preferences__pnp__sharing--description--nobody--not-discoverable'
+      );
+    }
     settings = (
       <>
         <div className="Preferences__title">
@@ -1452,11 +1473,7 @@ export function Preferences({
             value={whoCanSeeMe}
           />
           <div className="Preferences__padding">
-            <div className="Preferences__description">
-              {whoCanSeeMe === PhoneNumberSharingMode.Everybody
-                ? i18n('icu:Preferences__pnp__sharing--description--everyone')
-                : i18n('icu:Preferences__pnp__sharing--description--nobody')}
-            </div>
+            <div className="Preferences__description">{sharingDescription}</div>
           </div>
         </SettingsRow>
 
