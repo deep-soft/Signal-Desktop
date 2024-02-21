@@ -25,6 +25,7 @@ jobs:
 
     - run: npm install -g "yarn@${{ env.YARN_VERS }}"
     - run: npm install -g "npm@${{ env.NPM_VERS }}"
+    - run: npm install -g "node-gyp@10.0.1"
     - run: npm install -g "node-gyp@{{ env.NODEGYP_VERS }}"
 
     - run: npm install -g "yarn@${{ env.YARN_VERS }}" "npm@${{ env.NPM_VERS }}" "node-gyp@{{ env.NODEGYP_VERS }}"
