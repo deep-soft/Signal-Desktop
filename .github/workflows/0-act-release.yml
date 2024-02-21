@@ -18,10 +18,10 @@ on:
 env:
   VERSION: "v.1.0.0"
   DEBUG_LS: true
-  NODE_VERSION: '18.18.2'
-  #NODE_VERSION: '18.17.1'
-  YARN_VERSION: '1.22.10'
-  NPM_VERSION: 'npm@10.2.5'
+  NODE_VERSION:    '18.18.2'
+  #NODE_VERSION:   '18.17.1'
+  YARN_VERSION:    '1.22.10'
+  NPM_VERSION:     '10.2.5'
   NODEGYP_VERSION: '10.0.1'
 
 jobs:
