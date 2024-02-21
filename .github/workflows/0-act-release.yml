@@ -321,9 +321,9 @@ jobs:
       with:
         node-version: ${{ env.NODE_VERSION }}
 
-    - run: npm install -g "yarn@${{ env.YARN_VERSION }}"
-    - run: npm install -g "npm@${{ env.NPM_VERSION }}"
-    - run: npm install -g "node-gyp@{{ env.NODEGYP_VERSION }}"
+    - run: npm install -g yarn@${{ env.YARN_VERSION }}
+    - run: npm install -g npm@${{ env.NPM_VERSION }}
+    - run: npm install -g node-gyp@${{ env.NODEGYP_VERSION }}
 
     # Set things up so @nodert-win10-rs4 dependencies build properly
     - run: dir "$env:BUILD_LOCATION"
