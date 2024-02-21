@@ -41,6 +41,7 @@ jobs:
         node-version: ${{ env.NODE_VERSION }}
 
     - run: npm install -g yarn@${{ env.YARN_VERSION }} npm@${{ env.NPM_VERSION }}
+
     #- run: npm install -g yarn@${{ env.YARN_VERSION }}
 
     - name: Cache Desktop node_modules
