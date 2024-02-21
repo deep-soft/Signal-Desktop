@@ -2,12 +2,13 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useSpring, animated } from '@react-spring/web';
 
 import type { AvatarColorType } from '../types/Colors';
 import { AvatarColors } from '../types/Colors';
 import type {
   AvatarDataType,
-  AvatarUpdateType,
+  AvatarUpdateOptionsType,
   DeleteAvatarFromDiskActionType,
   ReplaceAvatarActionType,
   SaveAvatarToDiskActionType,
@@ -45,6 +46,7 @@ import {
 import { isWhitespace, trim } from '../util/whitespaceStringUtil';
 import { UserText } from './UserText';
 import { Tooltip, TooltipPlacement } from './Tooltip';
+import { offsetDistanceModifier } from '../util/popperUtil';
 
 export enum EditState {
   None = 'None',
@@ -59,7 +61,7 @@ type PropsExternalType = {
   onEditStateChanged: (editState: EditState) => unknown;
   onProfileChanged: (
     profileData: ProfileDataType,
-    avatar: AvatarUpdateType
+    avatarUpdateOptions: AvatarUpdateOptionsType
   ) => unknown;
   renderEditUsernameModalBody: (props: {
     isRootModal: boolean;
@@ -77,17 +79,16 @@ export type PropsDataType = {
   firstName: string;
   hasCompletedUsernameLinkOnboarding: boolean;
   i18n: LocalizerType;
-  isUsernameFlagEnabled: boolean;
   userAvatarData: ReadonlyArray<AvatarDataType>;
   username?: string;
   initialEditState?: EditState;
   usernameCorrupted: boolean;
   usernameEditState: UsernameEditState;
-  usernameLinkRecovered: boolean;
   usernameLinkState: UsernameLinkState;
   usernameLinkColor?: number;
   usernameLink?: string;
   usernameLinkCorrupted: boolean;
+  isUsernameDeletionEnabled: boolean;
 } & Pick<EmojiButtonProps, 'recentEmojis' | 'skinTone'>;
 
 type PropsActionType = {
@@ -101,7 +102,6 @@ type PropsActionType = {
   setUsernameLinkColor: (color: number) => void;
   toggleProfileEditor: () => void;
   resetUsernameLink: () => void;
-  clearUsernameLinkRecovered: () => void;
   deleteUsername: () => void;
   showToast: ShowToastAction;
   openUsernameReservationModal: () => void;
@@ -142,7 +142,6 @@ function getDefaultBios(i18n: LocalizerType): Array<DefaultBio> {
 export function ProfileEditor({
   aboutEmoji,
   aboutText,
-  clearUsernameLinkRecovered,
   color,
   conversationId,
   deleteAvatarFromDisk,
@@ -152,7 +151,6 @@ export function ProfileEditor({
   hasCompletedUsernameLinkOnboarding,
   i18n,
   initialEditState = EditState.None,
-  isUsernameFlagEnabled,
   markCompletedUsernameLinkOnboarding,
   onEditStateChanged,
   onProfileChanged,
@@ -174,11 +172,11 @@ export function ProfileEditor({
   username,
   usernameCorrupted,
   usernameEditState,
-  usernameLinkRecovered,
   usernameLinkState,
   usernameLinkColor,
   usernameLink,
   usernameLinkCorrupted,
+  isUsernameDeletionEnabled,
 }: PropsType): JSX.Element {
   const focusInputRef = useRef<HTMLInputElement | null>(null);
   const [editState, setEditState] = useState<EditState>(initialEditState);
@@ -205,9 +203,6 @@ export function ProfileEditor({
   const [avatarBuffer, setAvatarBuffer] = useState<Uint8Array | undefined>(
     undefined
   );
-  const [isLoadingAvatar, setIsLoadingAvatar] = useState(
-    Boolean(profileAvatarPath)
-  );
   const [stagedProfile, setStagedProfile] = useState<ProfileDataType>({
     aboutEmoji,
     aboutText,
@@ -215,6 +210,7 @@ export function ProfileEditor({
     firstName,
   });
   const [isResettingUsername, setIsResettingUsername] = useState(false);
+  const [isUsernameNoticeVisible, setIsUsernameNoticeVisible] = useState(false);
   const [isResettingUsernameLink, setIsResettingUsernameLink] = useState(false);
 
   // Reset username edit state when leaving
@@ -258,7 +254,10 @@ export function ProfileEditor({
             ? trim(stagedProfile.familyName)
             : undefined,
         },
-        { oldAvatar: oldAvatarBuffer, newAvatar: avatar }
+        {
+          keepAvatar: false,
+          avatarUpdate: { oldAvatar: oldAvatarBuffer, newAvatar: avatar },
+        }
       );
       setOldAvatarBuffer(avatar);
     },
@@ -295,9 +294,8 @@ export function ProfileEditor({
     avatar => {
       setAvatarBuffer(avatar);
       setOldAvatarBuffer(avatar);
-      setIsLoadingAvatar(false);
     },
-    [setAvatarBuffer, setOldAvatarBuffer, setIsLoadingAvatar]
+    [setAvatarBuffer, setOldAvatarBuffer]
   );
 
   let content: JSX.Element;
@@ -321,7 +319,6 @@ export function ProfileEditor({
     );
   } else if (editState === EditState.ProfileName) {
     const shouldDisableSave =
-      isLoadingAvatar ||
       !stagedProfile.firstName ||
       (stagedProfile.firstName === fullName.firstName &&
         stagedProfile.familyName === fullName.familyName) ||
@@ -394,10 +391,7 @@ export function ProfileEditor({
                 familyName: stagedProfile.familyName,
               });
 
-              onProfileChanged(stagedProfile, {
-                oldAvatar: oldAvatarBuffer,
-                newAvatar: avatarBuffer,
-              });
+              onProfileChanged(stagedProfile, { keepAvatar: true });
               handleBack();
             }}
           >
@@ -408,9 +402,8 @@ export function ProfileEditor({
     );
   } else if (editState === EditState.Bio) {
     const shouldDisableSave =
-      isLoadingAvatar ||
-      (stagedProfile.aboutText === fullBio.aboutText &&
-        stagedProfile.aboutEmoji === fullBio.aboutEmoji);
+      stagedProfile.aboutText === fullBio.aboutText &&
+      stagedProfile.aboutEmoji === fullBio.aboutEmoji;
 
     const defaultBios = getDefaultBios(i18n);
 
@@ -512,10 +505,7 @@ export function ProfileEditor({
                 aboutText: stagedProfile.aboutText,
               });
 
-              onProfileChanged(stagedProfile, {
-                oldAvatar: oldAvatarBuffer,
-                newAvatar: avatarBuffer,
-              });
+              onProfileChanged(stagedProfile, { keepAvatar: true });
               handleBack();
             }}
           >
@@ -537,178 +527,158 @@ export function ProfileEditor({
         username={username ?? ''}
         colorId={usernameLinkColor}
         usernameLinkCorrupted={usernameLinkCorrupted}
-        usernameLinkRecovered={usernameLinkRecovered}
         usernameLinkState={usernameLinkState}
         setUsernameLinkColor={setUsernameLinkColor}
         resetUsernameLink={resetUsernameLink}
-        clearUsernameLinkRecovered={clearUsernameLinkRecovered}
         saveAttachment={saveAttachment}
         showToast={showToast}
         onBack={() => setEditState(EditState.None)}
       />
     );
   } else if (editState === EditState.None) {
-    let maybeUsernameRows: JSX.Element | undefined;
-    if (isUsernameFlagEnabled) {
-      let actions: JSX.Element | undefined;
-      let alwaysShowActions = false;
+    let actions: JSX.Element | undefined;
+    let alwaysShowActions = false;
 
-      if (usernameEditState === UsernameEditState.Deleting) {
-        actions = (
-          <ConversationDetailsIcon
-            ariaLabel={i18n('icu:ProfileEditor--username--deleting-username')}
-            icon={IconType.spinner}
-            disabled
-            fakeButton
-          />
-        );
-      } else {
-        const menuOptions = [
-          {
-            group: 'copy',
-            icon: 'ProfileEditor__username-menu__copy-icon',
-            label: i18n('icu:ProfileEditor--username--copy'),
-            onClick: () => {
-              assertDev(
-                username !== undefined,
-                'Should not be visible without username'
-              );
-              void window.navigator.clipboard.writeText(username);
-              showToast({ toastType: ToastType.CopiedUsername });
-            },
-          },
-          {
-            // Different group to display a divider above it
-            group: 'delete',
-
-            icon: 'ProfileEditor__username-menu__trash-icon',
-            label: i18n('icu:ProfileEditor--username--delete'),
-            onClick: () => {
-              setUsernameEditState(UsernameEditState.ConfirmingDelete);
-            },
-          },
-        ];
-
-        if (usernameCorrupted) {
-          actions = (
-            <i
-              className="ProfileEditor__error-icon"
-              title={i18n('icu:ProfileEditor__username__error-icon')}
-            />
-          );
-          alwaysShowActions = true;
-        } else if (username) {
-          actions = (
-            <ContextMenu
-              i18n={i18n}
-              menuOptions={menuOptions}
-              popperOptions={{ placement: 'bottom', strategy: 'absolute' }}
-              moduleClassName="ProfileEditor__username-menu"
-              ariaLabel={i18n('icu:ProfileEditor--username--context-menu')}
-            />
-          );
-        }
-      }
-
-      let maybeUsernameLinkRow: JSX.Element | undefined;
-      if (username && !usernameCorrupted) {
-        let linkActions: JSX.Element | undefined;
-
-        if (usernameLinkCorrupted) {
-          linkActions = (
-            <i
-              className="ProfileEditor__error-icon"
-              title={i18n('icu:ProfileEditor__username-link__error-icon')}
-            />
-          );
-        }
-
-        maybeUsernameLinkRow = (
-          <PanelRow
-            className="ProfileEditor__row"
-            icon={
-              <i className="ProfileEditor__icon--container ProfileEditor__icon ProfileEditor__icon--username-link" />
-            }
-            label={i18n('icu:ProfileEditor__username-link')}
-            onClick={() => {
-              if (usernameLinkCorrupted) {
-                setIsResettingUsernameLink(true);
-                return;
-              }
-
-              setEditState(EditState.UsernameLink);
-            }}
-            alwaysShowActions
-            actions={linkActions}
-          />
-        );
-
-        if (!hasCompletedUsernameLinkOnboarding) {
-          const tooltip = (
-            <div className="ProfileEditor__username-link__tooltip__container">
-              <div className="ProfileEditor__username-link__tooltip__icon" />
-
-              <div className="ProfileEditor__username-link__tooltip__content">
-                <h3>
-                  {i18n('icu:ProfileEditor__username-link__tooltip__title')}
-                </h3>
-                <p>{i18n('icu:ProfileEditor__username-link__tooltip__body')}</p>
-              </div>
-
-              <button
-                type="button"
-                className="ProfileEditor__username-link__tooltip__close"
-                onClick={markCompletedUsernameLinkOnboarding}
-                aria-label={i18n('icu:close')}
-              />
-            </div>
-          );
-          maybeUsernameLinkRow = (
-            <Tooltip
-              className="ProfileEditor__username-link__tooltip"
-              direction={TooltipPlacement.Bottom}
-              sticky
-              content={tooltip}
-            >
-              {maybeUsernameLinkRow}
-            </Tooltip>
-          );
-        }
-      }
-
-      maybeUsernameRows = (
-        <>
-          <hr className="ProfileEditor__divider" />
-          <PanelRow
-            className="ProfileEditor__row"
-            icon={
-              <i className="ProfileEditor__icon--container ProfileEditor__icon ProfileEditor__icon--username" />
-            }
-            label={
-              (!usernameCorrupted && username) ||
-              i18n('icu:ProfileEditor--username')
-            }
-            onClick={() => {
-              if (usernameCorrupted) {
-                setIsResettingUsername(true);
-                return;
-              }
-
-              openUsernameReservationModal();
-              setEditState(EditState.Username);
-            }}
-            alwaysShowActions={alwaysShowActions}
-            actions={actions}
-          />
-          {maybeUsernameLinkRow}
-          <div className="ProfileEditor__info">
-            {username
-              ? i18n('icu:ProfileEditor--info--pnp')
-              : i18n('icu:ProfileEditor--info--pnp--no-username')}
-          </div>
-        </>
+    if (usernameEditState === UsernameEditState.Deleting) {
+      actions = (
+        <ConversationDetailsIcon
+          ariaLabel={i18n('icu:ProfileEditor--username--deleting-username')}
+          icon={IconType.spinner}
+          disabled
+          fakeButton
+        />
       );
+    } else {
+      const menuOptions = [
+        {
+          group: 'copy',
+          icon: 'ProfileEditor__username-menu__copy-icon',
+          label: i18n('icu:ProfileEditor--username--copy'),
+          onClick: () => {
+            assertDev(
+              username !== undefined,
+              'Should not be visible without username'
+            );
+            void window.navigator.clipboard.writeText(username);
+            showToast({ toastType: ToastType.CopiedUsername });
+          },
+        },
+        {
+          // Different group to display a divider above it
+          group: 'delete',
+
+          icon: 'ProfileEditor__username-menu__trash-icon',
+          label: i18n('icu:ProfileEditor--username--delete'),
+          onClick: () => {
+            if (isUsernameDeletionEnabled) {
+              setUsernameEditState(UsernameEditState.ConfirmingDelete);
+            } else {
+              setIsUsernameNoticeVisible(true);
+            }
+          },
+        },
+      ];
+
+      if (usernameCorrupted) {
+        actions = (
+          <i
+            className="ProfileEditor__error-icon"
+            title={i18n('icu:ProfileEditor__username__error-icon')}
+          />
+        );
+        alwaysShowActions = true;
+      } else if (username) {
+        actions = (
+          <ContextMenu
+            i18n={i18n}
+            menuOptions={menuOptions}
+            popperOptions={{ placement: 'bottom', strategy: 'absolute' }}
+            moduleClassName="ProfileEditor__username-menu"
+            ariaLabel={i18n('icu:ProfileEditor--username--context-menu')}
+          />
+        );
+      }
     }
+
+    let maybeUsernameLinkRow: JSX.Element | undefined;
+    if (username && !usernameCorrupted) {
+      let linkActions: JSX.Element | undefined;
+
+      if (usernameLinkCorrupted) {
+        linkActions = (
+          <i
+            className="ProfileEditor__error-icon"
+            title={i18n('icu:ProfileEditor__username-link__error-icon')}
+          />
+        );
+      }
+
+      maybeUsernameLinkRow = (
+        <PanelRow
+          className="ProfileEditor__row"
+          icon={
+            <i className="ProfileEditor__icon--container ProfileEditor__icon ProfileEditor__icon--username-link" />
+          }
+          label={i18n('icu:ProfileEditor__username-link')}
+          onClick={() => {
+            markCompletedUsernameLinkOnboarding();
+
+            if (usernameLinkCorrupted) {
+              setIsResettingUsernameLink(true);
+              return;
+            }
+
+            setEditState(EditState.UsernameLink);
+          }}
+          alwaysShowActions
+          actions={linkActions}
+        />
+      );
+
+      if (!hasCompletedUsernameLinkOnboarding && !usernameLink) {
+        maybeUsernameLinkRow = (
+          <UsernameLinkTooltip
+            handleClose={markCompletedUsernameLinkOnboarding}
+            i18n={i18n}
+          >
+            {maybeUsernameLinkRow}
+          </UsernameLinkTooltip>
+        );
+      }
+    }
+
+    const usernameRows = (
+      <>
+        <hr className="ProfileEditor__divider" />
+        <PanelRow
+          className="ProfileEditor__row"
+          icon={
+            <i className="ProfileEditor__icon--container ProfileEditor__icon ProfileEditor__icon--username" />
+          }
+          label={
+            (!usernameCorrupted && username) ||
+            i18n('icu:ProfileEditor--username')
+          }
+          onClick={() => {
+            if (usernameCorrupted) {
+              setIsResettingUsername(true);
+              return;
+            }
+
+            openUsernameReservationModal();
+            setEditState(EditState.Username);
+          }}
+          alwaysShowActions={alwaysShowActions}
+          actions={actions}
+        />
+        {maybeUsernameLinkRow}
+        <div className="ProfileEditor__info">
+          {username
+            ? i18n('icu:ProfileEditor--info--pnp')
+            : i18n('icu:ProfileEditor--info--pnp--no-username')}
+        </div>
+      </>
+    );
 
     content = (
       <>
@@ -771,7 +741,7 @@ export function ProfileEditor({
         <div className="ProfileEditor__info">
           {i18n('icu:ProfileEditor--info--general')}
         </div>
-        {maybeUsernameRows}
+        {usernameRows}
       </>
     );
   } else {
@@ -796,6 +766,17 @@ export function ProfileEditor({
           {i18n('icu:ProfileEditor--username--confirm-delete-body-2', {
             username,
           })}
+        </ConfirmationDialog>
+      )}
+
+      {isUsernameNoticeVisible && (
+        <ConfirmationDialog
+          dialogName="ProfileEditor.confirmDeleteUsername"
+          i18n={i18n}
+          onClose={() => setIsUsernameNoticeVisible(false)}
+          cancelText={i18n('icu:ok')}
+        >
+          {i18n('icu:ProfileEditor--username--delete-unavailable-notice')}
         </ConfirmationDialog>
       )}
 
@@ -852,5 +833,57 @@ export function ProfileEditor({
 
       <div className="ProfileEditor">{content}</div>
     </>
+  );
+}
+
+function UsernameLinkTooltip({
+  handleClose,
+  children,
+  i18n,
+}: {
+  handleClose: VoidFunction;
+  children: React.ReactNode;
+  i18n: LocalizerType;
+}) {
+  const animatedStyles = useSpring({
+    from: { opacity: 0, scale: 0.25 },
+    to: { opacity: 1, scale: 1 },
+    config: { mass: 1, tension: 280, friction: 25 },
+    delay: 200,
+  });
+  const tooltip = (
+    <animated.div
+      className="ProfileEditor__username-link__tooltip__container"
+      style={animatedStyles}
+    >
+      <div className="ProfileEditor__username-link__tooltip__icon" />
+
+      <div className="ProfileEditor__username-link__tooltip__content">
+        <h3>{i18n('icu:ProfileEditor__username-link__tooltip__title')}</h3>
+        <p>{i18n('icu:ProfileEditor__username-link__tooltip__body')}</p>
+      </div>
+
+      <button
+        type="button"
+        className="ProfileEditor__username-link__tooltip__close"
+        onClick={handleClose}
+        aria-label={i18n('icu:close')}
+      />
+      <div className="ProfileEditor__username-link__tooltip__arrow" />
+    </animated.div>
+  );
+
+  return (
+    <Tooltip
+      className="ProfileEditor__username-link__tooltip"
+      direction={TooltipPlacement.Bottom}
+      sticky
+      content={tooltip}
+      // By default tooltip has its distance modified, here we clear that
+      popperModifiers={[offsetDistanceModifier(0)]}
+      hideArrow
+    >
+      {children}
+    </Tooltip>
   );
 }

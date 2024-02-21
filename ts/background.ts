@@ -162,7 +162,7 @@ import { StartupQueue } from './util/StartupQueue';
 import { showConfirmationDialog } from './util/showConfirmationDialog';
 import { onCallEventSync } from './util/onCallEventSync';
 import { sleeper } from './util/sleeper';
-import { DAY, HOUR, MINUTE } from './util/durations';
+import { DAY, HOUR, SECOND } from './util/durations';
 import { copyDataMessageIntoMessage } from './util/copyDataMessageIntoMessage';
 import {
   flushMessageCounter,
@@ -645,6 +645,7 @@ export async function startApp(): Promise<void> {
           await new Promise<void>((resolve, reject) => {
             showConfirmationDialog({
               dialogName: 'deleteOldIndexedDBData',
+              noMouseClose: true,
               onTopOfEverything: true,
               cancelText: window.i18n('icu:quit'),
               confirmStyle: 'negative',
@@ -797,7 +798,7 @@ export async function startApp(): Promise<void> {
               );
               timeout = undefined;
               resolve();
-            }, 1 * MINUTE);
+            }, 10 * SECOND);
           }),
         ]);
         if (timeout) {
@@ -1331,6 +1332,10 @@ export async function startApp(): Promise<void> {
         return;
       }
 
+      if (remotelyExpired) {
+        return;
+      }
+
       log.info('reconnectToWebSocket starting...');
       await server.reconnect();
     });
@@ -1349,6 +1354,16 @@ export async function startApp(): Promise<void> {
 
   window.Whisper.events.on('unlinkAndDisconnect', () => {
     void unlinkAndDisconnect();
+  });
+
+  window.Whisper.events.on('httpResponse499', () => {
+    if (remotelyExpired) {
+      return;
+    }
+
+    log.warn('background: remote expiration detected, disabling reconnects');
+    remotelyExpired = true;
+    onOffline();
   });
 
   async function runStorageService() {
@@ -1442,6 +1457,9 @@ export async function startApp(): Promise<void> {
       drop(window.Signal.RemoteConfig.maybeRefreshRemoteConfig(server));
 
       drop(connect(true));
+
+      // Run storage service after linking
+      drop(runStorageService());
     });
 
     cancelInitializationMessage();
@@ -1553,6 +1571,10 @@ export async function startApp(): Promise<void> {
   }
 
   function onOnline() {
+    if (remotelyExpired) {
+      return;
+    }
+
     log.info('online');
 
     window.removeEventListener('online', onOnline);
@@ -1603,9 +1625,15 @@ export async function startApp(): Promise<void> {
 
   let connectCount = 0;
   let connecting = false;
+  let remotelyExpired = false;
   async function connect(firstRun?: boolean) {
     if (connecting) {
       log.warn('connect already running', { connectCount });
+      return;
+    }
+
+    if (remotelyExpired) {
+      log.warn('remotely expired, not reconnecting');
       return;
     }
 
@@ -1710,7 +1738,9 @@ export async function startApp(): Promise<void> {
       server.registerRequestHandler(messageReceiver);
 
       // If coming here after `offline` event - connect again.
-      await server.onOnline();
+      if (!remotelyExpired) {
+        await server.onOnline();
+      }
 
       void AttachmentDownloads.start({
         logger: log,
@@ -1775,9 +1805,7 @@ export async function startApp(): Promise<void> {
         try {
           // Note: we always have to register our capabilities all at once, so we do this
           //   after connect on every startup
-          await server.registerCapabilities({
-            pni: true,
-          });
+          await server.registerCapabilities({});
         } catch (error) {
           log.error(
             'Error: Unable to register our capabilities.',

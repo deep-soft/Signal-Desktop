@@ -126,7 +126,7 @@ const createProps = (
         ourE164={undefined}
         ourUsername={undefined}
         showUserNotFoundModal={action('showUserNotFoundModal')}
-        isUsernamesEnabled
+        username={undefined}
       />
     );
   },

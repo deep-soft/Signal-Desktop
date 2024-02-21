@@ -12,6 +12,7 @@ import {
   values,
   without,
 } from 'lodash';
+import type { PhoneNumber } from 'google-libphonenumber';
 
 import { clipboard } from 'electron';
 import type { ReadonlyDeep } from 'type-fest';
@@ -27,6 +28,7 @@ import type { DurationInSeconds } from '../../util/durations';
 import * as universalExpireTimer from '../../util/universalExpireTimer';
 import * as Attachment from '../../types/Attachment';
 import { isFileDangerous } from '../../util/isFileDangerous';
+import { instance as libphonenumberInstance } from '../../util/libphonenumberInstance';
 import type {
   ShowSendAnywayDialogActionType,
   ShowErrorModalActionType,
@@ -92,7 +94,10 @@ import {
   getMessagesByConversation,
 } from '../selectors/conversations';
 import { getIntl } from '../selectors/user';
-import type { AvatarDataType, AvatarUpdateType } from '../../types/Avatar';
+import type {
+  AvatarDataType,
+  AvatarUpdateOptionsType,
+} from '../../types/Avatar';
 import { getDefaultAvatars } from '../../types/Avatar';
 import { getAvatarData } from '../../util/getAvatarData';
 import { isSameAvatarData } from '../../util/isSameAvatarData';
@@ -445,9 +450,15 @@ type VerificationDataByConversation = ReadonlyDeep<
 
 type ComposerStateType = ReadonlyDeep<
   | {
-      step: ComposerStep.StartDirectConversation;
+      step: ComposerStep.StartDirectConversation | ComposerStep.FindByUsername;
       searchTerm: string;
       uuidFetchState: UUIDFetchStateType;
+    }
+  | {
+      step: ComposerStep.FindByPhoneNumber;
+      searchTerm: string;
+      uuidFetchState: UUIDFetchStateType;
+      selectedRegion: string;
     }
   | ({
       step: ComposerStep.ChooseGroupMembers;
@@ -866,6 +877,10 @@ type SetComposeSearchTermActionType = ReadonlyDeep<{
   type: 'SET_COMPOSE_SEARCH_TERM';
   payload: { searchTerm: string };
 }>;
+type SetComposeSelectedRegionActionType = ReadonlyDeep<{
+  type: 'SET_COMPOSE_SELECTED_REGION';
+  payload: { selectedRegion: string };
+}>;
 type SetIsFetchingUUIDActionType = ReadonlyDeep<{
   type: 'SET_IS_FETCHING_UUID';
   payload: {
@@ -888,6 +903,12 @@ type StartComposingActionType = ReadonlyDeep<{
 }>;
 type ShowChooseGroupMembersActionType = ReadonlyDeep<{
   type: 'SHOW_CHOOSE_GROUP_MEMBERS';
+}>;
+type ShowFindByUsername = ReadonlyDeep<{
+  type: 'SHOW_FIND_BY_USERNAME';
+}>;
+type ShowFindByPhoneNumber = ReadonlyDeep<{
+  type: 'SHOW_FIND_BY_PHONE_NUMBER';
 }>;
 type StartSettingGroupMetadataActionType = ReadonlyDeep<{
   type: 'START_SETTING_GROUP_METADATA';
@@ -976,6 +997,7 @@ export type ConversationActionType =
   | SetComposeGroupExpireTimerActionType
   | SetComposeGroupNameActionType
   | SetComposeSearchTermActionType
+  | SetComposeSelectedRegionActionType
   | SetIsFetchingUUIDActionType
   | SetIsNearBottomActionType
   | SetMessageLoadingStateActionType
@@ -983,6 +1005,8 @@ export type ConversationActionType =
   | SetRecentMediaItemsActionType
   | ShowArchivedConversationsActionType
   | ShowChooseGroupMembersActionType
+  | ShowFindByUsername
+  | ShowFindByPhoneNumber
   | ShowInboxActionType
   | ShowSendAnywayDialogActionType
   | ShowSpoilerActionType
@@ -1088,6 +1112,7 @@ export const actions = {
   setComposeGroupExpireTimer,
   setComposeGroupName,
   setComposeSearchTerm,
+  setComposeSelectedRegion,
   setDisappearingMessages,
   setDontNotifyForMentionsIfMuted,
   setIsFetchingUUID,
@@ -1103,6 +1128,8 @@ export const actions = {
   showConversation,
   showExpiredIncomingTapToViewToast,
   showExpiredOutgoingTapToViewToast,
+  showFindByUsername,
+  showFindByPhoneNumber,
   showInbox,
   startComposing,
   startConversation,
@@ -2029,7 +2056,7 @@ function saveAvatarToDisk(
 
 function myProfileChanged(
   profileData: ProfileDataType,
-  avatarUpdate: AvatarUpdateType
+  avatarUpdateOptions: AvatarUpdateOptionsType
 ): ThunkAction<
   void,
   RootStateType,
@@ -2045,9 +2072,7 @@ function myProfileChanged(
           ...conversation,
           ...profileData,
         },
-        {
-          avatarUpdate,
-        }
+        avatarUpdateOptions
       );
 
       // writeProfile above updates the backbone model which in turn updates
@@ -2069,17 +2094,13 @@ function removeCustomColorOnConversations(
 ): ThunkAction<void, RootStateType, unknown, CustomColorRemovedActionType> {
   return async dispatch => {
     const conversationsToUpdate: Array<ConversationAttributesType> = [];
-    // We don't want to trigger a model change because we're updating redux
-    // here manually ourselves. Au revoir Backbone!
     window.getConversations().forEach(conversation => {
       if (conversation.get('customColorId') === colorId) {
-        // eslint-disable-next-line no-param-reassign
-        delete conversation.attributes.conversationColor;
-        // eslint-disable-next-line no-param-reassign
-        delete conversation.attributes.customColor;
-        // eslint-disable-next-line no-param-reassign
-        delete conversation.attributes.customColorId;
-
+        conversation.set({
+          conversationColor: undefined,
+          customColor: undefined,
+          customColorId: undefined,
+        });
         conversationsToUpdate.push(conversation.attributes);
       }
     });
@@ -2107,15 +2128,12 @@ function resetAllChatColors(): ThunkAction<
     // Calling this with no args unsets all the colors in the db
     await window.Signal.Data.updateAllConversationColors();
 
-    // We don't want to trigger a model change because we're updating redux
-    // here manually ourselves. Au revoir Backbone!
     window.getConversations().forEach(conversation => {
-      // eslint-disable-next-line no-param-reassign
-      delete conversation.attributes.conversationColor;
-      // eslint-disable-next-line no-param-reassign
-      delete conversation.attributes.customColor;
-      // eslint-disable-next-line no-param-reassign
-      delete conversation.attributes.customColorId;
+      conversation.set({
+        conversationColor: undefined,
+        customColor: undefined,
+        customColorId: undefined,
+      });
     });
 
     dispatch({
@@ -2296,11 +2314,9 @@ export function setVoiceNotePlaybackRate({
   return async dispatch => {
     const conversationModel = window.ConversationController.get(conversationId);
     if (conversationModel) {
-      if (rate === 1) {
-        delete conversationModel.attributes.voiceNotePlaybackRate;
-      } else {
-        conversationModel.attributes.voiceNotePlaybackRate = rate;
-      }
+      conversationModel.set({
+        voiceNotePlaybackRate: rate === 1 ? undefined : rate,
+      });
       window.Signal.Data.updateConversation(conversationModel.attributes);
     }
 
@@ -2332,23 +2348,27 @@ function colorSelected({
   ColorSelectedActionType
 > {
   return async dispatch => {
-    // We don't want to trigger a model change because we're updating redux
-    // here manually ourselves. Au revoir Backbone!
     const conversation = window.ConversationController.get(conversationId);
     if (conversation) {
       if (conversationColor) {
-        conversation.attributes.conversationColor = conversationColor;
+        conversation.set({ conversationColor });
         if (customColorData) {
-          conversation.attributes.customColor = customColorData.value;
-          conversation.attributes.customColorId = customColorData.id;
+          conversation.set({
+            customColor: customColorData.value,
+            customColorId: customColorData.id,
+          });
         } else {
-          delete conversation.attributes.customColor;
-          delete conversation.attributes.customColorId;
+          conversation.set({
+            customColor: undefined,
+            customColorId: undefined,
+          });
         }
       } else {
-        delete conversation.attributes.conversationColor;
-        delete conversation.attributes.customColor;
-        delete conversation.attributes.customColorId;
+        conversation.set({
+          conversationColor: undefined,
+          customColor: undefined,
+          customColorId: undefined,
+        });
       }
 
       window.Signal.Data.updateConversation(conversation.attributes);
@@ -3671,12 +3691,29 @@ function setComposeSearchTerm(
   };
 }
 
+function setComposeSelectedRegion(
+  selectedRegion: string
+): SetComposeSelectedRegionActionType {
+  return {
+    type: 'SET_COMPOSE_SELECTED_REGION',
+    payload: { selectedRegion },
+  };
+}
+
 function startComposing(): StartComposingActionType {
   return { type: 'START_COMPOSING' };
 }
 
 function showChooseGroupMembers(): ShowChooseGroupMembersActionType {
   return { type: 'SHOW_CHOOSE_GROUP_MEMBERS' };
+}
+
+function showFindByUsername(): ShowFindByUsername {
+  return { type: 'SHOW_FIND_BY_USERNAME' };
+}
+
+function showFindByPhoneNumber(): ShowFindByPhoneNumber {
+  return { type: 'SHOW_FIND_BY_PHONE_NUMBER' };
 }
 
 function startSettingGroupMetadata(): StartSettingGroupMetadataActionType {
@@ -5858,6 +5895,31 @@ export function reducer(
     };
   }
 
+  if (action.type === 'SHOW_FIND_BY_USERNAME') {
+    return {
+      ...state,
+      showArchived: false,
+      composer: {
+        step: ComposerStep.FindByUsername,
+        searchTerm: '',
+        uuidFetchState: {},
+      },
+    };
+  }
+
+  if (action.type === 'SHOW_FIND_BY_PHONE_NUMBER') {
+    return {
+      ...state,
+      showArchived: false,
+      composer: {
+        step: ComposerStep.FindByPhoneNumber,
+        searchTerm: '',
+        selectedRegion: '',
+        uuidFetchState: {},
+      },
+    };
+  }
+
   if (action.type === 'START_SETTING_GROUP_METADATA') {
     const { composer } = state;
 
@@ -5964,8 +6026,69 @@ export function reducer(
     }
     if (
       composer.step !== ComposerStep.StartDirectConversation &&
+      composer.step !== ComposerStep.FindByUsername &&
+      composer.step !== ComposerStep.FindByPhoneNumber &&
       composer.step !== ComposerStep.ChooseGroupMembers
     ) {
+      assertDev(
+        false,
+        `Setting compose search term at step ${composer.step} is a no-op`
+      );
+      return state;
+    }
+
+    const { searchTerm } = action.payload;
+
+    // Basic state that we return if we can't parse the term.
+    const withUpdatedSearchTerm = {
+      ...state,
+      composer: {
+        ...composer,
+        searchTerm,
+      },
+    };
+
+    if (composer.step === ComposerStep.FindByPhoneNumber) {
+      const { selectedRegion } = composer;
+      let result: PhoneNumber;
+      try {
+        result = libphonenumberInstance.parse(searchTerm, selectedRegion);
+      } catch {
+        return withUpdatedSearchTerm;
+      }
+
+      const region = libphonenumberInstance.getRegionCodeForNumber(result);
+      if (!result.hasCountryCode() || !region || region === selectedRegion) {
+        return withUpdatedSearchTerm;
+      }
+
+      result.clearCountryCode();
+      const withoutCountryCode =
+        libphonenumberInstance.formatInOriginalFormat(result);
+
+      return {
+        ...state,
+        composer: {
+          ...composer,
+          selectedRegion: region,
+          searchTerm: withoutCountryCode,
+        },
+      };
+    }
+
+    return withUpdatedSearchTerm;
+  }
+
+  if (action.type === 'SET_COMPOSE_SELECTED_REGION') {
+    const { composer } = state;
+    if (!composer) {
+      assertDev(
+        false,
+        'Setting compose search term with the composer closed is a no-op'
+      );
+      return state;
+    }
+    if (composer.step !== ComposerStep.FindByPhoneNumber) {
       assertDev(
         false,
         `Setting compose search term at step ${composer.step} is a no-op`
@@ -5977,7 +6100,7 @@ export function reducer(
       ...state,
       composer: {
         ...composer,
-        searchTerm: action.payload.searchTerm,
+        selectedRegion: action.payload.selectedRegion,
       },
     };
   }
@@ -5993,6 +6116,8 @@ export function reducer(
     }
     if (
       composer.step !== ComposerStep.StartDirectConversation &&
+      composer.step !== ComposerStep.FindByUsername &&
+      composer.step !== ComposerStep.FindByPhoneNumber &&
       composer.step !== ComposerStep.ChooseGroupMembers
     ) {
       assertDev(

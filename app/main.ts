@@ -211,7 +211,7 @@ const FORCE_ENABLE_CRASH_REPORTS = process.argv.some(
 
 const CLI_LANG = cliOptions.lang as string | undefined;
 
-setupCrashReports(getLogger, FORCE_ENABLE_CRASH_REPORTS);
+setupCrashReports(getLogger, showDebugLogWindow, FORCE_ENABLE_CRASH_REPORTS);
 
 let sendDummyKeystroke: undefined | (() => void);
 if (OS.isWindows()) {
@@ -861,6 +861,21 @@ async function createWindow() {
 
     // Prevent the shutdown
     e.preventDefault();
+
+    // In certain cases such as during an active call, we ask the user to confirm close
+    // which includes shutdown, clicking X on MacOS or closing to tray.
+    let shouldClose = true;
+    try {
+      shouldClose = await maybeRequestCloseConfirmation();
+    } catch (error) {
+      getLogger().warn(
+        'Error while requesting close confirmation.',
+        Errors.toLogFormat(error)
+      );
+    }
+    if (!shouldClose) {
+      return;
+    }
 
     /**
      * if the user is in fullscreen mode and closes the window, not the
@@ -2057,6 +2072,59 @@ function setupMenu(options?: Partial<CreateTemplateOptionsType>) {
   });
 }
 
+async function maybeRequestCloseConfirmation(): Promise<boolean> {
+  if (!mainWindow || !mainWindow.webContents) {
+    return true;
+  }
+
+  getLogger().info(
+    'maybeRequestCloseConfirmation: Checking to see if close confirmation is needed'
+  );
+  const request = new Promise<boolean>(resolveFn => {
+    let timeout: NodeJS.Timeout | undefined;
+
+    if (!mainWindow) {
+      resolveFn(true);
+      return;
+    }
+
+    ipc.once('received-close-confirmation', (_event, result) => {
+      getLogger().info('maybeRequestCloseConfirmation: Response received');
+
+      clearTimeoutIfNecessary(timeout);
+      resolveFn(result);
+    });
+
+    ipc.once('requested-close-confirmation', () => {
+      getLogger().info(
+        'maybeRequestCloseConfirmation: Confirmation dialog shown, waiting for user.'
+      );
+      clearTimeoutIfNecessary(timeout);
+    });
+
+    mainWindow.webContents.send('maybe-request-close-confirmation');
+
+    // Wait a short time then proceed. Normally the dialog should be
+    // shown right away.
+    timeout = setTimeout(() => {
+      getLogger().error(
+        'maybeRequestCloseConfirmation: Response never received; continuing with close.'
+      );
+      resolveFn(true);
+    }, 10 * 1000);
+  });
+
+  try {
+    return await request;
+  } catch (error) {
+    getLogger().error(
+      'maybeRequestCloseConfirmation error:',
+      Errors.toLogFormat(error)
+    );
+    return true;
+  }
+}
+
 async function requestShutdown() {
   if (!mainWindow || !mainWindow.webContents) {
     return;
@@ -2445,6 +2513,12 @@ ipc.on('locale-data', event => {
 ipc.on('locale-display-names', event => {
   // eslint-disable-next-line no-param-reassign
   event.returnValue = getResolvedMessagesLocale().localeDisplayNames;
+});
+
+// Ingested in preload.js via a sendSync call
+ipc.on('country-display-names', event => {
+  // eslint-disable-next-line no-param-reassign
+  event.returnValue = getResolvedMessagesLocale().countryDisplayNames;
 });
 
 // TODO DESKTOP-5241

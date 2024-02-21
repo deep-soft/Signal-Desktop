@@ -26,9 +26,6 @@ export default {
   component: ProfileEditor,
   title: 'Components/ProfileEditor',
   argTypes: {
-    isUsernameFlagEnabled: {
-      control: { type: 'checkbox' },
-    },
     usernameEditState: {
       control: { type: 'radio' },
       options: {
@@ -47,7 +44,7 @@ export default {
     usernameLinkCorrupted: {
       control: 'boolean',
     },
-    usernameLinkRecovered: {
+    isUsernameDeletionEnabled: {
       control: 'boolean',
     },
   },
@@ -64,9 +61,9 @@ export default {
 
     usernameLink: 'https://signal.me/#eu/testtest',
     usernameLinkColor: Proto.AccountRecord.UsernameLink.Color.PURPLE,
-    isUsernameFlagEnabled: false,
     usernameEditState: UsernameEditState.Editing,
     usernameLinkState: UsernameLinkState.Ready,
+    isUsernameDeletionEnabled: true,
 
     recentEmojis: [],
     skinTone: 0,
@@ -81,7 +78,6 @@ export default {
     showToast: action('showToast'),
     replaceAvatar: action('replaceAvatar'),
     resetUsernameLink: action('resetUsernameLink'),
-    clearUsernameLinkRecovered: action('clearUsernameLinkRecovered'),
     saveAvatarToDisk: action('saveAvatarToDisk'),
     markCompletedUsernameLinkOnboarding: action(
       'markCompletedUsernameLinkOnboarding'
@@ -148,34 +144,25 @@ WithCustomAbout.args = {
   aboutText: 'Live. Laugh. Love',
 };
 
-export const WithUsernameFlagEnabled = Template.bind({});
-WithUsernameFlagEnabled.args = {
-  isUsernameFlagEnabled: true,
-};
-
-export const WithUsernameFlagEnabledAndUsername = Template.bind({});
-WithUsernameFlagEnabledAndUsername.args = {
-  isUsernameFlagEnabled: true,
+export const WithUsername = Template.bind({});
+WithUsername.args = {
   username: 'signaluser.123',
 };
 
 export const DeletingUsername = Template.bind({});
 DeletingUsername.args = {
-  isUsernameFlagEnabled: true,
   username: 'signaluser.123',
   usernameEditState: UsernameEditState.Deleting,
 };
 
 export const ConfirmingDelete = Template.bind({});
 ConfirmingDelete.args = {
-  isUsernameFlagEnabled: true,
   username: 'signaluser.123',
   usernameEditState: UsernameEditState.ConfirmingDelete,
 };
 
 export const Corrupted = Template.bind({});
 Corrupted.args = {
-  isUsernameFlagEnabled: true,
   username: 'signaluser.123',
   usernameCorrupted: true,
 };

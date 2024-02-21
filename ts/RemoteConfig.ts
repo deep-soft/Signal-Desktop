@@ -15,18 +15,14 @@ import { HashType } from './types/Crypto';
 import { getCountryCode } from './types/PhoneNumber';
 
 export type ConfigKeyType =
-  | 'cds.disableCompatibilityMode'
-  | 'desktop.cdsi.returnAcisWithoutUaks'
   | 'desktop.clientExpiration'
   | 'desktop.groupMultiTypingIndicators'
   | 'desktop.internalUser'
   | 'desktop.mediaQuality.levels'
   | 'desktop.messageCleanup'
-  | 'desktop.pnp'
   | 'desktop.retryRespondMaxAge'
   | 'desktop.senderKey.retry'
   | 'desktop.senderKeyMaxAge'
-  | 'desktop.usernames'
   | 'global.attachments.maxBytes'
   | 'global.attachments.maxReceiveBytes'
   | 'global.calling.maxGroupCallRingSize'

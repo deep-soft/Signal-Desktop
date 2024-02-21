@@ -13,19 +13,18 @@ import type { StateType } from '../reducer';
 import { getIntl } from '../selectors/user';
 import {
   getEmojiSkinTone,
-  getUsernamesEnabled,
   getHasCompletedUsernameLinkOnboarding,
   getUsernameCorrupted,
   getUsernameLinkColor,
   getUsernameLink,
   getUsernameLinkCorrupted,
+  isInternalUser,
 } from '../selectors/items';
 import { getMe } from '../selectors/conversations';
 import { selectRecentEmojis } from '../selectors/emojis';
 import {
   getUsernameEditState,
   getUsernameLinkState,
-  getUsernameLinkRecovered,
 } from '../selectors/username';
 
 function renderEditUsernameModalBody(props: {
@@ -52,12 +51,10 @@ function mapStateToProps(
   } = getMe(state);
   const recentEmojis = selectRecentEmojis(state);
   const skinTone = getEmojiSkinTone(state);
-  const isUsernameFlagEnabled = getUsernamesEnabled(state);
   const hasCompletedUsernameLinkOnboarding =
     getHasCompletedUsernameLinkOnboarding(state);
   const usernameEditState = getUsernameEditState(state);
   const usernameLinkState = getUsernameLinkState(state);
-  const usernameLinkRecovered = getUsernameLinkRecovered(state);
   const usernameLinkColor = getUsernameLinkColor(state);
   const usernameLink = getUsernameLink(state);
   const usernameCorrupted = getUsernameCorrupted(state);
@@ -75,7 +72,6 @@ function mapStateToProps(
     hasError: state.globalModals.profileEditorHasError,
     initialEditState: state.globalModals.profileEditorInitialEditState,
     i18n: getIntl(state),
-    isUsernameFlagEnabled,
     recentEmojis,
     skinTone,
     userAvatarData,
@@ -85,8 +81,8 @@ function mapStateToProps(
     usernameLinkState,
     usernameLinkColor,
     usernameLinkCorrupted,
-    usernameLinkRecovered,
     usernameLink,
+    isUsernameDeletionEnabled: isInternalUser(state),
 
     renderEditUsernameModalBody,
   };
