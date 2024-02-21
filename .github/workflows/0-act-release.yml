@@ -1,7 +1,7 @@
 # Copyright 2020 Signal Messenger, LLC
 # SPDX-License-Identifier: AGPL-3.0-only
 
-# 2023-10-03 17:00
+# 2024-02-21 17:30
 # node_version: ${{ env.NODE_VERSION }}
 # yarn_version: ${{ env.YARN_VERSION }}
 name: 0-act-release
@@ -18,8 +18,11 @@ on:
 env:
   VERSION: "v.1.0.0"
   DEBUG_LS: true
-  NODE_VERSION: '18.17.1'
+  NODE_VERSION: '18.18.2'
+  #NODE_VERSION: '18.17.1'
   YARN_VERSION: '1.22.10'
+  NPM_VERSION: 'npm@10.2.5'
+  NODEGYP_VERSION: '10.0.1'
 
 jobs:
   lint:
@@ -28,12 +31,17 @@ jobs:
 
     steps:
     - run: lsb_release -a
+
     - run: uname -a
+
     - uses: actions/checkout@v3
+
     - uses: actions/setup-node@v3
       with:
         node-version: ${{ env.NODE_VERSION }}
-    - run: npm install -g yarn@${{ env.YARN_VERSION }}
+
+    - run: npm install -g yarn@${{ env.YARN_VERSION }} npm@${{ env.NPM_VERSION }}
+    #- run: npm install -g yarn@${{ env.YARN_VERSION }}
 
     - name: Cache Desktop node_modules
       id: cache-desktop-modules
@@ -58,9 +66,13 @@ jobs:
         NPM_CONFIG_LOGLEVEL: verbose
 
     - run: yarn generate
+
     - run: yarn lint
+
     - run: yarn lint-deps
+
     - run: yarn lint-license-comments
+
     - run: git diff --exit-code
 
     - name: Update cached .eslintcache and tsconfig.tsbuildinfo
@@ -80,11 +92,15 @@ jobs:
 
     steps:
     - run: uname -a
+
     - uses: actions/checkout@v3
+
     - uses: actions/setup-node@v3
       with:
         node-version: ${{ env.NODE_VERSION }}
-    - run: npm install -g yarn@${{ env.YARN_VERSION }}
+
+    - run: npm install -g yarn@${{ env.YARN_VERSION }} npm@${{ env.NPM_VERSION }}
+    #- run: npm install -g yarn@${{ env.YARN_VERSION }}
 
     - run: python3 -m pip install setuptools
       continue-on-error: true
@@ -98,6 +114,7 @@ jobs:
       with:
         path: node_modules
         key: ${{ runner.os }}-${{ hashFiles('package.json', 'yarn.lock', 'patches/**') }}
+
     - name: Install Desktop node_modules
       if: steps.cache-desktop-modules.outputs.cache-hit != 'true'
       run: yarn install --frozen-lockfile
@@ -105,8 +122,11 @@ jobs:
         NPM_CONFIG_LOGLEVEL: verbose
 
     - run: yarn generate
+
     - run: yarn prepare-beta-build
+
     - run: yarn test-node
+
     - run: yarn test-electron
       env:
         ARTIFACTS_DIR: artifacts/macos
@@ -127,6 +147,7 @@ jobs:
       continue-on-error: true
       env:
         NODE_ENV: production
+
     - run: yarn test-eslint
 
     - name: Upload artifacts on failure
@@ -174,13 +195,19 @@ jobs:
 
     steps:
     - run: lsb_release -a
+
     - run: uname -a
+
     - uses: actions/checkout@v3
+
     - uses: actions/setup-node@v3
       with:
         node-version: ${{ env.NODE_VERSION }}
+
     - run: sudo apt-get install xvfb
-    - run: npm install -g yarn@${{ env.YARN_VERSION }}
+
+    - run: npm install -g yarn@${{ env.YARN_VERSION }} npm@${{ env.NPM_VERSION }}
+#    - run: npm install -g yarn@${{ env.YARN_VERSION }}
 
     - name: Cache Desktop node_modules
       id: cache-desktop-modules
@@ -188,6 +215,7 @@ jobs:
       with:
         path: node_modules
         key: ${{ runner.os }}-${{ hashFiles('package.json', 'yarn.lock', 'patches/**') }}
+
     - name: Install Desktop node_modules
       if: steps.cache-desktop-modules.outputs.cache-hit != 'true'
       run: yarn install --frozen-lockfile
@@ -195,6 +223,7 @@ jobs:
         NPM_CONFIG_LOGLEVEL: verbose
 
     - run: yarn generate
+
     - run: yarn prepare-beta-build
 
     - name: Create bundle
@@ -280,18 +309,26 @@ jobs:
 
     steps:
     - run: systeminfo
+
     - run: git config --global core.autocrlf false
+
     - run: git config --global core.eol lf
+
     - uses: actions/checkout@v3
+
     - uses: actions/setup-node@v3
       with:
         node-version: ${{ env.NODE_VERSION }}
-    - run: npm install -g yarn@${{ env.YARN_VERSION }}
+
+    - run: npm install -g yarn@${{ env.YARN_VERSION }} npm@${{ env.NPM_VERSION }} node-gyp@{{ env.NODEGYP_VERSION }}
 
     # Set things up so @nodert-win10-rs4 dependencies build properly
     - run: dir "$env:BUILD_LOCATION"
+
     - run: dir "$env:SDK_LOCATION"
+
     - run: "copy \"$env:BUILD_LOCATION\\platform.winmd\" \"$env:SDK_LOCATION\""
+
     - run: dir "$env:SDK_LOCATION"
 
     - name: Cache Desktop node_modules
@@ -300,6 +337,7 @@ jobs:
       with:
         path: node_modules
         key: ${{ runner.os }}-${{ hashFiles('package.json', 'yarn.lock', 'patches/**') }}
+
     - name: Install Desktop node_modules
       if: steps.cache-desktop-modules.outputs.cache-hit != 'true'
       run: yarn install --frozen-lockfile
@@ -308,10 +346,15 @@ jobs:
         NPM_CONFIG_LOGLEVEL: verbose
 
     - run: yarn generate
+
     - run: yarn test-node
+
     - run: copy package.json temp.json
+
     - run: del package.json
+
     - run: type temp.json | findstr /v certificateSubjectName | findstr /v certificateSha1 > package.json
+
     - run: yarn prepare-beta-build
 
     - name: Create bundle
@@ -393,6 +436,7 @@ jobs:
     steps:
     - name: Get system specs
       run: lsb_release -a
+
     - name: Get other system specs
       run: uname -a
 
@@ -403,8 +447,9 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ env.NODE_VERSION }}
+
     - name: Install global dependencies
-      run: npm install -g yarn@${{ env.YARN_VERSION }}
+      run: npm install -g yarn@${{ env.YARN_VERSION }} npm@${{ env.NPM_VERSION }}
 
     - name: Install xvfb
       run: sudo apt-get install xvfb
@@ -424,6 +469,7 @@ jobs:
 
     - name: Build typescript
       run: yarn generate
+
     - name: Bundle
       run: yarn build:esbuild:prod
 
