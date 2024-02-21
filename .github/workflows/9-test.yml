@@ -1,0 +1,33 @@
+name: 9-test
+on:
+  workflow_dispatch
+
+env:
+  VERSION: "v.1.0.0"
+  DEBUG_LS: true
+  NODE_VERSION:    '18.18.2'
+  #NODE_VERSION:   '18.17.1'
+  YARN_VERSION:    '1.22.10'
+  NPM_VERSION:     '10.2.5'
+  NODEGYP_VERSION: '10.0.1'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    # timeout-minutes: 30
+
+    steps:
+    - run: |
+        echo
+          NODE_VERSION:    ${{ env.NODE_VERSION    }}
+          YARN_VERSION:    ${{ env.YARN_VERSION    }}
+          NPM_VERSION:     ${{ env.NPM_VERSION     }}
+          NODEGYP_VERSION: ${{ env.NODEGYP_VERSION }}
+
+    - run: npm install -g "yarn@${{ env.YARN_VERSION }}"
+    - run: npm install -g "npm@${{ env.NPM_VERSION }}"
+    - run: npm install -g "node-gyp@{{ env.NODEGYP_VERSION }}"
+
+    - run: npm install -g "yarn@${{ env.YARN_VERSION }}" "npm@${{ env.NPM_VERSION }}" "node-gyp@{{ env.NODEGYP_VERSION }}"
+    
+    - run: npm install -g yarn@${{ env.YARN_VERSION }} npm@${{ env.NPM_VERSION }} node-gyp@{{ env.NODEGYP_VERSION }}
