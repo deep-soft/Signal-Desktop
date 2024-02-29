@@ -1368,6 +1368,7 @@ export async function startApp(): Promise<void> {
 
   async function runStorageService() {
     StorageService.enableStorageService();
+    StorageService.runStorageServiceSyncJob();
   }
 
   async function start() {
@@ -3041,13 +3042,15 @@ export async function startApp(): Promise<void> {
     drop(ViewOnceOpenSyncs.onSync(attributes));
   }
 
-  async function onFetchLatestSync(ev: FetchLatestEvent): Promise<void> {
-    ev.confirm();
+  function onFetchLatestSync(ev: FetchLatestEvent): void {
+    // Don't block on fetchLatestSync events
+    drop(doFetchLatestSync(ev));
+  }
 
+  async function doFetchLatestSync(ev: FetchLatestEvent): Promise<void> {
     const { eventType } = ev;
 
     const FETCH_LATEST_ENUM = Proto.SyncMessage.FetchLatest.Type;
-
     switch (eventType) {
       case FETCH_LATEST_ENUM.LOCAL_PROFILE: {
         log.info('onFetchLatestSync: fetching latest local profile');
@@ -3058,7 +3061,7 @@ export async function startApp(): Promise<void> {
       }
       case FETCH_LATEST_ENUM.STORAGE_MANIFEST:
         log.info('onFetchLatestSync: fetching latest manifest');
-        await StorageService.runStorageServiceSyncJob();
+        StorageService.runStorageServiceSyncJob();
         break;
       case FETCH_LATEST_ENUM.SUBSCRIPTION_STATUS:
         log.info('onFetchLatestSync: fetching latest subscription status');
@@ -3068,6 +3071,8 @@ export async function startApp(): Promise<void> {
       default:
         log.info(`onFetchLatestSync: Unknown type encountered ${eventType}`);
     }
+
+    ev.confirm();
   }
 
   async function onKeysSync(ev: KeysEvent) {

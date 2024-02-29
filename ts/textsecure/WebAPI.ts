@@ -649,6 +649,10 @@ export type GroupCredentialsType = {
   groupPublicParamsHex: string;
   authCredentialPresentationHex: string;
 };
+export type CallLinkAuthCredentialsType = {
+  callLinkPublicParamsHex: string;
+  authCredentialPresentationHex: string;
+};
 export type GetGroupLogOptionsType = Readonly<{
   startVersion: number | undefined;
   includeFirstState: boolean;
@@ -798,6 +802,7 @@ export type GetGroupCredentialsOptionsType = Readonly<{
 export type GetGroupCredentialsResultType = Readonly<{
   pni?: UntaggedPniString | null;
   credentials: ReadonlyArray<GroupCredentialType>;
+  callLinkAuthCredentials: ReadonlyArray<GroupCredentialType>;
 }>;
 
 const verifyServiceIdResponse = z.object({
@@ -1317,6 +1322,10 @@ export function initialize({
     });
 
     socketManager.on('authError', () => {
+      window.Whisper.events.trigger('unlinkAndDisconnect');
+    });
+
+    socketManager.on('deviceConflict', () => {
       window.Whisper.events.trigger('unlinkAndDisconnect');
     });
 
@@ -1975,7 +1984,7 @@ export function initialize({
         contentType: 'application/octet-stream',
         proxyUrl,
         responseType: 'bytes',
-        timeout: 0,
+        timeout: 90 * SECOND,
         type: 'GET',
         redactUrl: (href: string) => {
           const pattern = RegExp(escapeRegExp(path), 'g');
@@ -3110,10 +3119,6 @@ export function initialize({
       );
     }
 
-    type CredentialResponseType = {
-      credentials: Array<GroupCredentialType>;
-    };
-
     async function getGroupCredentials({
       startDayInMs,
       endDayInMs,
@@ -3128,7 +3133,7 @@ export function initialize({
           'pniAsServiceId=true',
         httpType: 'GET',
         responseType: 'json',
-      })) as CredentialResponseType;
+      })) as GetGroupCredentialsResultType;
 
       return response;
     }
