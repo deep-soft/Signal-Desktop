@@ -5,7 +5,10 @@ import React from 'react';
 import type { IntlShape } from 'react-intl';
 import { createIntl, createIntlCache } from 'react-intl';
 import type { LocaleMessageType, LocaleMessagesType } from '../types/I18N';
-import type { LocalizerType, ReplacementValuesType } from '../types/Util';
+import type {
+  LocalizerType,
+  ICUStringMessageParamsByKeyType,
+} from '../types/Util';
 import { strictAssert } from './assert';
 import { Emojify } from '../components/conversation/Emojify';
 import * as log from '../logging/log';
@@ -77,21 +80,25 @@ export function createCachedIntl(
   return intl;
 }
 
-function normalizeSubstitutions(
-  substitutions?: ReplacementValuesType
-): ReplacementValuesType | undefined {
+function normalizeSubstitutions<
+  Substitutions extends Record<string, string | number | Date> | undefined
+>(substitutions?: Substitutions): Substitutions | undefined {
   if (!substitutions) {
     return;
   }
-  const normalized: ReplacementValuesType = {};
-  for (const [key, value] of Object.entries(substitutions)) {
+  const normalized: Record<string, string | number | Date> = {};
+  const entries = Object.entries(substitutions);
+  if (entries.length === 0) {
+    return;
+  }
+  for (const [key, value] of entries) {
     if (typeof value === 'string') {
       normalized[key] = bidiIsolate(value);
     } else {
       normalized[key] = value;
     }
   }
-  return normalized;
+  return normalized as Substitutions;
 }
 
 export function setupI18n(
@@ -107,37 +114,24 @@ export function setupI18n(
 
   const intl = createCachedIntl(locale, filterLegacyMessages(messages));
 
-  const localizer: LocalizerType = (key, substitutions) => {
-    strictAssert(
-      !localizer.isLegacyFormat(key),
-      `i18n: Legacy message format is no longer supported "${key}"`
-    );
-
-    strictAssert(
-      !Array.isArray(substitutions),
-      `i18n: Substitutions must be an object for ICU message "${key}"`
-    );
-
+  const localizer: LocalizerType = (<
+    Key extends keyof ICUStringMessageParamsByKeyType
+  >(
+    key: Key,
+    substitutions: ICUStringMessageParamsByKeyType[Key]
+  ) => {
     const result = intl.formatMessage(
       { id: key },
       normalizeSubstitutions(substitutions)
     );
 
-    strictAssert(
-      typeof result === 'string',
-      'i18n: Formatted translation result must be a string, must use <Intl/> component to render JSX'
-    );
-
     strictAssert(result !== key, `i18n: missing translation for "${key}"`);
 
     return result;
-  };
+  }) as LocalizerType;
 
   localizer.getIntl = () => {
     return intl;
-  };
-  localizer.isLegacyFormat = (key: string) => {
-    return !key.startsWith('icu:');
   };
   localizer.getLocale = () => locale;
   localizer.getLocaleMessages = () => messages;

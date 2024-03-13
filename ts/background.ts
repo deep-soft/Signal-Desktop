@@ -138,7 +138,11 @@ import {
 import { themeChanged } from './shims/themeChanged';
 import { createIPCEvents } from './util/createIPCEvents';
 import type { ServiceIdString } from './types/ServiceId';
-import { ServiceIdKind, isServiceIdString } from './types/ServiceId';
+import {
+  ServiceIdKind,
+  isPniString,
+  isServiceIdString,
+} from './types/ServiceId';
 import { isAciString } from './util/isAciString';
 import { normalizeAci } from './util/normalizeAci';
 import * as log from './logging/log';
@@ -178,6 +182,7 @@ import { createEventHandler } from './quill/signal-clipboard/util';
 import { onCallLogEventSync } from './util/onCallLogEventSync';
 import {
   getCallsHistoryForRedux,
+  getCallsHistoryUnreadCountForRedux,
   loadCallsHistory,
 } from './services/callHistoryLoader';
 import {
@@ -1187,6 +1192,7 @@ export async function startApp(): Promise<void> {
   }) {
     initializeRedux({
       callsHistory: getCallsHistoryForRedux(),
+      callsHistoryUnreadCount: getCallsHistoryUnreadCountForRedux(),
       initialBadgesState,
       mainWindowStats,
       menuOptions,
@@ -2724,6 +2730,25 @@ export async function startApp(): Promise<void> {
     const source = window.textsecure.storage.user.getNumber();
     const sourceServiceId = window.textsecure.storage.user.getAci();
     strictAssert(source && sourceServiceId, 'Missing user number and uuid');
+
+    // Make sure destination conversation is created before we hit getMessageDescriptor
+    if (data.destinationServiceId !== sourceServiceId) {
+      const { mergePromises } =
+        window.ConversationController.maybeMergeContacts({
+          e164: data.destination,
+          aci: isAciString(data.destinationServiceId)
+            ? data.destinationServiceId
+            : undefined,
+          pni: isPniString(data.destinationServiceId)
+            ? data.destinationServiceId
+            : undefined,
+          reason: `onSentMessage(${data.timestamp})`,
+        });
+
+      if (mergePromises.length > 0) {
+        await Promise.all(mergePromises);
+      }
+    }
 
     const messageDescriptor = getMessageDescriptor({
       ...data,

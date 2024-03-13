@@ -3448,8 +3448,8 @@ async function getCallHistory(
   return callHistoryDetailsSchema.parse(row);
 }
 
-const READ_STATUS_UNREAD = sqlConstant(ReadStatus.Unread);
-const READ_STATUS_READ = sqlConstant(ReadStatus.Read);
+const SEEN_STATUS_UNSEEN = sqlConstant(SeenStatus.Unseen);
+const SEEN_STATUS_SEEN = sqlConstant(SeenStatus.Seen);
 const CALL_STATUS_MISSED = sqlConstant(DirectCallStatus.Missed);
 const CALL_STATUS_DELETED = sqlConstant(DirectCallStatus.Deleted);
 const CALL_STATUS_INCOMING = sqlConstant(CallDirection.Incoming);
@@ -3461,7 +3461,7 @@ async function getCallHistoryUnreadCount(): Promise<number> {
     SELECT count(*) FROM messages
     LEFT JOIN callsHistory ON callsHistory.callId = messages.callId
     WHERE messages.type IS 'call-history'
-      AND messages.readStatus IS ${READ_STATUS_UNREAD}
+      AND messages.seenStatus IS ${SEEN_STATUS_UNSEEN}
       AND callsHistory.status IS ${CALL_STATUS_MISSED}
       AND callsHistory.direction IS ${CALL_STATUS_INCOMING}
   `;
@@ -3471,9 +3471,16 @@ async function getCallHistoryUnreadCount(): Promise<number> {
 
 async function markCallHistoryRead(callId: string): Promise<void> {
   const db = await getWritableInstance();
+
+  const jsonPatch = JSON.stringify({
+    seenStatus: SeenStatus.Seen,
+  });
+
   const [query, params] = sql`
     UPDATE messages
-    SET readStatus = ${READ_STATUS_READ}
+    SET
+      seenStatus = ${SEEN_STATUS_UNSEEN}
+      json = json_patch(json, ${jsonPatch})
     WHERE type IS 'call-history'
     AND callId IS ${callId}
   `;
@@ -3486,7 +3493,7 @@ async function markAllCallHistoryRead(): Promise<ReadonlyArray<string>> {
   return db.transaction(() => {
     const where = sqlFragment`
       WHERE messages.type IS 'call-history'
-        AND messages.readStatus IS ${READ_STATUS_UNREAD}
+        AND messages.seenStatus IS ${SEEN_STATUS_UNSEEN}
     `;
 
     const [selectQuery, selectParams] = sql`
@@ -3497,9 +3504,15 @@ async function markAllCallHistoryRead(): Promise<ReadonlyArray<string>> {
 
     const conversationIds = db.prepare(selectQuery).pluck().all(selectParams);
 
+    const jsonPatch = JSON.stringify({
+      seenStatus: SeenStatus.Seen,
+    });
+
     const [updateQuery, updateParams] = sql`
       UPDATE messages
-      SET readStatus = ${READ_STATUS_READ}
+      SET
+        seenStatus = ${SEEN_STATUS_SEEN},
+        json = json_patch(json, ${jsonPatch})
       ${where};
     `;
 
