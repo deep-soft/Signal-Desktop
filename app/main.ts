@@ -79,12 +79,16 @@ import { updateDefaultSession } from './updateDefaultSession';
 import { PreventDisplaySleepService } from './PreventDisplaySleepService';
 import { SystemTrayService, focusAndForceToTop } from './SystemTrayService';
 import { SystemTraySettingCache } from './SystemTraySettingCache';
+import { OptionalResourceService } from './OptionalResourceService';
 import {
   SystemTraySetting,
   shouldMinimizeToSystemTray,
   parseSystemTraySetting,
 } from '../ts/types/SystemTraySetting';
-import { isSystemTraySupported } from '../ts/types/Settings';
+import {
+  getDefaultSystemTraySetting,
+  isSystemTraySupported,
+} from '../ts/types/Settings';
 import * as ephemeralConfig from './ephemeral_config';
 import * as logging from '../ts/logging/main_process_logging';
 import { MainSQL } from '../ts/sql/main';
@@ -109,13 +113,12 @@ import { load as loadLocale } from './locale';
 
 import type { LoggerType } from '../ts/types/Logging';
 import { HourCyclePreference } from '../ts/types/I18N';
+import { ScreenShareStatus } from '../ts/types/Calling';
 import { DBVersionFromFutureError } from '../ts/sql/migrations';
 import type { ParsedSignalRoute } from '../ts/util/signalRoutes';
 import { parseSignalRoute } from '../ts/util/signalRoutes';
 import * as dns from '../ts/util/dns';
 import { ZoomFactorService } from '../ts/services/ZoomFactorService';
-
-const STICKER_CREATOR_PARTITION = 'sticker-creator';
 
 const animationSettings = systemPreferences.getAnimationSettings();
 
@@ -203,6 +206,7 @@ const defaultWebPrefs = {
 const DISABLE_GPU =
   OS.isLinux() && !process.argv.some(arg => arg === '--enable-gpu');
 
+const DISABLE_IPV6 = process.argv.some(arg => arg === '--disable-ipv6');
 const FORCE_ENABLE_CRASH_REPORTS = process.argv.some(
   arg => arg === '--enable-crash-reports'
 );
@@ -292,22 +296,18 @@ const sql = new MainSQL();
 const heicConverter = getHeicConverter();
 
 async function getSpellCheckSetting(): Promise<boolean> {
-  const fastValue = ephemeralConfig.get('spell-check');
-  if (typeof fastValue === 'boolean') {
-    getLogger().info('got fast spellcheck setting', fastValue);
-    return fastValue;
+  const value = ephemeralConfig.get('spell-check');
+  if (typeof value === 'boolean') {
+    getLogger().info('got fast spellcheck setting', value);
+    return value;
   }
 
-  const json = await sql.sqlCall('getItemById', 'spell-check');
-
   // Default to `true` if setting doesn't exist yet
-  const slowValue = typeof json?.value === 'boolean' ? json.value : true;
+  ephemeralConfig.set('spell-check', true);
 
-  ephemeralConfig.set('spell-check', slowValue);
+  getLogger().info('initializing spellcheck setting', true);
 
-  getLogger().info('got slow spellcheck setting', slowValue);
-
-  return slowValue;
+  return true;
 }
 
 type GetThemeSettingOptionsType = Readonly<{
@@ -317,29 +317,22 @@ type GetThemeSettingOptionsType = Readonly<{
 async function getThemeSetting({
   ephemeralOnly = false,
 }: GetThemeSettingOptionsType = {}): Promise<ThemeSettingType> {
-  let result: unknown;
-
-  const fastValue = ephemeralConfig.get('theme-setting');
-  if (fastValue !== undefined) {
-    getLogger().info('got fast theme-setting value', fastValue);
-    result = fastValue;
+  const value = ephemeralConfig.get('theme-setting');
+  if (value !== undefined) {
+    getLogger().info('got fast theme-setting value', value);
   } else if (ephemeralOnly) {
     return 'system';
-  } else {
-    const json = await sql.sqlCall('getItemById', 'theme-setting');
-
-    result = json?.value;
   }
 
   // Default to `system` if setting doesn't exist or is invalid
   const validatedResult =
-    result === 'light' || result === 'dark' || result === 'system'
-      ? result
+    value === 'light' || value === 'dark' || value === 'system'
+      ? value
       : 'system';
 
-  if (fastValue !== validatedResult) {
+  if (value !== validatedResult) {
     ephemeralConfig.set('theme-setting', validatedResult);
-    getLogger().info('got slow theme-setting value', result);
+    getLogger().info('saving theme-setting value', validatedResult);
   }
 
   return validatedResult;
@@ -372,23 +365,19 @@ async function getBackgroundColor(
 }
 
 async function getLocaleOverrideSetting(): Promise<string | null> {
-  const fastValue = ephemeralConfig.get('localeOverride');
+  const value = ephemeralConfig.get('localeOverride');
   // eslint-disable-next-line eqeqeq -- Checking for null explicitly
-  if (typeof fastValue === 'string' || fastValue === null) {
-    getLogger().info('got fast localeOverride setting', fastValue);
-    return fastValue;
+  if (typeof value === 'string' || value === null) {
+    getLogger().info('got fast localeOverride setting', value);
+    return value;
   }
 
-  const json = await sql.sqlCall('getItemById', 'localeOverride');
-
   // Default to `null` if setting doesn't exist yet
-  const slowValue = typeof json?.value === 'string' ? json.value : null;
+  ephemeralConfig.set('localeOverride', null);
 
-  ephemeralConfig.set('localeOverride', slowValue);
+  getLogger().info('initializing localeOverride setting', null);
 
-  getLogger().info('got slow localeOverride setting', slowValue);
-
-  return slowValue;
+  return null;
 }
 
 const zoomFactorService = new ZoomFactorService({
@@ -409,10 +398,8 @@ const zoomFactorService = new ZoomFactorService({
 
 let systemTrayService: SystemTrayService | undefined;
 const systemTraySettingCache = new SystemTraySettingCache(
-  sql,
   ephemeralConfig,
-  process.argv,
-  app.getVersion()
+  process.argv
 );
 
 const windowFromUserConfig = userConfig.get('window');
@@ -1011,21 +998,24 @@ ipc.handle('database-ready', async () => {
   getLogger().info('sending `database-ready`');
 });
 
-ipc.handle('get-art-creator-auth', () => {
-  const { promise, resolve } = explodePromise<unknown>();
-  strictAssert(mainWindow, 'Main window did not exist');
+ipc.handle(
+  'art-creator:uploadStickerPack',
+  (_event: Electron.Event, data: unknown) => {
+    const { promise, resolve } = explodePromise<unknown>();
+    strictAssert(mainWindow, 'Main window did not exist');
 
-  mainWindow.webContents.send('open-art-creator');
+    mainWindow.webContents.send('art-creator:uploadStickerPack', data);
 
-  ipc.handleOnce('open-art-creator', (_event, { username, password }) => {
-    resolve({
-      baseUrl: config.get<string>('artCreatorUrl'),
-      username,
-      password,
+    ipc.once('art-creator:uploadStickerPack:done', (_doneEvent, response) => {
+      resolve(response);
     });
-  });
 
-  return promise;
+    return promise;
+  }
+);
+
+ipc.on('art-creator:onUploadProgress', () => {
+  stickerCreatorWindow?.webContents.send('art-creator:onUploadProgress');
 });
 
 ipc.on('show-window', () => {
@@ -1245,6 +1235,67 @@ async function showScreenShareWindow(sourceName: string) {
     screenShareWindow,
     await prepareFileUrl([__dirname, '../screenShare.html'], { sourceName })
   );
+}
+
+let callingDevToolsWindow: BrowserWindow | undefined;
+async function showCallingDevToolsWindow() {
+  if (callingDevToolsWindow) {
+    callingDevToolsWindow.show();
+    return;
+  }
+
+  const options = {
+    height: 1200,
+    width: 1000,
+    alwaysOnTop: false,
+    autoHideMenuBar: true,
+    backgroundColor: '#ffffff',
+    darkTheme: false,
+    frame: true,
+    fullscreenable: true,
+    maximizable: true,
+    minimizable: true,
+    resizable: true,
+    show: false,
+    title: getResolvedMessagesLocale().i18n('icu:callingDeveloperTools'),
+    titleBarStyle: nonMainTitleBarStyle,
+    webPreferences: {
+      ...defaultWebPrefs,
+      nodeIntegration: false,
+      nodeIntegrationInWorker: false,
+      sandbox: true,
+      contextIsolation: true,
+      nativeWindowOpen: true,
+      preload: join(__dirname, '../bundles/calling-tools/preload.js'),
+    },
+  };
+
+  callingDevToolsWindow = new BrowserWindow(options);
+
+  await handleCommonWindowEvents(callingDevToolsWindow);
+
+  callingDevToolsWindow.once('closed', () => {
+    callingDevToolsWindow = undefined;
+
+    mainWindow?.webContents.send('calling:set-rtc-stats-interval', null);
+  });
+
+  ipc.on('calling:set-rtc-stats-interval', (_, intervalMillis: number) => {
+    mainWindow?.webContents.send(
+      'calling:set-rtc-stats-interval',
+      intervalMillis
+    );
+  });
+
+  ipc.on('calling:rtc-stats-report', (_, report) => {
+    callingDevToolsWindow?.webContents.send('calling:rtc-stats-report', report);
+  });
+
+  await safeLoadURL(
+    callingDevToolsWindow,
+    await prepareFileUrl([__dirname, '../calling_tools.html'])
+  );
+  callingDevToolsWindow.show();
 }
 
 let aboutWindow: BrowserWindow | undefined;
@@ -1736,6 +1787,9 @@ if (DISABLE_GPU) {
 let ready = false;
 app.on('ready', async () => {
   dns.setFallback(await getDNSFallback());
+  if (DISABLE_IPV6) {
+    dns.setIPv6Enabled(false);
+  }
 
   const [userDataPath, crashDumpsPath, installPath] = await Promise.all([
     realpath(app.getPath('userData')),
@@ -1743,19 +1797,15 @@ app.on('ready', async () => {
     realpath(app.getAppPath()),
   ]);
 
-  const webSession = session.fromPartition(STICKER_CREATOR_PARTITION);
+  updateDefaultSession(session.defaultSession);
 
-  for (const s of [session.defaultSession, webSession]) {
-    updateDefaultSession(s);
-
-    if (getEnvironment() !== Environment.Test) {
-      installFileHandler({
-        session: s,
-        userDataPath,
-        installPath,
-        isWindows: OS.isWindows(),
-      });
-    }
+  if (getEnvironment() !== Environment.Test) {
+    installFileHandler({
+      session: session.defaultSession,
+      userDataPath,
+      installPath,
+      isWindows: OS.isWindows(),
+    });
   }
 
   installWebHandler({
@@ -1763,15 +1813,12 @@ app.on('ready', async () => {
     session: session.defaultSession,
   });
 
-  installWebHandler({
-    enableHttp: true,
-    session: webSession,
-  });
-
   logger = await logging.initialize(getMainWindow);
 
   // Write buffered information into newly created logger.
   consoleLogger.writeBufferInto(logger);
+
+  OptionalResourceService.create(join(userDataPath, 'optionalResources'));
 
   sqlInitPromise = initializeSQL(userDataPath);
 
@@ -1804,19 +1851,14 @@ app.on('ready', async () => {
   // would still show the window.
   // (User can change these settings later)
   if (
-    isSystemTraySupported(OS, app.getVersion()) &&
+    isSystemTraySupported(OS) &&
     (await systemTraySettingCache.get()) === SystemTraySetting.Uninitialized
   ) {
-    const newValue = SystemTraySetting.MinimizeToSystemTray;
+    const newValue = getDefaultSystemTraySetting(OS, app.getVersion());
     getLogger().info(`app.ready: setting system-tray-setting to ${newValue}`);
     systemTraySettingCache.set(newValue);
 
-    // Update both stores
     ephemeralConfig.set('system-tray-setting', newValue);
-    await sql.sqlCall('createOrUpdateItem', {
-      id: 'system-tray-setting',
-      value: newValue,
-    });
 
     if (OS.isWindows()) {
       getLogger().info('app.ready: enabling open at login');
@@ -1831,6 +1873,32 @@ app.on('ready', async () => {
 
   settingsChannel = new SettingsChannel();
   settingsChannel.install();
+
+  settingsChannel.on('change:systemTraySetting', async rawSystemTraySetting => {
+    const { openAtLogin } = app.getLoginItemSettings(
+      await getDefaultLoginItemSettings()
+    );
+
+    const systemTraySetting = parseSystemTraySetting(rawSystemTraySetting);
+    systemTraySettingCache.set(systemTraySetting);
+
+    if (systemTrayService) {
+      const isEnabled = shouldMinimizeToSystemTray(systemTraySetting);
+      systemTrayService.setEnabled(isEnabled);
+    }
+
+    // Default login item settings might have changed, so update the object.
+    getLogger().info('refresh-auto-launch: new value', openAtLogin);
+    app.setLoginItemSettings({
+      ...(await getDefaultLoginItemSettings()),
+      openAtLogin,
+    });
+  });
+
+  settingsChannel.on(
+    'ephemeral-setting-changed',
+    sendPreferencesChangedEventToWindows
+  );
 
   // We use this event only a single time to log the startup time of the app
   // from when it's first ready until the loading screen disappears.
@@ -2047,6 +2115,7 @@ function setupMenu(options?: Partial<CreateTemplateOptionsType>) {
     setupAsStandalone,
     showAbout,
     showDebugLog: showDebugLogWindow,
+    showCallingDevTools: showCallingDevToolsWindow,
     showKeyboardShortcuts,
     showSettings: showSettingsWindow,
     showWindow,
@@ -2318,35 +2387,20 @@ ipc.on(
   }
 );
 
-ipc.handle(
-  'update-system-tray-setting',
-  async (_event, rawSystemTraySetting /* : Readonly<unknown> */) => {
-    const { openAtLogin } = app.getLoginItemSettings(
-      await getDefaultLoginItemSettings()
-    );
-
-    const systemTraySetting = parseSystemTraySetting(rawSystemTraySetting);
-    systemTraySettingCache.set(systemTraySetting);
-
-    if (systemTrayService) {
-      const isEnabled = shouldMinimizeToSystemTray(systemTraySetting);
-      systemTrayService.setEnabled(isEnabled);
+ipc.on(
+  'screen-share:status-change',
+  (_event: Electron.Event, status: ScreenShareStatus) => {
+    if (!screenShareWindow) {
+      return;
     }
 
-    // Default login item settings might have changed, so update the object.
-    getLogger().info('refresh-auto-launch: new value', openAtLogin);
-    app.setLoginItemSettings({
-      ...(await getDefaultLoginItemSettings()),
-      openAtLogin,
-    });
+    if (status === ScreenShareStatus.Disconnected) {
+      screenShareWindow.close();
+    } else {
+      screenShareWindow.webContents.send('status-change', status);
+    }
   }
 );
-
-ipc.on('close-screen-share-controller', () => {
-  if (screenShareWindow) {
-    screenShareWindow.close();
-  }
-});
 
 ipc.on('stop-screen-share', () => {
   if (mainWindow) {
@@ -2451,7 +2505,6 @@ ipc.on('get-config', async event => {
     storageUrl: config.get<string>('storageUrl'),
     updatesUrl: config.get<string>('updatesUrl'),
     resourcesUrl: config.get<string>('resourcesUrl'),
-    artCreatorUrl: config.get<string>('artCreatorUrl'),
     cdnUrl0: config.get<string>('cdn.0'),
     cdnUrl2: config.get<string>('cdn.2'),
     cdnUrl3: config.get<string>('cdn.3'),
@@ -2460,9 +2513,12 @@ ipc.on('get-config', async event => {
       !isTestEnvironment(getEnvironment()) && ciMode
         ? Environment.Production
         : getEnvironment(),
+    isMockTestEnvironment: Boolean(process.env.MOCK_TEST),
     ciMode,
     // Should be already computed and cached at this point
     dnsFallback: await getDNSFallback(),
+    disableIPv6: DISABLE_IPV6,
+    ciBackupPath: config.get<string | null>('ciBackupPath') || undefined,
     nodeVersion: process.versions.node,
     hostname: os.hostname(),
     osRelease: os.release(),
@@ -2476,6 +2532,7 @@ ipc.on('get-config', async event => {
     serverPublicParams: config.get<string>('serverPublicParams'),
     serverTrustRoot: config.get<string>('serverTrustRoot'),
     genericServerPublicParams: config.get<string>('genericServerPublicParams'),
+    backupServerPublicParams: config.get<string>('backupServerPublicParams'),
     theme,
     appStartInitialSpellcheckSetting,
 
@@ -2564,13 +2621,14 @@ ipc.on('get-user-data-path', event => {
 });
 
 // Refresh the settings window whenever preferences change
-ipc.on('preferences-changed', () => {
+const sendPreferencesChangedEventToWindows = () => {
   for (const window of activeWindows) {
     if (window.webContents) {
       window.webContents.send('preferences-changed');
     }
   }
-});
+};
+ipc.on('preferences-changed', sendPreferencesChangedEventToWindows);
 
 function maybeGetIncomingSignalRoute(argv: Array<string>) {
   for (const arg of argv) {
@@ -2596,11 +2654,6 @@ function handleSignalRoute(route: ParsedSignalRoute) {
     mainWindow.webContents.send('show-sticker-pack', {
       packId: route.args.packId,
       packKey: Buffer.from(route.args.packKey, 'hex').toString('base64'),
-    });
-  } else if (route.key === 'artAuth') {
-    mainWindow.webContents.send('authorize-art-creator', {
-      token: route.args.token,
-      pubKeyBase64: route.args.pubKey,
     });
   } else if (route.key === 'groupInvites') {
     mainWindow.webContents.send('show-group-via-link', {
@@ -2887,7 +2940,6 @@ async function showStickerCreatorWindow() {
     show: false,
     webPreferences: {
       ...defaultWebPrefs,
-      partition: STICKER_CREATOR_PARTITION,
       nodeIntegration: false,
       nodeIntegrationInWorker: false,
       sandbox: true,

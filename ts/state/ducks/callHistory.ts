@@ -5,7 +5,10 @@ import type { ReadonlyDeep } from 'type-fest';
 import type { ThunkAction } from 'redux-thunk';
 import { omit } from 'lodash';
 import type { StateType as RootStateType } from '../reducer';
-import { clearCallHistoryDataAndSync } from '../../util/callDisposition';
+import {
+  clearCallHistoryDataAndSync,
+  markAllCallHistoryReadAndSync,
+} from '../../util/callDisposition';
 import type { BoundActionCreatorsMapObject } from '../../hooks/useBoundActions';
 import { useBoundActions } from '../../hooks/useBoundActions';
 import type { ToastActionType } from './toast';
@@ -107,23 +110,14 @@ function markCallsTabViewed(): ThunkAction<
   CallHistoryUpdateUnread
 > {
   return async dispatch => {
-    try {
-      const conversationIds = await window.Signal.Data.markAllCallHistoryRead();
-      for (const conversationId of conversationIds) {
-        drop(window.ConversationController.get(conversationId)?.updateUnread());
-      }
-    } catch (error) {
-      log.error(
-        'markCallsTabViewed: Error marking all call history read',
-        Errors.toLogFormat(error)
-      );
-    } finally {
-      dispatch(updateCallHistoryUnreadCount());
-    }
+    await markAllCallHistoryReadAndSync();
+    dispatch(updateCallHistoryUnreadCount());
   };
 }
 
-function addCallHistory(callHistory: CallHistoryDetails): CallHistoryAdd {
+export function addCallHistory(
+  callHistory: CallHistoryDetails
+): CallHistoryAdd {
   return {
     type: CALL_HISTORY_ADD,
     payload: callHistory,

@@ -351,6 +351,7 @@ async function getPreview(
           type: fullSizeImage.contentType,
         }),
         fileName: title,
+        highQuality: true,
       });
 
       const data = await fileToBytes(withBlob.file);
@@ -584,8 +585,9 @@ async function getCallLinkPreview(
   }
 
   const callLinkRootKey = CallLinkRootKey.parse(parsedUrl.args.key);
-  const callLinkState = await calling.readCallLink({ callLinkRootKey });
-  if (!callLinkState) {
+  const readResult = await calling.readCallLink({ callLinkRootKey });
+  const { callLinkState } = readResult;
+  if (!callLinkState || callLinkState.revoked) {
     return null;
   }
 

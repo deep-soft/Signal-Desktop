@@ -21,13 +21,15 @@ import {
   isImageTypeSupported,
   isVideoTypeSupported,
 } from '../util/GoogleChrome';
-import type { LocalizerType } from './Util';
+import type { LocalizerType, WithRequiredProperties } from './Util';
 import { ThemeType } from './Util';
 import * as GoogleChrome from '../util/GoogleChrome';
 import { ReadStatus } from '../messages/MessageReadStatus';
 import type { MessageStatusType } from '../components/conversation/Message';
 import { strictAssert } from '../util/assert';
 import type { SignalService as Proto } from '../protobuf';
+import { isMoreRecentThan } from '../util/timestamp';
+import { DAY } from '../util/durations';
 
 const MAX_WIDTH = 300;
 const MAX_HEIGHT = MAX_WIDTH * 1.5;
@@ -70,14 +72,22 @@ export type AttachmentType = {
   flags?: number;
   thumbnail?: ThumbnailType;
   isCorrupted?: boolean;
-  downloadJobId?: string;
   cdnNumber?: number;
   cdnId?: string;
   cdnKey?: string;
   key?: string;
+  iv?: string;
   data?: Uint8Array;
   textAttachment?: TextAttachmentType;
   wasTooBig?: boolean;
+
+  incrementalMac?: string;
+  incrementalMacChunkSize?: number;
+
+  backupLocator?: {
+    mediaName: string;
+    cdnNumber?: number;
+  };
 
   /** Legacy field. Used only for downloading old attachments */
   id?: number;
@@ -90,6 +100,7 @@ export type UploadedAttachmentType = Proto.IAttachmentPointer &
   Readonly<{
     // Required fields
     cdnKey: string;
+    iv: Uint8Array;
     key: Uint8Array;
     size: number;
     digest: Uint8Array;
@@ -120,6 +131,8 @@ export type TextAttachmentType = {
     startColor?: number | null;
     endColor?: number | null;
     angle?: number | null;
+    colors?: ReadonlyArray<number> | null;
+    positions?: ReadonlyArray<number> | null;
   } | null;
   color?: number | null;
 };
@@ -176,12 +189,11 @@ export type AttachmentDraftType =
       size: number;
     };
 
-export type ThumbnailType = Pick<
-  AttachmentType,
-  'height' | 'width' | 'url' | 'contentType' | 'path' | 'data'
-> & {
+export type ThumbnailType = AttachmentType & {
   // Only used when quote needed to make an in-memory thumbnail
   objectUrl?: string;
+  // Whether the thumbnail has been copied from the original (quoted) message
+  copied?: boolean;
 };
 
 // // Incoming message attachment fields
@@ -443,6 +455,7 @@ export async function captureDimensionsAndScreenshot(
           contentType: THUMBNAIL_CONTENT_TYPE,
           width: THUMBNAIL_SIZE,
           height: THUMBNAIL_SIZE,
+          size: thumbnailBuffer.byteLength,
         },
       };
     } catch (error) {
@@ -502,6 +515,7 @@ export async function captureDimensionsAndScreenshot(
         contentType: THUMBNAIL_CONTENT_TYPE,
         width: THUMBNAIL_SIZE,
         height: THUMBNAIL_SIZE,
+        size: thumbnailBuffer.byteLength,
       },
       width,
       height,
@@ -694,7 +708,7 @@ export function hasNotResolved(attachment?: AttachmentType): boolean {
 
 export function isDownloading(attachment?: AttachmentType): boolean {
   const resolved = resolveNestedAttachment(attachment);
-  return Boolean(resolved && resolved.downloadJobId && resolved.pending);
+  return Boolean(resolved && resolved.pending);
 }
 
 export function hasFailed(attachment?: AttachmentType): boolean {
@@ -864,7 +878,9 @@ export const isFile = (attachment: AttachmentType): boolean => {
   return true;
 };
 
-export const isVoiceMessage = (attachment: AttachmentType): boolean => {
+export const isVoiceMessage = (
+  attachment: Pick<AttachmentType, 'contentType' | 'fileName' | 'flags'>
+): boolean => {
   const flag = SignalService.AttachmentPointer.Flags.VOICE_MESSAGE;
   const hasFlag =
     // eslint-disable-next-line no-bitwise
@@ -984,4 +1000,125 @@ export const canBeDownloaded = (
 export function getAttachmentSignature(attachment: AttachmentType): string {
   strictAssert(attachment.digest, 'attachment missing digest');
   return attachment.digest;
+}
+
+type RequiredPropertiesForDecryption = 'key' | 'digest';
+type RequiredPropertiesForReencryption = 'key' | 'digest' | 'iv';
+
+type DecryptableAttachment = WithRequiredProperties<
+  AttachmentType,
+  RequiredPropertiesForDecryption
+>;
+
+type ReencryptableAttachment = WithRequiredProperties<
+  AttachmentType,
+  RequiredPropertiesForReencryption
+>;
+
+export type AttachmentDownloadableFromTransitTier = WithRequiredProperties<
+  DecryptableAttachment,
+  'cdnKey' | 'cdnNumber'
+>;
+
+export type AttachmentDownloadableFromBackupTier = WithRequiredProperties<
+  DecryptableAttachment,
+  'backupLocator'
+>;
+
+export type LocallySavedAttachment = WithRequiredProperties<
+  AttachmentType,
+  'path'
+>;
+
+export type AttachmentReadyForBackup = WithRequiredProperties<
+  LocallySavedAttachment,
+  RequiredPropertiesForReencryption
+>;
+
+export function isDecryptable(
+  attachment: AttachmentType
+): attachment is DecryptableAttachment {
+  return Boolean(attachment.key) && Boolean(attachment.digest);
+}
+
+export function isReencryptableToSameDigest(
+  attachment: AttachmentType
+): attachment is ReencryptableAttachment {
+  return (
+    Boolean(attachment.key) &&
+    Boolean(attachment.digest) &&
+    Boolean(attachment.iv)
+  );
+}
+
+const TIME_ON_TRANSIT_TIER = 30 * DAY;
+// Extend range in case the attachment is actually still there (this function is meant to
+// be optimistic)
+const BUFFERED_TIME_ON_TRANSIT_TIER = TIME_ON_TRANSIT_TIER + 5 * DAY;
+
+export function mightStillBeOnTransitTier(
+  attachment: Pick<AttachmentType, 'cdnKey' | 'cdnNumber' | 'uploadTimestamp'>
+): boolean {
+  if (!attachment.cdnKey) {
+    return false;
+  }
+  if (attachment.cdnNumber == null) {
+    return false;
+  }
+
+  if (!attachment.uploadTimestamp) {
+    // Let's be conservative and still assume it might be downloadable
+    return true;
+  }
+
+  if (
+    isMoreRecentThan(attachment.uploadTimestamp, BUFFERED_TIME_ON_TRANSIT_TIER)
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
+export function mightBeOnBackupTier(
+  attachment: Pick<AttachmentType, 'backupLocator'>
+): boolean {
+  return Boolean(attachment.backupLocator?.mediaName);
+}
+
+export function isDownloadableFromTransitTier(
+  attachment: AttachmentType
+): attachment is AttachmentDownloadableFromTransitTier {
+  if (!isDecryptable(attachment)) {
+    return false;
+  }
+  if (attachment.cdnKey && attachment.cdnNumber != null) {
+    return true;
+  }
+  return false;
+}
+
+export function isDownloadableFromBackupTier(
+  attachment: AttachmentType
+): attachment is AttachmentDownloadableFromBackupTier {
+  if (!attachment.key || !attachment.digest) {
+    return false;
+  }
+  if (attachment.backupLocator?.mediaName) {
+    return true;
+  }
+  return false;
+}
+
+export function isDownloadable(attachment: AttachmentType): boolean {
+  return (
+    isDownloadableFromTransitTier(attachment) ||
+    isDownloadableFromBackupTier(attachment)
+  );
+}
+
+export function isAttachmentLocallySaved(
+  attachment: AttachmentType
+): attachment is LocallySavedAttachment {
+  return Boolean(attachment.path);
 }

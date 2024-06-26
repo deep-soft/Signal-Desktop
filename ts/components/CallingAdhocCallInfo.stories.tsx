@@ -49,8 +49,10 @@ function getCallLink(overrideProps: Partial<CallLinkType> = {}): CallLinkType {
   return {
     roomId: 'abcd1234abcd1234abcd1234abcd1234abcd1234',
     rootKey: 'abcd-abcd-abcd-abcd-abcd-abcd-abcd-abcd',
+    adminKey: null,
     name: 'Axolotl Discuss',
     restrictions: CallLinkRestrictions.None,
+    revoked: false,
     expiration: Date.now() + 30 * 24 * 60 * 60 * 1000,
     ...overrideProps,
   };
@@ -59,10 +61,14 @@ function getCallLink(overrideProps: Partial<CallLinkType> = {}): CallLinkType {
 const createProps = (overrideProps: Partial<PropsType> = {}): PropsType => ({
   callLink: getCallLink(overrideProps.callLink || {}),
   i18n,
+  isCallLinkAdmin: overrideProps.isCallLinkAdmin || false,
   ourServiceId: generateAci(),
   participants: overrideProps.participants || [],
   onClose: action('on-close'),
   onCopyCallLink: action('on-copy-call-link'),
+  onShareCallLinkViaSignal: action('on-share-call-link-via-signal'),
+  removeClient: overrideProps.removeClient || action('remove-client'),
+  showContactModal: action('show-contact-modal'),
 });
 
 export default {

@@ -2775,6 +2775,13 @@
   },
   {
     "rule": "React-useRef",
+    "path": "ts/components/AutoSizeTextArea.tsx",
+    "line": "  const ownRef = useRef<HTMLTextAreaElement | null>(null);",
+    "reasonCategory": "usageTrusted",
+    "updated": "2024-03-26T17:14:14.370Z"
+  },
+  {
+    "rule": "React-useRef",
     "path": "ts/components/AvatarTextEditor.tsx",
     "line": "  const measureElRef = useRef<null | HTMLDivElement>(null);",
     "reasonCategory": "usageTrusted",
@@ -2875,20 +2882,6 @@
   {
     "rule": "React-useRef",
     "path": "ts/components/CallScreen.tsx",
-    "line": "  const reactButtonRef = React.useRef<null | HTMLDivElement>(null);",
-    "reasonCategory": "usageTrusted",
-    "updated": "2024-01-16T22:59:06.336Z"
-  },
-  {
-    "rule": "React-useRef",
-    "path": "ts/components/CallScreen.tsx",
-    "line": "  const reactionPickerContainerRef = React.useRef<null | HTMLDivElement>(null);",
-    "reasonCategory": "usageTrusted",
-    "updated": "2024-01-16T22:59:06.336Z"
-  },
-  {
-    "rule": "React-useRef",
-    "path": "ts/components/CallScreen.tsx",
     "line": "  const burstRegionRef = useRef<HTMLDivElement>(null);",
     "reasonCategory": "usageTrusted",
     "updated": "2023-12-21T11:13:56.623Z",
@@ -2901,6 +2894,20 @@
     "reasonCategory": "usageTrusted",
     "updated": "2024-01-06T00:59:20.678Z",
     "reasonDetail": "Recent reactions shown for reactions burst"
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/components/CallScreen.tsx",
+    "line": "  const reactButtonRef = React.useRef<null | HTMLDivElement>(null);",
+    "reasonCategory": "usageTrusted",
+    "updated": "2024-01-16T22:59:06.336Z"
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/components/CallScreen.tsx",
+    "line": "  const reactionPickerContainerRef = React.useRef<null | HTMLDivElement>(null);",
+    "reasonCategory": "usageTrusted",
+    "updated": "2024-01-16T22:59:06.336Z"
   },
   {
     "rule": "React-useRef",
@@ -3374,6 +3381,13 @@
   },
   {
     "rule": "React-useRef",
+    "path": "ts/components/SafetyTipsModal.tsx",
+    "line": "  const scrollEndTimer = useRef<NodeJS.Timeout | null>(null);",
+    "reasonCategory": "usageTrusted",
+    "updated": "2024-03-08T01:48:15.330Z"
+  },
+  {
+    "rule": "React-useRef",
     "path": "ts/components/Slider.tsx",
     "line": "  const diff = useRef<number>(0);",
     "reasonCategory": "usageTrusted",
@@ -3513,20 +3527,18 @@
     "updated": "2023-12-08T20:28:57.595Z"
   },
   {
-    "rule": "React-createRef",
+    "rule": "React-useRef",
     "path": "ts/components/conversation/ConversationHeader.tsx",
-    "line": "    this.menuTriggerRef = React.createRef();",
+    "line": "  const menuTriggerRef = useRef<any>(null);",
     "reasonCategory": "usageTrusted",
-    "updated": "2020-05-20T20:10:43.540Z",
-    "reasonDetail": "Used to reference popup menu"
+    "updated": "2024-03-15T18:29:48.327Z"
   },
   {
-    "rule": "React-createRef",
+    "rule": "React-useRef",
     "path": "ts/components/conversation/ConversationHeader.tsx",
-    "line": "    this.headerRef = React.createRef();",
+    "line": "  const headerRef = useRef<HTMLDivElement>(null);",
     "reasonCategory": "usageTrusted",
-    "updated": "2021-01-18T22:24:05.937Z",
-    "reasonDetail": "Used to reference popup menu boundaries element"
+    "updated": "2024-03-15T18:29:48.327Z"
   },
   {
     "rule": "React-useRef",
@@ -3685,6 +3697,14 @@
     "reasonCategory": "usageTrusted",
     "updated": "2022-06-14T22:04:43.988Z",
     "reasonDetail": "Handling outside click"
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/hooks/useEmojiSearch.ts",
+    "line": "  const searchRef = useRef(defaultSearch);",
+    "reasonCategory": "usageTrusted",
+    "updated": "2024-03-16T18:34:38.165Z",
+    "reasonDetail": "Quill requires an immutable reference to the search function"
   },
   {
     "rule": "React-useRef",
@@ -3861,6 +3881,13 @@
   {
     "rule": "React-useRef",
     "path": "ts/state/smart/InstallScreen.tsx",
+    "line": "  const chooseBackupFilePromiseWrapperRef = useRef(",
+    "reasonCategory": "testCode",
+    "updated": "2023-11-16T23:39:21.322Z"
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/state/smart/InstallScreen.tsx",
     "line": "  const chooseDeviceNamePromiseWrapperRef = useRef(explodePromise<string>());",
     "reasonCategory": "usageTrusted",
     "updated": "2021-12-06T23:07:28.947Z",
@@ -3872,5 +3899,52 @@
     "line": "  message.innerHTML = window.i18n('icu:optimizingApplication');",
     "reasonCategory": "usageTrusted",
     "updated": "2021-09-17T21:02:59.414Z"
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/components/CallManager.tsx",
+    "line": "  const imageDataCache = React.useRef<CallingImageDataCache>(new Map());",
+    "reasonCategory": "usageTrusted",
+    "updated": "2024-05-06T20:18:59.647Z"
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/components/CallsList.tsx",
+    "line": "  const searchStateItemsRef = useRef<ReadonlyArray<CallHistoryGroup> | null>(",
+    "reasonCategory": "falseMatch|testCode|exampleCode|otherUtilityCode|regexMatchedSafeCode|notExercisedByOurApp|ruleNeeded|usageTrusted",
+    "updated": "2024-05-16T02:10:00.652Z",
+    "reasonDetail": "<optional>"
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/components/CallsList.tsx",
+    "line": "  const peekQueueRef = useRef<Set<string>>(new Set());",
+    "reasonCategory": "falseMatch|testCode|exampleCode|otherUtilityCode|regexMatchedSafeCode|notExercisedByOurApp|ruleNeeded|usageTrusted",
+    "updated": "2024-05-16T02:10:00.652Z",
+    "reasonDetail": "<optional>"
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/components/CallsList.tsx",
+    "line": "  const peekQueueArgsRef = useRef<Map<string, PeekNotConnectedGroupCallType>>(",
+    "reasonCategory": "falseMatch|testCode|exampleCode|otherUtilityCode|regexMatchedSafeCode|notExercisedByOurApp|ruleNeeded|usageTrusted",
+    "updated": "2024-05-16T02:10:00.652Z",
+    "reasonDetail": "<optional>"
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/components/CallsList.tsx",
+    "line": "  const inactiveCallLinksPeekedAtRef = useRef<Map<string, number>>(new Map());",
+    "reasonCategory": "falseMatch|testCode|exampleCode|otherUtilityCode|regexMatchedSafeCode|notExercisedByOurApp|ruleNeeded|usageTrusted",
+    "updated": "2024-05-16T02:10:00.652Z",
+    "reasonDetail": "<optional>"
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/components/CallsList.tsx",
+    "line": "  const peekQueueTimerRef = useRef<NodeJS.Timeout | null>(null);",
+    "reasonCategory": "falseMatch|testCode|exampleCode|otherUtilityCode|regexMatchedSafeCode|notExercisedByOurApp|ruleNeeded|usageTrusted",
+    "updated": "2024-05-16T02:10:00.652Z",
+    "reasonDetail": "<optional>"
   }
 ]

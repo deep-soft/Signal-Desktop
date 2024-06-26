@@ -52,6 +52,7 @@ import { isNotNil } from '../util/isNotNil';
 import * as log from '../logging/log';
 import * as Errors from '../types/errors';
 import { useRefMerger } from '../hooks/useRefMerger';
+import { useEmojiSearch } from '../hooks/useEmojiSearch';
 import type { LinkPreviewType } from '../types/message/LinkPreviews';
 import { StagedLinkPreview } from './conversation/StagedLinkPreview';
 import type { DraftEditMessageType } from '../model-types.d';
@@ -96,25 +97,26 @@ export type InputApi = {
 
 export type Props = Readonly<{
   children?: React.ReactNode;
-  conversationId?: string;
+  conversationId: string | null;
   i18n: LocalizerType;
   disabled?: boolean;
-  draftEditMessage?: DraftEditMessageType;
+  draftEditMessage: DraftEditMessageType | null;
   getPreferredBadge: PreferredBadgeSelectorType;
-  large?: boolean;
-  inputApi?: React.MutableRefObject<InputApi | undefined>;
+  large: boolean | null;
+  inputApi: React.MutableRefObject<InputApi | undefined> | null;
   isFormattingEnabled: boolean;
+  isActive: boolean;
   sendCounter: number;
-  skinTone?: EmojiPickDataType['skinTone'];
-  draftText?: string;
-  draftBodyRanges?: HydratedBodyRangesType;
+  skinTone: NonNullable<EmojiPickDataType['skinTone']> | null;
+  draftText: string | null;
+  draftBodyRanges: HydratedBodyRangesType | null;
   moduleClassName?: string;
   theme: ThemeType;
   placeholder?: string;
-  sortedGroupMembers?: ReadonlyArray<ConversationType>;
+  sortedGroupMembers: ReadonlyArray<ConversationType> | null;
   scrollerRef?: React.RefObject<HTMLDivElement>;
   onDirtyChange?(dirty: boolean): unknown;
-  onEditorStateChange?(options: {
+  onEditorStateChange(options: {
     bodyRanges: DraftBodyRanges;
     caretLocation?: number;
     conversationId: string | undefined;
@@ -132,11 +134,11 @@ export type Props = Readonly<{
   ): unknown;
   onScroll?: (ev: React.UIEvent<HTMLElement>) => void;
   platform: string;
-  shouldHidePopovers?: boolean;
+  shouldHidePopovers: boolean | null;
   getQuotedMessage?(): unknown;
   clearQuotedMessage?(): unknown;
   linkPreviewLoading?: boolean;
-  linkPreviewResult?: LinkPreviewType;
+  linkPreviewResult: LinkPreviewType | null;
   onCloseLinkPreview?(conversationId: string): unknown;
 }>;
 
@@ -157,6 +159,7 @@ export function CompositionInput(props: Props): React.ReactElement {
     i18n,
     inputApi,
     isFormattingEnabled,
+    isActive,
     large,
     linkPreviewLoading,
     linkPreviewResult,
@@ -408,8 +411,13 @@ export function CompositionInput(props: Props): React.ReactElement {
     isMouseDown,
     previousFormattingEnabled,
     previousIsMouseDown,
-    quillRef,
   ]);
+
+  React.useEffect(() => {
+    quillRef.current?.getModule('signalClipboard').updateOptions({
+      isDisabled: !isActive,
+    });
+  }, [isActive]);
 
   const onEnter = (): boolean => {
     const quill = quillRef.current;
@@ -562,7 +570,7 @@ export function CompositionInput(props: Props): React.ReactElement {
           onEditorStateChange({
             bodyRanges,
             caretLocation: selection ? selection.index : undefined,
-            conversationId,
+            conversationId: conversationId ?? undefined,
             messageText: text,
             sendCounter,
           });
@@ -612,7 +620,7 @@ export function CompositionInput(props: Props): React.ReactElement {
   React.useEffect(() => {
     const emojiCompletion = emojiCompletionRef.current;
 
-    if (emojiCompletion === undefined || skinTone === undefined) {
+    if (emojiCompletion == null || skinTone == null) {
       return;
     }
 
@@ -688,6 +696,8 @@ export function CompositionInput(props: Props): React.ReactElement {
   const callbacksRef = React.useRef(unstaleCallbacks);
   callbacksRef.current = unstaleCallbacks;
 
+  const search = useEmojiSearch(i18n.getLocale());
+
   const reactQuill = React.useMemo(
     () => {
       const delta = generateDelta(draftText || '', draftBodyRanges || []);
@@ -699,7 +709,9 @@ export function CompositionInput(props: Props): React.ReactElement {
           defaultValue={delta}
           modules={{
             toolbar: false,
-            signalClipboard: true,
+            signalClipboard: {
+              isDisabled: !isActive,
+            },
             clipboard: {
               matchers: [
                 ['IMG', matchEmojiImage],
@@ -739,6 +751,7 @@ export function CompositionInput(props: Props): React.ReactElement {
               onPickEmoji: (emoji: EmojiPickDataType) =>
                 callbacksRef.current.onPickEmoji(emoji),
               skinTone,
+              search,
             },
             autoSubstituteAsciiEmojis: {
               skinTone,

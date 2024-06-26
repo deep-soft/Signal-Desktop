@@ -32,6 +32,7 @@ import type {
 } from '../../types/Attachment';
 import { copyCdnFields } from '../../util/attachments';
 import { LONG_MESSAGE } from '../../types/MIME';
+import { LONG_ATTACHMENT_LIMIT } from '../../types/Message';
 import type { RawBodyRange } from '../../types/BodyRange';
 import type {
   EmbeddedContactWithHydratedAvatar,
@@ -60,7 +61,6 @@ import {
 } from '../../util/editHelpers';
 import { getMessageSentTimestamp } from '../../util/getMessageSentTimestamp';
 
-const LONG_ATTACHMENT_LIMIT = 2048;
 const MAX_CONCURRENT_ATTACHMENT_UPLOADS = 5;
 
 export async function sendNormalMessage(
@@ -779,8 +779,7 @@ async function uploadMessageQuote({
     prop: 'quote',
     targetTimestamp,
   });
-  const loadedQuote =
-    message.cachedOutgoingQuoteData || (await loadQuoteData(startingQuote));
+  const loadedQuote = await loadQuoteData(startingQuote);
 
   if (!loadedQuote) {
     return undefined;
@@ -790,14 +789,17 @@ async function uploadMessageQuote({
     loadedQuote.attachments.map(
       attachment => async (): Promise<OutgoingQuoteAttachmentType> => {
         const { thumbnail } = attachment;
-        if (!thumbnail) {
+        if (!thumbnail || !thumbnail.data) {
           return {
             contentType: attachment.contentType,
             fileName: attachment.fileName,
           };
         }
 
-        const uploaded = await uploadAttachment(thumbnail);
+        const uploaded = await uploadAttachment({
+          ...thumbnail,
+          data: thumbnail.data,
+        });
 
         return {
           contentType: attachment.contentType,
@@ -826,13 +828,9 @@ async function uploadMessageQuote({
       }
 
       strictAssert(
-        attachment.path === loadedQuote.attachments.at(index)?.path,
+        attachment.thumbnail.path ===
+          loadedQuote.attachments.at(index)?.thumbnail?.path,
         `${logId}: Quote attachment ${index} was updated from under us`
-      );
-
-      strictAssert(
-        attachment.thumbnail,
-        `${logId}: Quote attachment ${index} no longer has a thumbnail`
       );
 
       const attachmentAfterThumbnailUpload =
@@ -891,9 +889,7 @@ async function uploadMessagePreviews({
     targetTimestamp,
   });
 
-  const loadedPreviews =
-    message.cachedOutgoingPreviewData ||
-    (await loadPreviewData(startingPreview));
+  const loadedPreviews = await loadPreviewData(startingPreview);
 
   if (!loadedPreviews) {
     return undefined;
@@ -975,9 +971,7 @@ async function uploadMessageSticker(
   // See uploadMessageQuote for comment on how we do caching for these
   // attachments.
   const startingSticker = message.get('sticker');
-  const stickerWithData =
-    message.cachedOutgoingStickerData ||
-    (await loadStickerData(startingSticker));
+  const stickerWithData = await loadStickerData(startingSticker);
 
   if (!stickerWithData) {
     return undefined;
@@ -1021,9 +1015,7 @@ async function uploadMessageContacts(
 
   // See uploadMessageQuote for comment on how we do caching for these
   // attachments.
-  const contacts =
-    message.cachedOutgoingContactData ||
-    (await loadContactData(message.get('contact')));
+  const contacts = await loadContactData(message.get('contact'));
 
   if (!contacts) {
     return undefined;
