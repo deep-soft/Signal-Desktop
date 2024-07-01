@@ -30,6 +30,7 @@ import {
 } from '../types/CallLink';
 import type { LocalizerType } from '../types/Util';
 import { isTestOrMockEnvironment } from '../environment';
+import { getColorForCallLink } from './getColorForCallLink';
 
 export const CALL_LINK_DEFAULT_STATE = {
   name: '',
@@ -92,10 +93,11 @@ export function callLinkToConversation(
   callLink: CallLinkType,
   i18n: LocalizerType
 ): CallLinkConversationType {
-  const { roomId, name } = callLink;
+  const { roomId, name, rootKey } = callLink;
   return {
     id: roomId,
     type: 'callLink',
+    color: getColorForCallLink(rootKey),
     isMe: false,
     title: name || i18n('icu:calling__call-link-default-title'),
     sharedGroupNames: [],

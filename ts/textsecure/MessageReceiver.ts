@@ -152,10 +152,13 @@ import { chunk } from '../util/iterables';
 import { inspectUnknownFieldTags } from '../util/inspectProtobufs';
 import { incrementMessageCounter } from '../util/incrementMessageCounter';
 import { filterAndClean } from '../types/BodyRange';
-import { getCallEventForProto } from '../util/callDisposition';
+import {
+  getCallEventForProto,
+  getCallLogEventForProto,
+} from '../util/callDisposition';
 import { checkOurPniIdentityKey } from '../util/checkOurPniIdentityKey';
-import { CallLogEvent } from '../types/CallDisposition';
 import { CallLinkUpdateSyncType } from '../types/CallLink';
+import { bytesToUuid } from '../util/uuidToBytes';
 
 const GROUPV2_ID_LENGTH = 32;
 const RETRY_TIMEOUT = 2 * 60 * 1000;
@@ -3613,32 +3616,10 @@ export default class MessageReceiver
 
     const { receivedAtCounter } = envelope;
 
-    let event: CallLogEvent;
-    if (callLogEvent.type == null) {
-      throw new Error('MessageReceiver.handleCallLogEvent: type was null');
-    } else if (
-      callLogEvent.type === Proto.SyncMessage.CallLogEvent.Type.CLEAR
-    ) {
-      event = CallLogEvent.Clear;
-    } else if (
-      callLogEvent.type === Proto.SyncMessage.CallLogEvent.Type.MARKED_AS_READ
-    ) {
-      event = CallLogEvent.MarkedAsRead;
-    } else {
-      throw new Error(
-        `MessageReceiver.handleCallLogEvent: unknown type ${callLogEvent.type}`
-      );
-    }
-
-    if (callLogEvent.timestamp == null) {
-      throw new Error('MessageReceiver.handleCallLogEvent: timestamp was null');
-    }
-    const timestamp = callLogEvent.timestamp.toNumber();
-
+    const callLogEventDetails = getCallLogEventForProto(callLogEvent);
     const callLogEventSync = new CallLogEventSyncEvent(
       {
-        event,
-        timestamp,
+        callLogEventDetails,
         receivedAtCounter,
       },
       this.removeFromCache.bind(this, envelope)
@@ -3707,6 +3688,10 @@ export default class MessageReceiver
               const mostRecentMessages = item.mostRecentMessages
                 ?.map(message => processMessageToDelete(message, logId))
                 .filter(isNotNil);
+              const mostRecentNonExpiringMessages =
+                item.mostRecentNonExpiringMessages
+                  ?.map(message => processMessageToDelete(message, logId))
+                  .filter(isNotNil);
               const conversation = item.conversation
                 ? processConversationToDelete(item.conversation, logId)
                 : undefined;
@@ -3729,6 +3714,7 @@ export default class MessageReceiver
                 conversation,
                 isFullDelete: Boolean(item.isFullDelete),
                 mostRecentMessages,
+                mostRecentNonExpiringMessages,
                 timestamp,
               };
             })
@@ -3760,6 +3746,67 @@ export default class MessageReceiver
             .filter(isNotNil);
 
         eventData = eventData.concat(localOnlyConversationDeletes);
+      }
+      if (deleteSync.attachmentDeletes?.length) {
+        const attachmentDeletes: Array<DeleteForMeSyncTarget> =
+          deleteSync.attachmentDeletes
+            .map(item => {
+              const {
+                clientUuid: targetClientUuid,
+                conversation: targetConversation,
+                fallbackDigest: targetFallbackDigest,
+                fallbackPlaintextHash: targetFallbackPlaintextHash,
+                targetMessage,
+              } = item;
+              const conversation = targetConversation
+                ? processConversationToDelete(targetConversation, logId)
+                : undefined;
+              const message = targetMessage
+                ? processMessageToDelete(targetMessage, logId)
+                : undefined;
+
+              if (!conversation) {
+                log.warn(
+                  `${logId}/handleDeleteForMeSync/attachmentDeletes: No target conversation`
+                );
+                return undefined;
+              }
+              if (!message) {
+                log.warn(
+                  `${logId}/handleDeleteForMeSync/attachmentDeletes: No target message`
+                );
+                return undefined;
+              }
+              const clientUuid = targetClientUuid?.length
+                ? bytesToUuid(targetClientUuid)
+                : undefined;
+              const fallbackDigest = targetFallbackDigest?.length
+                ? Bytes.toBase64(targetFallbackDigest)
+                : undefined;
+              // TODO: DESKTOP-7204
+              const fallbackPlaintextHash = targetFallbackPlaintextHash?.length
+                ? Bytes.toHex(targetFallbackPlaintextHash)
+                : undefined;
+              if (!clientUuid && !fallbackDigest && !fallbackPlaintextHash) {
+                log.warn(
+                  `${logId}/handleDeleteForMeSync/attachmentDeletes: Missing clientUuid, fallbackDigest and fallbackPlaintextHash`
+                );
+                return undefined;
+              }
+
+              return {
+                type: 'delete-single-attachment' as const,
+                conversation,
+                message,
+                clientUuid,
+                fallbackDigest,
+                fallbackPlaintextHash,
+                timestamp,
+              };
+            })
+            .filter(isNotNil);
+
+        eventData = eventData.concat(attachmentDeletes);
       }
       if (!eventData.length) {
         throw new Error(`${logId}: Nothing found in sync message!`);

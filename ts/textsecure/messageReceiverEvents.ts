@@ -18,7 +18,10 @@ import type {
   ProcessedSent,
 } from './Types.d';
 import type { ContactDetailsWithAvatar } from './ContactsParser';
-import type { CallEventDetails, CallLogEvent } from '../types/CallDisposition';
+import type {
+  CallEventDetails,
+  CallLogEventDetails,
+} from '../types/CallDisposition';
 import type { CallLinkUpdateSyncType } from '../types/CallLink';
 import { isAciString } from '../util/isAciString';
 
@@ -518,6 +521,7 @@ export const deleteConversationSchema = z.object({
   type: z.literal('delete-conversation').readonly(),
   conversation: conversationToDeleteSchema,
   mostRecentMessages: z.array(messageToDeleteSchema),
+  mostRecentNonExpiringMessages: z.array(messageToDeleteSchema).optional(),
   isFullDelete: z.boolean(),
   timestamp: z.number(),
 });
@@ -526,10 +530,20 @@ export const deleteLocalConversationSchema = z.object({
   conversation: conversationToDeleteSchema,
   timestamp: z.number(),
 });
+export const deleteAttachmentSchema = z.object({
+  type: z.literal('delete-single-attachment').readonly(),
+  conversation: conversationToDeleteSchema,
+  message: messageToDeleteSchema,
+  clientUuid: z.string().optional(),
+  fallbackDigest: z.string().optional(),
+  fallbackPlaintextHash: z.string().optional(),
+  timestamp: z.number(),
+});
 export const deleteForMeSyncTargetSchema = z.union([
   deleteMessageSchema,
   deleteConversationSchema,
   deleteLocalConversationSchema,
+  deleteAttachmentSchema,
 ]);
 
 export type DeleteForMeSyncTarget = z.infer<typeof deleteForMeSyncTargetSchema>;
@@ -548,14 +562,13 @@ export class DeleteForMeSyncEvent extends ConfirmableEvent {
 }
 
 export type CallLogEventSyncEventData = Readonly<{
-  event: CallLogEvent;
-  timestamp: number;
+  callLogEventDetails: CallLogEventDetails;
   receivedAtCounter: number;
 }>;
 
 export class CallLogEventSyncEvent extends ConfirmableEvent {
   constructor(
-    public readonly callLogEvent: CallLogEventSyncEventData,
+    public readonly data: CallLogEventSyncEventData,
     confirm: ConfirmCallback
   ) {
     super('callLogEventSync', confirm);

@@ -13,7 +13,10 @@ import {
 import { missingCaseError } from './missingCaseError';
 import { getMessageSentTimestampSet } from './getMessageSentTimestampSet';
 import { getAuthor } from '../messages/helpers';
+import { isPniString } from '../types/ServiceId';
+import { singleProtoJobQueue } from '../jobs/singleProtoJobQueue';
 import dataInterface, { deleteAndCleanup } from '../sql/Client';
+import { deleteData } from '../types/Attachment';
 
 import type {
   ConversationAttributesType,
@@ -24,14 +27,15 @@ import type {
   ConversationToDelete,
   MessageToDelete,
 } from '../textsecure/messageReceiverEvents';
-import { isPniString } from '../types/ServiceId';
 import type { AciString, PniString } from '../types/ServiceId';
-import { singleProtoJobQueue } from '../jobs/singleProtoJobQueue';
+import type { AttachmentType } from '../types/Attachment';
+import type { MessageModel } from '../models/messages';
 
 const {
   getMessagesBySentAt,
   getMostRecentAddressableMessages,
   removeMessagesInConversation,
+  saveMessage,
 } = dataInterface;
 
 export function doesMessageMatch({
@@ -93,32 +97,195 @@ export async function deleteMessage(
   const found = await findMatchingMessage(conversationId, query);
 
   if (!found) {
-    log.warn(`${logId}: Couldn't find matching message`);
+    log.warn(`${logId}/deleteMessage: Couldn't find matching message`);
     return false;
   }
 
-  await deleteAndCleanup([found], logId, {
+  const message = window.MessageCache.toMessageAttributes(found);
+  await applyDeleteMessage(message, logId);
+
+  return true;
+}
+export async function applyDeleteMessage(
+  message: MessageAttributesType,
+  logId: string
+): Promise<void> {
+  await deleteAndCleanup([message], logId, {
     fromSync: true,
     singleProtoJobQueue,
   });
+}
+
+export async function deleteAttachmentFromMessage(
+  conversationId: string,
+  targetMessage: MessageToDelete,
+  deleteAttachmentData: {
+    clientUuid?: string;
+    fallbackDigest?: string;
+    fallbackPlaintextHash?: string;
+  },
+  {
+    deleteOnDisk,
+    logId,
+  }: {
+    deleteOnDisk: (path: string) => Promise<void>;
+    logId: string;
+  }
+): Promise<boolean> {
+  const query = getMessageQueryFromTarget(targetMessage);
+  const found = await findMatchingMessage(conversationId, query);
+
+  if (!found) {
+    log.warn(
+      `${logId}/deleteAttachmentFromMessage: Couldn't find matching message`
+    );
+    return false;
+  }
+
+  const message = window.MessageCache.__DEPRECATED$register(
+    found.id,
+    found,
+    'ReadSyncs.onSync'
+  );
+
+  return applyDeleteAttachmentFromMessage(message, deleteAttachmentData, {
+    deleteOnDisk,
+    logId,
+    shouldSave: true,
+  });
+}
+
+export async function applyDeleteAttachmentFromMessage(
+  message: MessageModel,
+  {
+    clientUuid,
+    fallbackDigest,
+    fallbackPlaintextHash,
+  }: {
+    clientUuid?: string;
+    fallbackDigest?: string;
+    fallbackPlaintextHash?: string;
+  },
+  {
+    deleteOnDisk,
+    shouldSave,
+    logId,
+  }: {
+    deleteOnDisk: (path: string) => Promise<void>;
+    shouldSave: boolean;
+    logId: string;
+  }
+): Promise<boolean> {
+  if (!clientUuid && !fallbackDigest && !fallbackPlaintextHash) {
+    log.warn(
+      `${logId}/deleteAttachmentFromMessage: No clientUuid, fallbackDigest or fallbackPlaintextHash`
+    );
+    return true;
+  }
+
+  const ourAci = window.textsecure.storage.user.getCheckedAci();
+
+  const attachments = message.get('attachments');
+  if (!attachments || attachments.length === 0) {
+    log.warn(
+      `${logId}/deleteAttachmentFromMessage: No attachments on target message`
+    );
+    return true;
+  }
+
+  async function checkFieldAndDelete(
+    value: string | undefined,
+    valueName: string,
+    fieldName: keyof AttachmentType
+  ): Promise<boolean> {
+    if (value) {
+      const attachment = attachments?.find(
+        item => item.digest && item[fieldName] === value
+      );
+      if (attachment) {
+        message.set({
+          attachments: attachments?.filter(item => item !== attachment),
+        });
+        if (shouldSave) {
+          await saveMessage(message.attributes, { ourAci });
+        }
+        await deleteData(deleteOnDisk)(attachment);
+
+        return true;
+      }
+      log.warn(
+        `${logId}/deleteAttachmentFromMessage: No attachment found with provided ${valueName}`
+      );
+    } else {
+      log.warn(
+        `${logId}/deleteAttachmentFromMessage: No ${valueName} provided`
+      );
+    }
+
+    return false;
+  }
+  let result: boolean;
+
+  result = await checkFieldAndDelete(clientUuid, 'clientUuid', 'clientUuid');
+  if (result) {
+    return true;
+  }
+
+  result = await checkFieldAndDelete(
+    fallbackDigest,
+    'fallbackDigest',
+    'digest'
+  );
+  if (result) {
+    return true;
+  }
+
+  result = await checkFieldAndDelete(
+    fallbackPlaintextHash,
+    'fallbackPlaintextHash',
+    'plaintextHash'
+  );
+  if (result) {
+    return true;
+  }
+
+  log.warn(
+    `${logId}/deleteAttachmentFromMessage: Couldn't find target attachment`
+  );
 
   return true;
+}
+
+async function getMostRecentMatchingMessage(
+  conversationId: string,
+  targetMessages: Array<MessageToDelete>
+): Promise<MessageAttributesType | undefined> {
+  const queries = targetMessages.map(getMessageQueryFromTarget);
+  const found = await Promise.all(
+    queries.map(query => findMatchingMessage(conversationId, query))
+  );
+
+  const sorted = sortBy(found, 'received_at');
+  return last(sorted);
 }
 
 export async function deleteConversation(
   conversation: ConversationModel,
   mostRecentMessages: Array<MessageToDelete>,
+  mostRecentNonExpiringMessages: Array<MessageToDelete> | undefined,
   isFullDelete: boolean,
-  logId: string
+  providedLogId: string
 ): Promise<boolean> {
-  const queries = mostRecentMessages.map(getMessageQueryFromTarget);
-  const found = await Promise.all(
-    queries.map(query => findMatchingMessage(conversation.id, query))
-  );
+  const logId = `${providedLogId}/deleteConversation`;
 
-  const sorted = sortBy(found, 'received_at');
-  const newestMessage = last(sorted);
-  if (newestMessage) {
+  const newestMessage = await getMostRecentMatchingMessage(
+    conversation.id,
+    mostRecentMessages
+  );
+  if (!newestMessage) {
+    log.warn(`${logId}: Found no messages from mostRecentMessages set`);
+  } else {
+    log.info(`${logId}: Found most recent message from mostRecentMessages set`);
     const { received_at: receivedAt } = newestMessage;
 
     await removeMessagesInConversation(conversation.id, {
@@ -129,13 +296,34 @@ export async function deleteConversation(
     });
   }
 
-  if (!newestMessage) {
-    log.warn(`${logId}: Found no target messages for delete`);
+  if (!newestMessage && mostRecentNonExpiringMessages?.length) {
+    const newestNondisappearingMessage = await getMostRecentMatchingMessage(
+      conversation.id,
+      mostRecentNonExpiringMessages
+    );
+
+    if (!newestNondisappearingMessage) {
+      log.warn(
+        `${logId}: Found no messages from mostRecentNonExpiringMessages set`
+      );
+    } else {
+      log.info(
+        `${logId}: Found most recent message from mostRecentNonExpiringMessages set`
+      );
+      const { received_at: receivedAt } = newestNondisappearingMessage;
+
+      await removeMessagesInConversation(conversation.id, {
+        fromSync: true,
+        receivedAt,
+        logId: `${logId}(receivedAt=${receivedAt})`,
+        singleProtoJobQueue,
+      });
+    }
   }
 
   if (isFullDelete) {
     log.info(`${logId}: isFullDelete=true, proceeding to local-only delete`);
-    return deleteLocalOnlyConversation(conversation, logId);
+    return deleteLocalOnlyConversation(conversation, providedLogId);
   }
 
   return true;
@@ -143,17 +331,16 @@ export async function deleteConversation(
 
 export async function deleteLocalOnlyConversation(
   conversation: ConversationModel,
-  logId: string
+  providedLogId: string
 ): Promise<boolean> {
+  const logId = `${providedLogId}/deleteLocalOnlyConversation`;
   const limit = 1;
   const messages = await getMostRecentAddressableMessages(
     conversation.id,
     limit
   );
   if (messages.length > 0) {
-    log.warn(
-      `${logId}: Attempted local-only delete but found an addressable message`
-    );
+    log.warn(`${logId}: Cannot delete; found an addressable message`);
     return false;
   }
 

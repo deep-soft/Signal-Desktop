@@ -89,14 +89,18 @@ import type {
   MessageToDelete,
 } from './messageReceiverEvents';
 import { getConversationFromTarget } from '../util/deleteForMe';
-import type { CallDetails } from '../types/CallDisposition';
+import type { CallDetails, CallHistoryDetails } from '../types/CallDisposition';
 import {
   AdhocCallStatus,
   DirectCallStatus,
   GroupCallStatus,
 } from '../types/CallDisposition';
-import { getProtoForCallHistory } from '../util/callDisposition';
+import {
+  getBytesForPeerId,
+  getProtoForCallHistory,
+} from '../util/callDisposition';
 import { CallMode } from '../types/Calling';
+import { MAX_MESSAGE_COUNT } from '../util/deleteForMe.types';
 
 export type SendMetadataType = {
   [serviceId: ServiceIdString]: {
@@ -1518,13 +1522,16 @@ export default class MessageSender {
       } else if (item.type === 'delete-conversation') {
         const mostRecentMessages =
           item.mostRecentMessages.map(toAddressableMessage);
+        const mostRecentNonExpiringMessages =
+          item.mostRecentNonExpiringMessages?.map(toAddressableMessage);
         const conversation = toConversationIdentifier(item.conversation);
 
         deleteForMe.conversationDeletes = deleteForMe.conversationDeletes || [];
         deleteForMe.conversationDeletes.push({
-          mostRecentMessages,
           conversation,
           isFullDelete: true,
+          mostRecentMessages,
+          mostRecentNonExpiringMessages,
         });
       } else if (item.type === 'delete-local-conversation') {
         const conversation = toConversationIdentifier(item.conversation);
@@ -1534,19 +1541,29 @@ export default class MessageSender {
         deleteForMe.localOnlyConversationDeletes.push({
           conversation,
         });
+      } else if (item.type === 'delete-single-attachment') {
+        throw new Error(
+          "getDeleteForMeSyncMessage: Desktop currently does not support sending 'delete-single-attachment' messages"
+        );
       } else {
         throw missingCaseError(item);
       }
     });
 
     if (messageDeletes.size > 0) {
-      for (const items of messageDeletes.values()) {
+      for (const [conversationId, items] of messageDeletes.entries()) {
         const first = items[0];
         if (!first) {
           throw new Error('Failed to fetch first from items');
         }
         const messages = items.map(item => toAddressableMessage(item.message));
         const conversation = toConversationIdentifier(first.conversation);
+
+        if (items.length > MAX_MESSAGE_COUNT) {
+          log.warn(
+            `getDeleteForMeSyncMessage: Sending ${items.length} message deletes for conversationId ${conversationId}`
+          );
+        }
 
         deleteForMe.messageDeletes = deleteForMe.messageDeletes || [];
         deleteForMe.messageDeletes.push({
@@ -1575,11 +1592,15 @@ export default class MessageSender {
     };
   }
 
-  static getClearCallHistoryMessage(timestamp: number): SingleProtoJobData {
+  static getClearCallHistoryMessage(
+    latestCall: CallHistoryDetails
+  ): SingleProtoJobData {
     const ourAci = window.textsecure.storage.user.getCheckedAci();
     const callLogEvent = new Proto.SyncMessage.CallLogEvent({
       type: Proto.SyncMessage.CallLogEvent.Type.CLEAR,
-      timestamp: Long.fromNumber(timestamp),
+      timestamp: Long.fromNumber(latestCall.timestamp),
+      peerId: getBytesForPeerId(latestCall),
+      callId: Long.fromString(latestCall.callId),
     });
 
     const syncMessage = MessageSender.createSyncMessage();

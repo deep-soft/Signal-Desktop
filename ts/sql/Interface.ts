@@ -28,6 +28,7 @@ import type {
   CallHistoryFilter,
   CallHistoryGroup,
   CallHistoryPagination,
+  CallLogEventTarget,
 } from '../types/CallDisposition';
 import type { CallLinkStateType, CallLinkType } from '../types/CallLink';
 import type { AttachmentDownloadJobType } from '../types/AttachmentDownload';
@@ -372,6 +373,7 @@ export type GetUnreadByConversationAndMarkReadResultType = Array<
     | 'type'
     | 'readStatus'
     | 'seenStatus'
+    | 'expirationStartTimestamp'
   >
 >;
 
@@ -666,14 +668,17 @@ export type DataInterface = {
     conversationId: string;
   }): Promise<MessageType | undefined>;
   getAllCallHistory: () => Promise<ReadonlyArray<CallHistoryDetails>>;
+  clearCallHistory: (
+    target: CallLogEventTarget
+  ) => Promise<ReadonlyArray<string>>;
   markCallHistoryDeleted: (callId: string) => Promise<void>;
-  clearCallHistory: (beforeTimestamp: number) => Promise<Array<string>>;
   cleanupCallHistoryMessages: () => Promise<void>;
   getCallHistoryUnreadCount(): Promise<number>;
   markCallHistoryRead(callId: string): Promise<void>;
-  markAllCallHistoryRead(
-    beforeTimestamp: number
-  ): Promise<ReadonlyArray<string>>;
+  markAllCallHistoryRead(target: CallLogEventTarget): Promise<void>;
+  markAllCallHistoryReadInConversation(
+    target: CallLogEventTarget
+  ): Promise<void>;
   getCallHistoryMessageByCallId(options: {
     conversationId: string;
     callId: string;
@@ -730,6 +735,10 @@ export type DataInterface = {
     history: ReadonlyArray<EditedMessageType>
   ) => Promise<void>;
   getMostRecentAddressableMessages: (
+    conversationId: string,
+    limit?: number
+  ) => Promise<Array<MessageType>>;
+  getMostRecentAddressableNondisappearingMessages: (
     conversationId: string,
     limit?: number
   ) => Promise<Array<MessageType>>;

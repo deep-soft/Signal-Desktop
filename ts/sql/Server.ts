@@ -157,6 +157,7 @@ import type {
   CallHistoryFilter,
   CallHistoryGroup,
   CallHistoryPagination,
+  CallLogEventTarget,
 } from '../types/CallDisposition';
 import {
   DirectCallStatus,
@@ -166,6 +167,7 @@ import {
   CallDirection,
   GroupCallStatus,
   CallType,
+  CallStatusValue,
 } from '../types/CallDisposition';
 import {
   callLinkExists,
@@ -352,6 +354,7 @@ const dataInterface: ServerInterface = {
   getCallHistoryUnreadCount,
   markCallHistoryRead,
   markAllCallHistoryRead,
+  markAllCallHistoryReadInConversation,
   getCallHistoryMessageByCallId,
   getCallHistory,
   getCallHistoryGroupsCount,
@@ -372,6 +375,7 @@ const dataInterface: ServerInterface = {
   saveEditedMessage,
   saveEditedMessages,
   getMostRecentAddressableMessages,
+  getMostRecentAddressableNondisappearingMessages,
 
   removeSyncTaskById,
   saveSyncTasks,
@@ -2119,6 +2123,39 @@ export function getMostRecentAddressableMessagesSync(
   return rows.map(row => jsonToObject(row.json));
 }
 
+async function getMostRecentAddressableNondisappearingMessages(
+  conversationId: string,
+  limit = 5
+): Promise<Array<MessageType>> {
+  const db = getReadonlyInstance();
+  return getMostRecentAddressableNondisappearingMessagesSync(
+    db,
+    conversationId,
+    limit
+  );
+}
+
+export function getMostRecentAddressableNondisappearingMessagesSync(
+  db: Database,
+  conversationId: string,
+  limit = 5
+): Array<MessageType> {
+  const [query, parameters] = sql`
+    SELECT json FROM messages
+    INDEXED BY messages_by_date_addressable_nondisappearing
+    WHERE
+      expireTimer IS NULL AND
+      conversationId IS ${conversationId} AND
+      isAddressableMessage = 1
+    ORDER BY received_at DESC, sent_at DESC
+    LIMIT ${limit};
+  `;
+
+  const rows = db.prepare(query).all(parameters);
+
+  return rows.map(row => jsonToObject(row.json));
+}
+
 async function removeSyncTaskById(id: string): Promise<void> {
   const db = await getWritableInstance();
   removeSyncTaskByIdSync(db, id);
@@ -3597,34 +3634,56 @@ async function getAllCallHistory(): Promise<ReadonlyArray<CallHistoryDetails>> {
 }
 
 async function clearCallHistory(
-  beforeTimestamp: number
-): Promise<Array<string>> {
+  target: CallLogEventTarget
+): Promise<ReadonlyArray<string>> {
   const db = await getWritableInstance();
   return db.transaction(() => {
-    const whereMessages = sqlFragment`
-      WHERE messages.type IS 'call-history'
-      AND messages.sent_at <= ${beforeTimestamp};
+    const timestamp = getTimestampForCallLogEventTarget(db, target);
+
+    const [selectCallIdsQuery, selectCallIdsParams] = sql`
+      SELECT callsHistory.callId
+      FROM callsHistory
+      WHERE
+        -- Prior calls
+        (callsHistory.timestamp <= ${timestamp})
+        -- Unused call links
+        OR (
+          callsHistory.mode IS ${CALL_MODE_ADHOC} AND
+          callsHistory.status IS ${CALL_STATUS_PENDING}
+        );
     `;
 
-    const [selectMessagesQuery, selectMessagesParams] = sql`
-      SELECT id FROM messages ${whereMessages}
-    `;
-    const [clearMessagesQuery, clearMessagesParams] = sql`
-      DELETE FROM messages ${whereMessages}
-    `;
+    const callIds = db
+      .prepare(selectCallIdsQuery)
+      .pluck()
+      .all(selectCallIdsParams);
+
+    let deletedMessageIds: ReadonlyArray<string> = [];
+
+    batchMultiVarQuery(db, callIds, (ids: ReadonlyArray<string>): void => {
+      const [deleteMessagesQuery, deleteMessagesParams] = sql`
+        DELETE FROM messages
+        WHERE messages.type IS 'call-history'
+        AND messages.callId IN (${sqlJoin(ids)})
+        RETURNING id;
+      `;
+
+      const batchDeletedMessageIds = db
+        .prepare(deleteMessagesQuery)
+        .pluck()
+        .all(deleteMessagesParams);
+
+      deletedMessageIds = deletedMessageIds.concat(batchDeletedMessageIds);
+    });
+
     const [clearCallsHistoryQuery, clearCallsHistoryParams] = sql`
       UPDATE callsHistory
       SET
         status = ${DirectCallStatus.Deleted},
         timestamp = ${Date.now()}
-      WHERE callsHistory.timestamp <= ${beforeTimestamp};
+      WHERE callsHistory.timestamp <= ${timestamp};
     `;
 
-    const messageIds = db
-      .prepare(selectMessagesQuery)
-      .pluck()
-      .all(selectMessagesParams);
-    db.prepare(clearMessagesQuery).run(clearMessagesParams);
     try {
       db.prepare(clearCallsHistoryQuery).run(clearCallsHistoryParams);
     } catch (error) {
@@ -3632,7 +3691,7 @@ async function clearCallHistory(
       throw error;
     }
 
-    return messageIds;
+    return deletedMessageIds;
   })();
 }
 
@@ -3709,8 +3768,9 @@ async function getCallHistory(
 
 const SEEN_STATUS_UNSEEN = sqlConstant(SeenStatus.Unseen);
 const SEEN_STATUS_SEEN = sqlConstant(SeenStatus.Seen);
-const CALL_STATUS_MISSED = sqlConstant(DirectCallStatus.Missed);
-const CALL_STATUS_DELETED = sqlConstant(DirectCallStatus.Deleted);
+const CALL_STATUS_MISSED = sqlConstant(CallStatusValue.Missed);
+const CALL_STATUS_DELETED = sqlConstant(CallStatusValue.Deleted);
+const CALL_STATUS_PENDING = sqlConstant(CallStatusValue.Pending);
 const CALL_STATUS_INCOMING = sqlConstant(CallDirection.Incoming);
 const CALL_MODE_ADHOC = sqlConstant(CallMode.Adhoc);
 const FOUR_HOURS_IN_MS = sqlConstant(4 * 60 * 60 * 1000);
@@ -3747,42 +3807,80 @@ async function markCallHistoryRead(callId: string): Promise<void> {
   db.prepare(query).run(params);
 }
 
-async function markAllCallHistoryRead(
-  beforeTimestamp: number
-): Promise<ReadonlyArray<string>> {
-  const db = await getWritableInstance();
+function getTimestampForCallLogEventTarget(
+  db: Database,
+  target: CallLogEventTarget
+): number {
+  let { timestamp } = target;
 
-  return db.transaction(() => {
-    const where = sqlFragment`
-      WHERE messages.type IS 'call-history'
-        AND messages.seenStatus IS ${SEEN_STATUS_UNSEEN}
-        AND messages.sent_at <= ${beforeTimestamp};
-    `;
-
+  if (target.peerId != null && target.callId != null) {
     const [selectQuery, selectParams] = sql`
-      SELECT DISTINCT conversationId
-      FROM messages
-      ${where};
+      SELECT callsHistory.timestamp
+      FROM callsHistory
+      WHERE callsHistory.callId IS ${target.callId}
+        AND callsHistory.peerId IS ${target.peerId}
     `;
+    const value = db.prepare(selectQuery).pluck().get(selectParams);
 
-    const conversationIds = db.prepare(selectQuery).pluck().all(selectParams);
+    if (value != null) {
+      timestamp = value;
+    } else {
+      log.warn(
+        'getTimestampForCallLogEventTarget: Target call not found',
+        target.callId
+      );
+    }
+  }
 
+  return timestamp;
+}
+
+async function markAllCallHistoryReadWithPredicate(
+  target: CallLogEventTarget,
+  inConversation: boolean
+) {
+  const db = await getWritableInstance();
+  db.transaction(() => {
     const jsonPatch = JSON.stringify({
       seenStatus: SeenStatus.Seen,
     });
+
+    const timestamp = getTimestampForCallLogEventTarget(db, target);
+
+    const predicate = inConversation
+      ? sqlFragment`callsHistory.peerId IS ${target.peerId}`
+      : sqlFragment`TRUE`;
 
     const [updateQuery, updateParams] = sql`
       UPDATE messages
       SET
         seenStatus = ${SEEN_STATUS_SEEN},
         json = json_patch(json, ${jsonPatch})
-      ${where};
+      WHERE id IN (
+        SELECT id FROM messages
+        INNER JOIN callsHistory ON callsHistory.callId IS messages.callId
+        WHERE messages.type IS 'call-history'
+          AND messages.seenStatus IS ${SEEN_STATUS_UNSEEN}
+          AND callsHistory.timestamp <= ${timestamp}
+          AND ${predicate}
+      )
     `;
 
     db.prepare(updateQuery).run(updateParams);
-
-    return conversationIds;
   })();
+}
+
+async function markAllCallHistoryRead(
+  target: CallLogEventTarget
+): Promise<void> {
+  await markAllCallHistoryReadWithPredicate(target, false);
+}
+
+async function markAllCallHistoryReadInConversation(
+  target: CallLogEventTarget
+): Promise<void> {
+  strictAssert(target.peerId, 'peerId is required');
+  await markAllCallHistoryReadWithPredicate(target, true);
 }
 
 function getCallHistoryGroupDataSync(
@@ -4898,7 +4996,7 @@ async function saveAttachmentBackupJob(
       attempts,
       data,
       lastAttemptTimestamp,
-      mediaName, 
+      mediaName,
       receivedAt,
       retryAfter,
       type
@@ -4969,7 +5067,7 @@ function removeAttachmentBackupJobSync(
 ): void {
   const [query, params] = sql`
   DELETE FROM attachment_backup_jobs
-  WHERE 
+  WHERE
     mediaName = ${job.mediaName};
 `;
 
