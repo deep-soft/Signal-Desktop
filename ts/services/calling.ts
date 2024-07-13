@@ -1231,12 +1231,12 @@ export class CallingClass {
     let updateMessageState = GroupCallUpdateMessageState.SentNothing;
     const updateCallHistoryOnLocalChanged =
       callMode === CallMode.Group
-        ? this.updateCallHistoryForGroupCallOnLocalChanged
-        : this.updateCallHistoryForAdhocCall;
+        ? this.updateCallHistoryForGroupCallOnLocalChanged.bind(this)
+        : this.updateCallHistoryForAdhocCall.bind(this);
     const updateCallHistoryOnPeek =
       callMode === CallMode.Group
-        ? this.updateCallHistoryForGroupCallOnPeek
-        : this.updateCallHistoryForAdhocCall;
+        ? this.updateCallHistoryForGroupCallOnPeek.bind(this)
+        : this.updateCallHistoryForAdhocCall.bind(this);
     const logId =
       callMode === CallMode.Group
         ? `groupv2(${conversationId})`
@@ -1590,6 +1590,15 @@ export class CallingClass {
     }
 
     groupCall.removeClient(demuxId);
+  }
+
+  public blockClient(conversationId: string, demuxId: number): void {
+    const groupCall = this.getGroupCall(conversationId);
+    if (!groupCall) {
+      throw new Error('Could not find matching call');
+    }
+
+    groupCall.blockClient(demuxId);
   }
 
   // See the comment in types/Calling.ts to explain why we have to do this conversion.
@@ -3180,22 +3189,25 @@ export class CallingClass {
     const callId = getCallIdFromEra(peekInfo.eraId);
 
     try {
-      // We only log events confirmed joined. If admin approval is required, then
-      // the call begins in the Pending state and we don't want history for that.
-      if (joinState !== GroupCallJoinState.Joined) {
+      let localCallEvent;
+      if (joinState === GroupCallJoinState.Joined) {
+        localCallEvent = LocalCallEvent.Accepted;
+      } else if (peekInfo && peekInfo.devices.length > 0) {
+        localCallEvent = LocalCallEvent.Started;
+      } else {
         return;
       }
 
       const callDetails = getCallDetailsForAdhocCall(roomId, callId);
       const callEvent = getCallEventDetails(
         callDetails,
-        LocalCallEvent.Accepted,
-        'CallingClass.updateCallHistoryForGroupCallOnLocalChanged'
+        localCallEvent,
+        'CallingClass.updateCallHistoryForAdhocCall'
       );
       await updateAdhocCallHistory(callEvent);
     } catch (error) {
       log.error(
-        'CallingClass.updateCallHistoryForGroupCallOnLocalChanged: Error updating state',
+        'CallingClass.updateCallHistoryForAdhocCall: Error updating state',
         Errors.toLogFormat(error)
       );
     }

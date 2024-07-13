@@ -443,7 +443,7 @@ function HeaderContent({
     <span className="module-ConversationHeader__header__avatar">
       <Avatar
         acceptedMessageRequest={conversation.acceptedMessageRequest}
-        avatarPath={conversation.avatarPath ?? undefined}
+        avatarUrl={conversation.avatarUrl ?? undefined}
         badge={badge ?? undefined}
         color={conversation.color ?? undefined}
         conversationType={conversation.type}
@@ -459,7 +459,7 @@ function HeaderContent({
         storyRing={conversation.isMe ? undefined : hasStories ?? undefined}
         theme={theme}
         title={conversation.title}
-        unblurredAvatarPath={conversation.unblurredAvatarPath ?? undefined}
+        unblurredAvatarUrl={conversation.unblurredAvatarUrl ?? undefined}
       />
     </span>
   );
@@ -957,6 +957,14 @@ function DeleteMessagesConfirmationDialog({
     );
   }
 
+  const dialogBody = isDeleteSyncSendEnabled
+    ? i18n(
+        'icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync'
+      )
+    : i18n(
+        'icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description'
+      );
+
   return (
     <ConfirmationDialog
       dialogName="ConversationHeader.destroyMessages"
@@ -973,9 +981,7 @@ function DeleteMessagesConfirmationDialog({
       i18n={i18n}
       onClose={onClose}
     >
-      {i18n(
-        'icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description'
-      )}
+      {dialogBody}
     </ConfirmationDialog>
   );
 }

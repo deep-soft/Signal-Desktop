@@ -100,6 +100,8 @@ export async function encryptAndUploadAttachment({
       plaintext,
       keys,
       dangerousIv,
+      getAbsoluteAttachmentPath:
+        window.Signal.Migrations.getAbsoluteAttachmentPath,
     });
 
     absoluteCiphertextPath = window.Signal.Migrations.getAbsoluteAttachmentPath(
@@ -146,7 +148,7 @@ export async function uploadFile({
     });
   } else {
     await server.putEncryptedAttachment(
-      createReadStream(absoluteCiphertextPath),
+      () => createReadStream(absoluteCiphertextPath),
       uploadForm
     );
   }

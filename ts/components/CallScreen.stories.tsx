@@ -42,7 +42,7 @@ const i18n = setupI18n('en', enMessages);
 
 const conversation = getDefaultConversation({
   id: '3051234567',
-  avatarPath: undefined,
+  avatarUrl: undefined,
   color: AvatarColors[0],
   title: 'Rick Sanchez',
   name: 'Rick Sanchez',
@@ -185,6 +185,7 @@ const createProps = (
 ): PropsType => ({
   activeCall: createActiveCallProp(overrideProps),
   approveUser: action('approve-user'),
+  batchUserAction: action('batch-user-action'),
   changeCallView: action('change-call-view'),
   denyUser: action('deny-user'),
   getGroupCallVideoFrameSource: fakeGetGroupCallVideoFrameSource,

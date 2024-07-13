@@ -70,10 +70,6 @@ function _maybeGrabLinkPreview(
   if (!messaging) {
     return;
   }
-  // If we're behind a user-configured proxy, we don't support link previews
-  if (window.isBehindProxy()) {
-    return;
-  }
 
   if (!message) {
     resetLinkPreview(conversationId);
@@ -453,8 +449,8 @@ async function getStickerPackPreview(
     const sticker = pack.stickers[coverStickerId];
     const data =
       pack.status === 'ephemeral'
-        ? await window.Signal.Migrations.readTempData(sticker.path)
-        : await window.Signal.Migrations.readStickerData(sticker.path);
+        ? await window.Signal.Migrations.readTempData(sticker)
+        : await window.Signal.Migrations.readStickerData(sticker);
 
     if (abortSignal.aborted) {
       return null;

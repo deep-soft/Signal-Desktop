@@ -28,6 +28,7 @@ import {
 import type { ConversationType } from '../state/ducks/conversations';
 import type {
   AcceptCallType,
+  BatchUserActionPayloadType,
   CancelCallType,
   DeclineCallType,
   GroupCallParticipantInfoType,
@@ -101,6 +102,7 @@ export type PropsType = {
   toggleParticipants: () => void;
   acceptCall: (_: AcceptCallType) => void;
   approveUser: (payload: PendingUserActionPayloadType) => void;
+  batchUserAction: (payload: BatchUserActionPayloadType) => void;
   bounceAppIconStart: () => unknown;
   bounceAppIconStop: () => unknown;
   declineCall: (_: DeclineCallType) => void;
@@ -117,6 +119,7 @@ export type PropsType = {
   openSystemPreferencesAction: () => unknown;
   playRingtone: () => unknown;
   removeClient: (payload: RemoveClientType) => void;
+  blockClient: (payload: RemoveClientType) => void;
   sendGroupCallRaiseHand: (payload: SendGroupCallRaiseHandType) => void;
   sendGroupCallReaction: (payload: SendGroupCallReactionType) => void;
   setGroupCallVideoRequest: (_: SetGroupCallVideoRequestType) => void;
@@ -163,6 +166,8 @@ function ActiveCallManager({
   activeCall,
   approveUser,
   availableCameras,
+  batchUserAction,
+  blockClient,
   callLink,
   cancelCall,
   changeCallView,
@@ -391,12 +396,14 @@ function ActiveCallManager({
               callLink={callLink}
               i18n={i18n}
               isCallLinkAdmin={isCallLinkAdmin}
+              isUnknownContactDiscrete={false}
               ourServiceId={me.serviceId}
               participants={peekedParticipants}
               onClose={toggleParticipants}
               onCopyCallLink={onCopyCallLink}
               onShareCallLinkViaSignal={handleShareCallLinkViaSignal}
               removeClient={removeClient}
+              blockClient={blockClient}
               showContactModal={showContactModal}
             />
           ) : (
@@ -442,6 +449,7 @@ function ActiveCallManager({
       <CallScreen
         activeCall={activeCall}
         approveUser={approveUser}
+        batchUserAction={batchUserAction}
         changeCallView={changeCallView}
         denyUser={denyUser}
         getPresentingSources={getPresentingSources}
@@ -488,12 +496,14 @@ function ActiveCallManager({
             callLink={callLink}
             i18n={i18n}
             isCallLinkAdmin={isCallLinkAdmin}
+            isUnknownContactDiscrete
             ourServiceId={me.serviceId}
             participants={groupCallParticipantsForParticipantsList}
             onClose={toggleParticipants}
             onCopyCallLink={onCopyCallLink}
             onShareCallLinkViaSignal={handleShareCallLinkViaSignal}
             removeClient={removeClient}
+            blockClient={blockClient}
             showContactModal={showContactModal}
           />
         ) : (
@@ -515,6 +525,8 @@ export function CallManager({
   activeCall,
   approveUser,
   availableCameras,
+  batchUserAction,
+  blockClient,
   bounceAppIconStart,
   bounceAppIconStop,
   callLink,
@@ -613,6 +625,8 @@ export function CallManager({
           activeCall={activeCall}
           availableCameras={availableCameras}
           approveUser={approveUser}
+          batchUserAction={batchUserAction}
+          blockClient={blockClient}
           callLink={callLink}
           cancelCall={cancelCall}
           changeCallView={changeCallView}

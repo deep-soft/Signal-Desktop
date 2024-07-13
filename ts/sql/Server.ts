@@ -210,6 +210,9 @@ type StickerRow = Readonly<{
   lastUsed: number;
   path: string;
   width: number;
+  version: 1 | 2;
+  localKey: string | null;
+  size: number | null;
 }>;
 
 // Because we can't force this module to conform to an interface, we narrow our exports
@@ -409,6 +412,7 @@ const dataInterface: ServerInterface = {
   updateStickerPackStatus,
   updateStickerPackInfo,
   createOrUpdateSticker,
+  createOrUpdateStickers,
   updateStickerLastUsed,
   addStickerPackReference,
   deleteStickerPackReference,
@@ -542,6 +546,9 @@ function rowToSticker(row: StickerRow): StickerType {
     ...row,
     isCoverOnly: Boolean(row.isCoverOnly),
     emoji: dropNull(row.emoji),
+    version: row.version || 1,
+    localKey: dropNull(row.localKey),
+    size: dropNull(row.size),
   };
 }
 
@@ -1655,7 +1662,7 @@ function saveConversationSync(db: Database, data: ConversationType): void {
   ).run({
     id,
     json: objectToJSON(
-      omit(data, ['profileLastFetchedAt', 'unblurredAvatarPath'])
+      omit(data, ['profileLastFetchedAt', 'unblurredAvatarUrl'])
     ),
 
     e164: e164 || null,
@@ -1726,7 +1733,7 @@ function updateConversationSync(db: Database, data: ConversationType): void {
   ).run({
     id,
     json: objectToJSON(
-      omit(data, ['profileLastFetchedAt', 'unblurredAvatarPath'])
+      omit(data, ['profileLastFetchedAt', 'unblurredAvatarUrl'])
     ),
 
     e164: e164 || null,
@@ -2253,7 +2260,7 @@ export function getAllSyncTasksSync(db: Database): Array<SyncTaskType> {
   })();
 }
 
-function saveMessageSync(
+export function saveMessageSync(
   db: Database,
   data: MessageType,
   options: {
@@ -3638,7 +3645,7 @@ async function clearCallHistory(
 ): Promise<ReadonlyArray<string>> {
   const db = await getWritableInstance();
   return db.transaction(() => {
-    const timestamp = getTimestampForCallLogEventTarget(db, target);
+    const timestamp = getMessageTimestampForCallLogEventTarget(db, target);
 
     const [selectCallIdsQuery, selectCallIdsParams] = sql`
       SELECT callsHistory.callId
@@ -3807,48 +3814,76 @@ async function markCallHistoryRead(callId: string): Promise<void> {
   db.prepare(query).run(params);
 }
 
-function getTimestampForCallLogEventTarget(
+function getMessageTimestampForCallLogEventTarget(
   db: Database,
   target: CallLogEventTarget
 ): number {
-  let { timestamp } = target;
+  let { callId, peerId } = target;
+  const { timestamp } = target;
 
-  if (target.peerId != null && target.callId != null) {
+  if (callId == null || peerId == null) {
+    const predicate =
+      peerId != null
+        ? sqlFragment`callsHistory.peerId IS ${target.peerId}`
+        : sqlFragment`TRUE`;
+
+    // Get the most recent call history timestamp for the target.timestamp
     const [selectQuery, selectParams] = sql`
-      SELECT callsHistory.timestamp
+      SELECT callsHistory.callId, callsHistory.peerId
       FROM callsHistory
-      WHERE callsHistory.callId IS ${target.callId}
-        AND callsHistory.peerId IS ${target.peerId}
+      WHERE ${predicate}
+        AND callsHistory.timestamp <= ${timestamp}
+      ORDER BY callsHistory.timestamp DESC
+      LIMIT 1
     `;
-    const value = db.prepare(selectQuery).pluck().get(selectParams);
 
-    if (value != null) {
-      timestamp = value;
-    } else {
-      log.warn(
-        'getTimestampForCallLogEventTarget: Target call not found',
-        target.callId
-      );
+    const row = db.prepare(selectQuery).get(selectParams);
+    if (row == null) {
+      log.warn('getTimestampForCallLogEventTarget: Target call not found');
+      return timestamp;
     }
+    callId = row.callId as string;
+    peerId = row.peerId as AciString;
   }
 
-  return timestamp;
+  const [selectQuery, selectParams] = sql`
+    SELECT messages.sent_at
+    FROM messages
+    WHERE messages.type IS 'call-history'
+      AND messages.conversationId IS ${peerId}
+      AND messages.callId IS ${callId}
+    LIMIT 1
+  `;
+
+  const messageTimestamp = db.prepare(selectQuery).pluck().get(selectParams);
+
+  if (messageTimestamp == null) {
+    log.warn(
+      'getTimestampForCallLogEventTarget: Target call message not found'
+    );
+  }
+
+  return messageTimestamp ?? target.timestamp;
 }
 
-async function markAllCallHistoryReadWithPredicate(
+export function markAllCallHistoryReadSync(
+  db: Database,
   target: CallLogEventTarget,
   inConversation: boolean
-) {
-  const db = await getWritableInstance();
+): void {
+  if (inConversation) {
+    strictAssert(target.peerId, 'peerId is required');
+  }
+
   db.transaction(() => {
     const jsonPatch = JSON.stringify({
       seenStatus: SeenStatus.Seen,
     });
 
-    const timestamp = getTimestampForCallLogEventTarget(db, target);
+    const timestamp = getMessageTimestampForCallLogEventTarget(db, target);
 
     const predicate = inConversation
-      ? sqlFragment`callsHistory.peerId IS ${target.peerId}`
+      ? sqlFragment`messages.conversationId IS ${target.peerId}`
       : sqlFragment`TRUE`;
 
     const [updateQuery, updateParams] = sql`
@@ -3856,14 +3891,10 @@ async function markAllCallHistoryReadWithPredicate(
       SET
         seenStatus = ${SEEN_STATUS_SEEN},
         json = json_patch(json, ${jsonPatch})
-      WHERE id IN (
-        SELECT id FROM messages
-        INNER JOIN callsHistory ON callsHistory.callId IS messages.callId
-        WHERE messages.type IS 'call-history'
-          AND messages.seenStatus IS ${SEEN_STATUS_UNSEEN}
-          AND callsHistory.timestamp <= ${timestamp}
-          AND ${predicate}
-      )
+      WHERE messages.type IS 'call-history'
+        AND ${predicate}
+        AND messages.seenStatus IS ${SEEN_STATUS_UNSEEN}
+        AND messages.sent_at <= ${timestamp}
     `;
 
     db.prepare(updateQuery).run(updateParams);
@@ -3873,14 +3904,16 @@ async function markAllCallHistoryReadWithPredicate(
 async function markAllCallHistoryRead(
   target: CallLogEventTarget
 ): Promise<void> {
-  await markAllCallHistoryReadWithPredicate(target, false);
+  const db = await getWritableInstance();
+  markAllCallHistoryReadSync(db, target, false);
 }
 
 async function markAllCallHistoryReadInConversation(
   target: CallLogEventTarget
 ): Promise<void> {
   strictAssert(target.peerId, 'peerId is required');
-  await markAllCallHistoryReadWithPredicate(target, true);
+  const db = await getWritableInstance();
+  markAllCallHistoryReadSync(db, target, true);
 }
 
 function getCallHistoryGroupDataSync(
@@ -4173,9 +4206,10 @@ async function getCallHistoryGroups(
     .reverse();
 }
 
-async function saveCallHistory(callHistory: CallHistoryDetails): Promise<void> {
-  const db = await getWritableInstance();
-
+export function saveCallHistorySync(
+  db: Database,
+  callHistory: CallHistoryDetails
+): void {
   const [insertQuery, insertParams] = sql`
     INSERT OR REPLACE INTO callsHistory (
       callId,
@@ -4199,6 +4233,11 @@ async function saveCallHistory(callHistory: CallHistoryDetails): Promise<void> {
   `;
 
   db.prepare(insertQuery).run(insertParams);
+}
+
+async function saveCallHistory(callHistory: CallHistoryDetails): Promise<void> {
+  const db = await getWritableInstance();
+  saveCallHistorySync(db, callHistory);
 }
 
 async function hasGroupCallHistoryMessage(
@@ -5353,10 +5392,20 @@ async function clearAllErrorStickerPackAttempts(): Promise<void> {
     `
   ).run();
 }
-async function createOrUpdateSticker(sticker: StickerType): Promise<void> {
-  const db = await getWritableInstance();
-  const { emoji, height, id, isCoverOnly, lastUsed, packId, path, width } =
-    sticker;
+function createOrUpdateStickerSync(db: Database, sticker: StickerType): void {
+  const {
+    emoji,
+    height,
+    id,
+    isCoverOnly,
+    lastUsed,
+    packId,
+    path,
+    width,
+    version,
+    localKey,
+    size,
+  } = sticker;
 
   if (!isNumber(id)) {
     throw new Error(
@@ -5379,7 +5428,10 @@ async function createOrUpdateSticker(sticker: StickerType): Promise<void> {
       lastUsed,
       packId,
       path,
-      width
+      width,
+      version,
+      localKey,
+      size
     ) values (
       $emoji,
       $height,
@@ -5388,7 +5440,10 @@ async function createOrUpdateSticker(sticker: StickerType): Promise<void> {
       $lastUsed,
       $packId,
       $path,
-      $width
+      $width,
+      $version,
+      $localKey,
+      $size
     )
     `
   ).run({
@@ -5400,7 +5455,24 @@ async function createOrUpdateSticker(sticker: StickerType): Promise<void> {
     packId,
     path,
     width,
+    version: version || 1,
+    localKey: localKey || null,
+    size: size || null,
   });
+}
+async function createOrUpdateSticker(sticker: StickerType): Promise<void> {
+  const db = await getWritableInstance();
+  return createOrUpdateStickerSync(db, sticker);
+}
+async function createOrUpdateStickers(
+  stickers: ReadonlyArray<StickerType>
+): Promise<void> {
+  const db = await getWritableInstance();
+  db.transaction(() => {
+    for (const sticker of stickers) {
+      createOrUpdateStickerSync(db, sticker);
+    }
+  })();
 }
 async function updateStickerLastUsed(
   packId: string,

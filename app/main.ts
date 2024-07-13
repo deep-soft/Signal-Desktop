@@ -28,6 +28,8 @@ import {
   shell,
   systemPreferences,
   Notification,
+  safeStorage,
+  protocol as electronProtocol,
 } from 'electron';
 import type { MenuItemConstructorOptions, Settings } from 'electron';
 import { z } from 'zod';
@@ -1583,27 +1585,70 @@ const runSQLReadonlyHandler = async () => {
   throw error;
 };
 
-async function initializeSQL(
-  userDataPath: string
-): Promise<{ ok: true; error: undefined } | { ok: false; error: Error }> {
-  let key: string | undefined;
-  const keyFromConfig = userConfig.get('key');
-  if (typeof keyFromConfig === 'string') {
-    key = keyFromConfig;
-  } else if (keyFromConfig) {
-    getLogger().warn(
-      "initializeSQL: got key from config, but it wasn't a string"
-    );
+function generateSQLKey(): string {
+  getLogger().info(
+    'key/initialize: Generating new encryption key, since we did not find it on disk'
+  );
+  // https://www.zetetic.net/sqlcipher/sqlcipher-api/#key
+  return randomBytes(32).toString('hex');
+}
+
+function getSQLKey(): string {
+  let update = false;
+  const legacyKeyValue = userConfig.get('key');
+  const modernKeyValue = userConfig.get('encryptedKey');
+
+  const isEncryptionAvailable =
+    safeStorage.isEncryptionAvailable() &&
+    (!OS.isLinux() || safeStorage.getSelectedStorageBackend() !== 'basic_text');
+
+  let key: string;
+  if (typeof modernKeyValue === 'string') {
+    if (!isEncryptionAvailable) {
+      throw new Error("Can't decrypt database key");
+    }
+
+    getLogger().info('getSQLKey: decrypting key');
+    const encrypted = Buffer.from(modernKeyValue, 'hex');
+    key = safeStorage.decryptString(encrypted);
+
+    if (legacyKeyValue != null) {
+      getLogger().info('getSQLKey: removing legacy key');
+      userConfig.set('key', undefined);
+    }
+  } else if (typeof legacyKeyValue === 'string') {
+    key = legacyKeyValue;
+    update = isEncryptionAvailable;
+    if (update) {
+      getLogger().info('getSQLKey: migrating key');
+    } else {
+      getLogger().info('getSQLKey: using legacy key');
+    }
+  } else {
+    getLogger().warn("getSQLKey: got key from config, but it wasn't a string");
+    key = generateSQLKey();
+    update = true;
   }
-  if (!key) {
-    getLogger().info(
-      'key/initialize: Generating new encryption key, since we did not find it on disk'
-    );
-    // https://www.zetetic.net/sqlcipher/sqlcipher-api/#key
-    key = randomBytes(32).toString('hex');
+
+  if (!update) {
+    return key;
+  }
+
+  if (isEncryptionAvailable) {
+    getLogger().info('getSQLKey: updating encrypted key in the config');
+    const encrypted = safeStorage.encryptString(key).toString('hex');
+    userConfig.set('encryptedKey', encrypted);
+  } else {
+    getLogger().info('getSQLKey: updating plaintext key in the config');
     userConfig.set('key', key);
   }
 
+  return key;
+}
+
+async function initializeSQL(
+  userDataPath: string
+): Promise<{ ok: true; error: undefined } | { ok: false; error: Error }> {
   sqlInitTimeStart = Date.now();
   try {
     // This should be the first awaited call in this function, otherwise
@@ -1612,7 +1657,7 @@ async function initializeSQL(
     await sql.initialize({
       appVersion: app.getVersion(),
       configDir: userDataPath,
-      key,
+      key: getSQLKey(),
       logger: getLogger(),
     });
   } catch (error: unknown) {
@@ -1773,14 +1818,22 @@ const featuresToDisable = `HardwareMediaKeyHandling,${app.commandLine.getSwitchV
 )}`;
 app.commandLine.appendSwitch('disable-features', featuresToDisable);
 
-// If we don't set this, Desktop will ask for access to keychain/keyring on startup
-app.commandLine.appendSwitch('password-store', 'basic');
-
 // <canvas/> rendering is often utterly broken on Linux when using GPU
 // acceleration.
 if (DISABLE_GPU) {
   app.disableHardwareAcceleration();
 }
+
+// This has to run before the 'ready' event.
+electronProtocol.registerSchemesAsPrivileged([
+  {
+    scheme: 'attachment',
+    privileges: {
+      supportFetchAPI: true,
+      stream: true,
+    },
+  },
+]);
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -1824,8 +1877,6 @@ app.on('ready', async () => {
   );
   await EmojiService.create(resourceService);
 
-  sqlInitPromise = initializeSQL(userDataPath);
-
   if (!resolvedTranslationsLocale) {
     preferredSystemLocales = resolveCanonicalLocales(
       loadPreferredSystemLocales()
@@ -1849,6 +1900,8 @@ app.on('ready', async () => {
       logger: getLogger(),
     });
   }
+
+  sqlInitPromise = initializeSQL(userDataPath);
 
   // First run: configure Signal to minimize to tray. Additionally, on Windows
   // enable auto-start with start-in-tray so that starting from a Desktop icon
@@ -2251,11 +2304,19 @@ async function requestShutdown() {
 function getWindowDebugInfo() {
   const windows = BrowserWindow.getAllWindows();
 
-  return {
-    windowCount: windows.length,
-    mainWindowExists: windows.some(win => win === mainWindow),
-    mainWindowIsFullScreen: mainWindow?.isFullScreen(),
-  };
+  try {
+    return {
+      windowCount: windows.length,
+      mainWindowExists: windows.some(win => win === mainWindow),
+      mainWindowIsFullScreen: mainWindow?.isFullScreen(),
+    };
+  } catch {
+    return {
+      windowCount: 0,
+      mainWindowExists: false,
+      mainWindowIsFullScreen: false,
+    };
+  }
 }
 
 app.on('before-quit', e => {
@@ -2614,11 +2675,6 @@ ipc.handle('DebugLogs.upload', async (_event, content: string) => {
   });
 });
 
-ipc.on('user-config-key', event => {
-  // eslint-disable-next-line no-param-reassign
-  event.returnValue = userConfig.get('key');
-});
-
 ipc.on('get-user-data-path', event => {
   // eslint-disable-next-line no-param-reassign
   event.returnValue = app.getPath('userData');
@@ -2972,18 +3028,27 @@ async function showStickerCreatorWindow() {
 }
 
 if (isTestEnvironment(getEnvironment())) {
+  ipc.on('ci:test-electron:getArgv', event => {
+    // eslint-disable-next-line no-param-reassign
+    event.returnValue = process.argv;
+  });
+
   ipc.handle('ci:test-electron:debug', async (_event, info) => {
     process.stdout.write(`ci:test-electron:debug=${JSON.stringify(info)}\n`);
   });
 
-  ipc.handle('ci:test-electron:done', async (_event, info) => {
-    if (!process.env.TEST_QUIT_ON_COMPLETE) {
-      return;
-    }
-
+  ipc.handle('ci:test-electron:event', async (_event, event) => {
     process.stdout.write(
-      `ci:test-electron:done=${JSON.stringify(info)}\n`,
-      () => app.quit()
+      `ci:test-electron:event=${JSON.stringify(event)}\n`,
+      () => {
+        if (event.type !== 'end') {
+          return;
+        }
+        if (!process.env.TEST_QUIT_ON_COMPLETE) {
+          return;
+        }
+        app.quit();
+      }
     );
   });
 }

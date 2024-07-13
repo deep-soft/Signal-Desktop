@@ -536,11 +536,10 @@ const doGroupCallPeek = ({
 
     log.info(`doGroupCallPeek/${logId}: Found ${peekInfo.deviceCount} devices`);
 
+    const joinState = isGroupOrAdhocCallState(existingCall)
+      ? existingCall.joinState
+      : null;
     if (callMode === CallMode.Group) {
-      const joinState = isGroupOrAdhocCallState(existingCall)
-        ? existingCall.joinState
-        : null;
-
       try {
         await calling.updateCallHistoryForGroupCallOnPeek(
           conversationId,
@@ -555,6 +554,12 @@ const doGroupCallPeek = ({
       }
 
       dispatch(updateLastMessage(conversationId));
+    } else if (callMode === CallMode.Adhoc) {
+      await calling.updateCallHistoryForAdhocCall(
+        conversationId,
+        joinState,
+        peekInfo
+      );
     }
 
     const formattedPeekInfo = calling.formatGroupCallPeekInfoForRedux(peekInfo);
@@ -574,6 +579,7 @@ const doGroupCallPeek = ({
 
 const ACCEPT_CALL_PENDING = 'calling/ACCEPT_CALL_PENDING';
 const APPROVE_USER = 'calling/APPROVE_USER';
+const BLOCK_CLIENT = 'calling/BLOCK_CLIENT';
 const CANCEL_CALL = 'calling/CANCEL_CALL';
 const CANCEL_INCOMING_GROUP_CALL_RING =
   'calling/CANCEL_INCOMING_GROUP_CALL_RING';
@@ -781,6 +787,11 @@ export type PendingUserActionPayloadType = ReadonlyDeep<{
   serviceId: ServiceIdString | undefined;
 }>;
 
+export type BatchUserActionPayloadType = ReadonlyDeep<{
+  action: 'approve' | 'deny';
+  serviceIds: Array<ServiceIdString>;
+}>;
+
 // eslint-disable-next-line local-rules/type-alias-readonlydeep
 type RefreshIODevicesActionType = {
   type: 'calling/REFRESH_IO_DEVICES';
@@ -799,6 +810,10 @@ type RemoteVideoChangeActionType = ReadonlyDeep<{
 
 type RemoveClientActionType = ReadonlyDeep<{
   type: 'calling/REMOVE_CLIENT';
+}>;
+
+type BlockClientActionType = ReadonlyDeep<{
+  type: 'calling/BLOCK_CLIENT';
 }>;
 
 type ReturnToActiveCallActionType = ReadonlyDeep<{
@@ -995,6 +1010,54 @@ function denyUser(
     dispatch({ type: DENY_USER });
   };
 }
+
+function batchUserAction(
+  payload: BatchUserActionPayloadType
+): ThunkAction<void, RootStateType, unknown, ShowToastActionType> {
+  return (dispatch, getState) => {
+    const activeCall = getActiveCall(getState().calling);
+    if (!activeCall || !isGroupOrAdhocCallMode(activeCall.callMode)) {
+      log.warn(
+        'batchUserAction: Trying to do pending user without active group or adhoc call'
+      );
+      return;
+    }
+
+    const { action, serviceIds } = payload;
+    let actionFn;
+    if (action === 'approve') {
+      actionFn = calling.approveUser;
+    } else if (action === 'deny') {
+      actionFn = calling.denyUser;
+    } else {
+      throw missingCaseError(action);
+    }
+
+    let count = 0;
+    for (const serviceId of serviceIds) {
+      if (!isAciString(serviceId)) {
+        log.warn(
+          'batchUserAction: Trying to do user action without valid aci serviceid'
+        );
+        continue;
+      }
+
+      actionFn.call(calling, activeCall.conversationId, serviceId);
+      count += 1;
+    }
+
+    if (count > 0 && action === 'approve') {
+      dispatch({
+        type: SHOW_TOAST,
+        payload: {
+          toastType: ToastType.AddedUsersToCall,
+          parameters: { count },
+        },
+      });
+    }
+  };
+}
+
 function removeClient(
   payload: RemoveClientType
 ): ThunkAction<void, RootStateType, unknown, RemoveClientActionType> {
@@ -1002,13 +1065,30 @@ function removeClient(
     const activeCall = getActiveCall(getState().calling);
     if (!activeCall || !isGroupOrAdhocCallMode(activeCall.callMode)) {
       log.warn(
-        'approveUser: Trying to approve pending user without active group or adhoc call'
+        'removeClient: Trying to remove client without active group or adhoc call'
       );
       return;
     }
 
     calling.removeClient(activeCall.conversationId, payload.demuxId);
     dispatch({ type: REMOVE_CLIENT });
+  };
+}
+
+function blockClient(
+  payload: RemoveClientType
+): ThunkAction<void, RootStateType, unknown, BlockClientActionType> {
+  return (dispatch, getState) => {
+    const activeCall = getActiveCall(getState().calling);
+    if (!activeCall || !isGroupOrAdhocCallMode(activeCall.callMode)) {
+      log.warn(
+        'blockClient: Trying to block client without active group or adhoc call'
+      );
+      return;
+    }
+
+    calling.blockClient(activeCall.conversationId, payload.demuxId);
+    dispatch({ type: BLOCK_CLIENT });
   };
 }
 
@@ -2274,6 +2354,8 @@ function switchFromPresentationView(): SwitchFromPresentationViewActionType {
 export const actions = {
   acceptCall,
   approveUser,
+  batchUserAction,
+  blockClient,
   callStateChange,
   cancelCall,
   cancelIncomingGroupCallRing,

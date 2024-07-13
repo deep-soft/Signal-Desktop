@@ -20,6 +20,7 @@ import { AVATAR_COLOR_COUNT, AvatarColors } from '../types/Colors';
 import { Button } from './Button';
 import { Modal } from './Modal';
 import { Theme } from '../util/theme';
+import { ConfirmationDialog } from './ConfirmationDialog';
 
 const MAX_UNKNOWN_AVATARS_COUNT = 3;
 
@@ -35,12 +36,14 @@ export type PropsType = {
   readonly callLink: CallLinkType;
   readonly i18n: LocalizerType;
   readonly isCallLinkAdmin: boolean;
+  readonly isUnknownContactDiscrete: boolean;
   readonly ourServiceId: ServiceIdString | undefined;
   readonly participants: Array<ParticipantType>;
   readonly onClose: () => void;
   readonly onCopyCallLink: () => void;
   readonly onShareCallLinkViaSignal: () => void;
-  readonly removeClient: ((payload: RemoveClientType) => void) | null;
+  readonly removeClient: (payload: RemoveClientType) => void;
+  readonly blockClient: (payload: RemoveClientType) => void;
   readonly showContactModal: (
     contactId: string,
     conversationId?: string
@@ -77,7 +80,7 @@ function UnknownContacts({
       return (
         <Avatar
           acceptedMessageRequest={participant.acceptedMessageRequest}
-          avatarPath={participant.avatarPath}
+          avatarUrl={participant.avatarUrl}
           badge={undefined}
           className="CallingAdhocCallInfo__UnknownContactAvatar"
           color={AvatarColors[colorIndex]}
@@ -143,8 +146,10 @@ function UnknownContacts({
 export function CallingAdhocCallInfo({
   i18n,
   isCallLinkAdmin,
+  isUnknownContactDiscrete,
   ourServiceId,
   participants,
+  blockClient,
   onClose,
   onCopyCallLink,
   onShareCallLinkViaSignal,
@@ -153,6 +158,11 @@ export function CallingAdhocCallInfo({
 }: PropsType): JSX.Element | null {
   const [isUnknownContactDialogVisible, setIsUnknownContactDialogVisible] =
     React.useState(false);
+  const [removeClientDialogState, setRemoveClientDialogState] = React.useState<{
+    demuxId: number;
+    name: string;
+  } | null>(null);
+
   const hideUnknownContactDialog = React.useCallback(
     () => setIsUnknownContactDialogVisible(false),
     [setIsUnknownContactDialogVisible]
@@ -162,18 +172,20 @@ export function CallingAdhocCallInfo({
     onShareCallLinkViaSignal();
   }, [onClose, onShareCallLinkViaSignal]);
 
-  const [knownParticipants, unknownParticipants] = React.useMemo<
+  const [visibleParticipants, unknownParticipants] = React.useMemo<
     [Array<ParticipantType>, Array<ParticipantType>]
   >(
     () =>
-      partition(participants, (participant: ParticipantType) =>
-        Boolean(participant.titleNoDefault)
+      partition(
+        participants,
+        (participant: ParticipantType) =>
+          isUnknownContactDiscrete || Boolean(participant.titleNoDefault)
       ),
-    [participants]
+    [isUnknownContactDiscrete, participants]
   );
   const sortedParticipants = React.useMemo<Array<ParticipantType>>(
-    () => sortByTitle(knownParticipants),
-    [knownParticipants]
+    () => sortByTitle(visibleParticipants),
+    [visibleParticipants]
   );
 
   const renderParticipant = React.useCallback(
@@ -199,7 +211,7 @@ export function CallingAdhocCallInfo({
         <div className="module-calling-participants-list__avatar-and-name">
           <Avatar
             acceptedMessageRequest={participant.acceptedMessageRequest}
-            avatarPath={participant.avatarPath}
+            avatarUrl={participant.avatarUrl}
             badge={undefined}
             color={participant.color}
             conversationType="direct"
@@ -256,7 +268,6 @@ export function CallingAdhocCallInfo({
           )}
         />
         {isCallLinkAdmin &&
-        removeClient &&
         participant.demuxId &&
         !(ourServiceId && participant.serviceId === ourServiceId) ? (
           <button
@@ -273,7 +284,10 @@ export function CallingAdhocCallInfo({
 
               event.stopPropagation();
               event.preventDefault();
-              removeClient({ demuxId: participant.demuxId });
+              setRemoveClientDialogState({
+                demuxId: participant.demuxId,
+                name: participant.title,
+              });
             }}
             type="button"
           />
@@ -285,13 +299,45 @@ export function CallingAdhocCallInfo({
       isCallLinkAdmin,
       onClose,
       ourServiceId,
-      removeClient,
+      setRemoveClientDialogState,
       showContactModal,
     ]
   );
 
   return (
     <>
+      {removeClientDialogState != null ? (
+        <ConfirmationDialog
+          dialogName="CallingAdhocCallInfo.removeClientDialog"
+          moduleClassName="CallingAdhocCallInfo__RemoveClientDialog"
+          actions={[
+            {
+              action: () =>
+                blockClient({ demuxId: removeClientDialogState.demuxId }),
+              style: 'negative',
+              text: i18n(
+                'icu:CallingAdhocCallInfo__RemoveClientDialogButton--block'
+              ),
+            },
+            {
+              action: () =>
+                removeClient({ demuxId: removeClientDialogState.demuxId }),
+              style: 'negative',
+              text: i18n(
+                'icu:CallingAdhocCallInfo__RemoveClientDialogButton--remove'
+              ),
+            },
+          ]}
+          cancelText={i18n('icu:cancel')}
+          i18n={i18n}
+          theme={Theme.Dark}
+          onClose={() => setRemoveClientDialogState(null)}
+        >
+          {i18n('icu:CallingAdhocCallInfo__RemoveClientDialogBody', {
+            name: removeClientDialogState.name,
+          })}
+        </ConfirmationDialog>
+      ) : null}
       {isUnknownContactDialogVisible ? (
         <Modal
           modalName="CallingAdhocCallInfo.UnknownContactInfo"
@@ -335,7 +381,9 @@ export function CallingAdhocCallInfo({
             {unknownParticipants.length > 0 && (
               <UnknownContacts
                 i18n={i18n}
-                isInAdditionToKnownContacts={Boolean(knownParticipants.length)}
+                isInAdditionToKnownContacts={Boolean(
+                  visibleParticipants.length
+                )}
                 participants={unknownParticipants}
                 showUnknownContactDialog={() =>
                   setIsUnknownContactDialogVisible(true)

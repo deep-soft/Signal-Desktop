@@ -123,6 +123,14 @@
     "messageformat": "The version of your database does not match this version of Signal. Make sure you are opening the newest version of Signal on your computer.",
     "description": "Text in a popup shown if the app cannot start because the user started an older version of Signal"
   },
+  "icu:databaseError__recover__detail": {
+    "messageformat": "A database error occurred. You can copy the error and contact Signal support to help fix the issue. If you need to use Signal right away, you can attempt to recover your data.\n\nContact support by visiting: {link}",
+    "description": "(Deleted 2024/07/11) Description shown in a popup if the database key cannot be read, but can be recovered"
+  },
+  "icu:databaseError__recover__button": {
+    "messageformat": "Recover data",
+    "description": "(Deleted 2024/07/11) Text of a button shown in a popup if the database cannot start up properly; allows user to attempt data recovery of their database"
+  },
   "icu:mainMenuFile": {
     "messageformat": "&File",
     "description": "The label that is used for the File menu in the program main menu. The '&' indicates that the following letter will be used as the keyboard 'shortcut letter' for accessing the menu with the Alt-<letter> combination."
@@ -877,7 +885,7 @@
   },
   "icu:callingDeveloperToolsDescription": {
     "messageformat": "This window is used during development to display diagnostics from ongoing calls.",
-    "description": "(Deleted 2024/05/30) Description displayed for calling developer tools window"
+    "description": "Description displayed for calling developer tools window"
   },
   "icu:speech": {
     "messageformat": "Speech",
@@ -1318,6 +1326,10 @@
     "messageformat": "All messages in this chat will be deleted from this device. You can still search for this chat after you delete messages.",
     "description": "Description for confirmation modal to delete all messages in a conversation"
   },
+  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
+    "messageformat": "All messages in this chat will be deleted from all your devices. You can still search for this chat after you delete messages.",
+    "description": "Description for confirmation modal to delete all messages in a conversation"
+  },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "Leave group",
     "description": "This is a button to leave a group"
@@ -1484,7 +1496,27 @@
   },
   "icu:Install__qr-failed-load": {
     "messageformat": "The QR code couldn't load. Check your internet and try again. <retry>Retry</retry>",
-    "description": "Shown on the install screen if the QR code fails to load"
+    "description": "(Deleted 2024/07/01) Shown on the install screen if the QR code fails to load"
+  },
+  "icu:Install__qr-failed-load__error--timeout": {
+    "messageformat": "The QR code couldn't load. Check your connection and try again.",
+    "description": "Shown on the install screen if the QR code fails to load due to connection timeout"
+  },
+  "icu:Install__qr-failed-load__error--unknown": {
+    "messageformat": "<paragraph>An unexpected error occurred.</paragraph><paragraph>Please try again.</paragraph>",
+    "description": "Shown on the install screen if the QR code fails to load due to an unknown error"
+  },
+  "icu:Install__qr-failed-load__error--network": {
+    "messageformat": "Signal cannot link this device using your current network.",
+    "description": "Shown on the install screen if the QR code fails to load due to a network error"
+  },
+  "icu:Install__qr-failed-load__retry": {
+    "messageformat": "Retry",
+    "description": "Text of the button shown on the install screen if the QR code fails to load"
+  },
+  "icu:Install__qr-failed-load__get-help": {
+    "messageformat": "Get help",
+    "description": "Text of the link to support page shown on the install screen if the QR code fails to load"
   },
   "icu:Install__support-link": {
     "messageformat": "Need help?",
@@ -1709,9 +1741,45 @@
     "messageformat": "Deny join request",
     "description": "Tooltip label for check mark button to deny a user's request to join a call."
   },
+  "icu:CallingPendingParticipants__ApproveAll": {
+    "messageformat": "Approve all",
+    "description": "Button to approve all pending requests to join a call."
+  },
+  "icu:CallingPendingParticipants__DenyAll": {
+    "messageformat": "Deny all",
+    "description": "Button to deny all pending requests to join a call."
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogTitle--ApproveAll": {
+    "messageformat": "Approve {count, plural, one {# request} other {# requests}}?",
+    "description": "Title of confirmation dialog when approving all pending requests to join a call."
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogTitle--DenyAll": {
+    "messageformat": "Deny {count, plural, one {# request} other {# requests}}?",
+    "description": "Title of confirmation dialog when approving all pending requests to join a call."
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogBody--ApproveAll": {
+    "messageformat": "{count, plural, one {# person} other {# people}} will be added to the call.",
+    "description": "Title of confirmation dialog when approving all pending requests to join a call."
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogBody--DenyAll": {
+    "messageformat": "{count, plural, one {# person} other {# people}} will not be added to the call.",
+    "description": "Title of confirmation dialog when denying all pending requests to join a call."
+  },
   "icu:CallingPendingParticipants__RequestsToJoin": {
     "messageformat": "{count, plural, one {# request} other {# requests}} to join the call",
     "description": "Shown in the call pending join request list to describe how many people are requesting to join"
+  },
+  "icu:CallingPendingParticipants__WouldLikeToJoin": {
+    "messageformat": "Would like to join...",
+    "description": "Participant info text in the call pending join requests compact list, visible only to call admins. Indicates that the participant would like to join the call and is requesting action."
+  },
+  "icu:CallingPendingParticipants__AdditionalRequests": {
+    "messageformat": "{count, plural, one {+# request} other {+# requests}}",
+    "description": "Button text in the call pending join requests compact list. When clicked the list expands to the full list"
+  },
+  "icu:CallingPendingParticipants__Toast--added-users-to-call": {
+    "messageformat": "{count, plural, one {# person} other {# people}} added to the call",
+    "description": "Shown in toast after batch approving requests to join a call"
   },
   "icu:CallingRaisedHandsList__Title": {
     "messageformat": "{count, plural, one {# raised hand} other {# raised hands}}",
@@ -3689,6 +3757,18 @@
   "icu:CallingAdhocCallInfo__RemoveClient": {
     "messageformat": "Remove this person from the call",
     "description": "Button in the in-call info popup for call link calls showing all participants. The action is to remove the participant from the call."
+  },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogBody": {
+    "messageformat": "Remove {name} from the call?",
+    "description": "Info text in confirmation dialog when removing or blocking someone from an ongoing call for a call link."
+  },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogButton--remove": {
+    "messageformat": "Remove",
+    "description": "Button in confirmation dialog when removing or blocking someone from an ongoing call for a call link."
+  },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogButton--block": {
+    "messageformat": "Block from call",
+    "description": "Button in confirmation dialog when removing or blocking someone from an ongoing call for a call link."
   },
   "icu:CallingAdhocCallInfo__UnknownContactLabel": {
     "messageformat": "{count, plural, one {# person} other {# people}}",
@@ -7287,20 +7367,20 @@
     "description": "Release notes for releases that only include bug fixes",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.14--0": {
-    "messageformat": "If you're tired of losing your voice, we fixed a bug where switching to another chat or application while recording a voice message could cause that message to disappear. In-progress voice messages are now saved as drafts so you can review and send them when you return to the chat.",
-    "description": "(Deleted 2024/06/27) Release notes for version 7.14"
-  },
   "icu:WhatsNew__v7.15--0": {
     "messageformat": "Now you can forward contact cards that were sent from a mobile device. Share the take-out number for your favorite restaurant without taking out your phone.",
-    "description": "Release notes for version 7.15"
+    "description": "(Deleted 2024/07/02) Release notes for version 7.15"
   },
   "icu:WhatsNew__v7.15--1": {
     "messageformat": "New support for high-resolution \"jumbomoji\" adds larger-than-life detail to large emoji, especially on big screens with small pixels.",
-    "description": "Release notes for version 7.15"
+    "description": "(Deleted 2024/07/02) Release notes for version 7.15"
   },
   "icu:WhatsNew__v7.15--2": {
     "messageformat": "We also updated the Sticker Creator to support the latest Emoji, so today's stickers are no longer stuck with yesterday's Unicode standard.",
-    "description": "Release notes for version 7.15"
+    "description": "(Deleted 2024/07/02) Release notes for version 7.15"
+  },
+  "icu:WhatsNew__v7.16--0": {
+    "messageformat": "We fixed a bug that prevented the button to minimize a call from appearing while that call was reconnecting. Now you don't need to feel disconnected from previous chats even if the internet is feeling disconnected.",
+    "description": "Release notes for version 7.16"
   }
 }
