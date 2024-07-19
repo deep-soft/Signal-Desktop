@@ -180,6 +180,8 @@ nativeThemeNotifier.initialize();
 
 let appStartInitialSpellcheckSetting = true;
 
+let macInitialOpenUrlRoute: ParsedSignalRoute | undefined;
+
 const cliParser = createParser({
   allowUnknown: true,
   options: [
@@ -282,10 +284,19 @@ if (!process.mas) {
       return true;
     });
 
+    // This event is received in macOS packaged builds.
     app.on('open-url', (event, incomingHref) => {
       event.preventDefault();
       const route = parseSignalRoute(incomingHref);
+
       if (route != null) {
+        // When the app isn't open and you click a signal link to open the app, then
+        // this event will emit before mainWindow is ready. We save the value for later.
+        if (mainWindow == null || !mainWindow.webContents) {
+          macInitialOpenUrlRoute = route;
+          return;
+        }
+
         handleSignalRoute(route);
       }
     });
@@ -662,10 +673,19 @@ async function createWindow() {
   const usePreloadBundle =
     !isTestEnvironment(getEnvironment()) || forcePreloadBundle;
 
+  const primaryDisplay = screen.getPrimaryDisplay();
+  const { width: maxWidth, height: maxHeight } = primaryDisplay.workAreaSize;
+  const width = windowConfig
+    ? Math.min(windowConfig.width, maxWidth)
+    : DEFAULT_WIDTH;
+  const height = windowConfig
+    ? Math.min(windowConfig.height, maxHeight)
+    : DEFAULT_HEIGHT;
+
   const windowOptions: Electron.BrowserWindowConstructorOptions = {
     show: false,
-    width: DEFAULT_WIDTH,
-    height: DEFAULT_HEIGHT,
+    width,
+    height,
     minWidth: MIN_WIDTH,
     minHeight: MIN_HEIGHT,
     autoHideMenuBar: false,
@@ -690,7 +710,7 @@ async function createWindow() {
       disableBlinkFeatures: 'Accelerated2dCanvas,AcceleratedSmallCanvases',
     },
     icon: windowIcon,
-    ...pick(windowConfig, ['autoHideMenuBar', 'width', 'height', 'x', 'y']),
+    ...pick(windowConfig, ['autoHideMenuBar', 'x', 'y']),
   };
 
   if (!isNumber(windowOptions.width) || windowOptions.width < MIN_WIDTH) {
@@ -870,15 +890,18 @@ async function createWindow() {
      * if the user is in fullscreen mode and closes the window, not the
      * application, we need them leave fullscreen first before closing it to
      * prevent a black screen.
+     * Also check for mainWindow because it might become undefined while
+     * waiting for close confirmation.
      *
      * issue: https://github.com/signalapp/Signal-Desktop/issues/4348
      */
-
-    if (mainWindow.isFullScreen()) {
-      mainWindow.once('leave-full-screen', () => mainWindow?.hide());
-      mainWindow.setFullScreen(false);
-    } else {
-      mainWindow.hide();
+    if (mainWindow) {
+      if (mainWindow.isFullScreen()) {
+        mainWindow.once('leave-full-screen', () => mainWindow?.hide());
+        mainWindow.setFullScreen(false);
+      } else {
+        mainWindow.hide();
+      }
     }
 
     // On Mac, or on other platforms when the tray icon is in use, the window
@@ -886,7 +909,11 @@ async function createWindow() {
     const usingTrayIcon = shouldMinimizeToSystemTray(
       await systemTraySettingCache.get()
     );
-    if (!windowState.shouldQuit() && (usingTrayIcon || OS.isMacOS())) {
+    if (
+      mainWindow &&
+      !windowState.shouldQuit() &&
+      (usingTrayIcon || OS.isMacOS())
+    ) {
       if (usingTrayIcon) {
         const shownTrayNotice = ephemeralConfig.get('shown-tray-notice');
         if (shownTrayNotice) {
@@ -1084,11 +1111,16 @@ async function readyForUpdates() {
 
   isReadyForUpdates = true;
 
-  // First, install requested sticker pack
+  // First, handle requested signal URLs
   const incomingHref = maybeGetIncomingSignalRoute(process.argv);
   if (incomingHref) {
     handleSignalRoute(incomingHref);
+  } else if (macInitialOpenUrlRoute) {
+    handleSignalRoute(macInitialOpenUrlRoute);
   }
+
+  // Discard value even if we don't handle a saved URL.
+  macInitialOpenUrlRoute = undefined;
 
   // Second, start checking for app updates
   try {
@@ -1638,6 +1670,7 @@ function getSQLKey(): string {
     getLogger().info('getSQLKey: updating encrypted key in the config');
     const encrypted = safeStorage.encryptString(key).toString('hex');
     userConfig.set('encryptedKey', encrypted);
+    userConfig.set('key', undefined);
   } else {
     getLogger().info('getSQLKey: updating plaintext key in the config');
     userConfig.set('key', key);
@@ -1650,6 +1683,7 @@ async function initializeSQL(
   userDataPath: string
 ): Promise<{ ok: true; error: undefined } | { ok: false; error: Error }> {
   sqlInitTimeStart = Date.now();
+
   try {
     // This should be the first awaited call in this function, otherwise
     // `sql.sqlCall` will throw an uninitialized error instead of waiting for
@@ -1706,9 +1740,11 @@ const onDatabaseError = async (error: string) => {
   } else {
     // Otherwise, this is some other kind of DB error, let's give them the option to
     // delete.
-    messageDetail = i18n('icu:databaseError__detail', {
-      link: SIGNAL_SUPPORT_LINK,
-    });
+    messageDetail = i18n(
+      'icu:databaseError__detail',
+      { link: SIGNAL_SUPPORT_LINK },
+      { bidi: 'strip' }
+    );
 
     buttons.push(i18n('icu:deleteAndRestart'));
     deleteAllDataButtonIndex = 1;

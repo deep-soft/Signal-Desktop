@@ -13,6 +13,7 @@ import type { LocalizerType, ThemeType } from '../types/Util';
 import type { ErrorDialogAudioRecorderType } from '../types/AudioRecorder';
 import { RecordingState } from '../types/AudioRecorder';
 import type { imageToBlurHash } from '../util/imageToBlurHash';
+import { dropNull } from '../util/dropNull';
 import { Spinner } from './Spinner';
 import type {
   Props as EmojiButtonProps,
@@ -358,8 +359,26 @@ export const CompositionArea = memo(function CompositionArea({
   const draftEditMessageBody = draftEditMessage?.body;
   const editedMessageId = draftEditMessage?.targetMessageId;
 
+  const canSend =
+    // Text or link preview edited
+    dirty ||
+    // Quote of edited message changed
+    (draftEditMessage != null &&
+      dropNull(draftEditMessage.quote?.messageId) !==
+        dropNull(quotedMessageId)) ||
+    // Not edit message, but has attachments
+    (draftEditMessage == null && draftAttachments.length !== 0);
+
   const handleSubmit = useCallback(
-    (message: string, bodyRanges: DraftBodyRanges, timestamp: number) => {
+    (
+      message: string,
+      bodyRanges: DraftBodyRanges,
+      timestamp: number
+    ): boolean => {
+      if (!canSend) {
+        return false;
+      }
+
       emojiButtonRef.current?.close();
 
       if (editedMessageId) {
@@ -380,9 +399,12 @@ export const CompositionArea = memo(function CompositionArea({
         });
       }
       setLarge(false);
+
+      return true;
     },
     [
       conversationId,
+      canSend,
       draftAttachments,
       editedMessageId,
       quotedMessageSentAt,
@@ -592,6 +614,7 @@ export const CompositionArea = memo(function CompositionArea({
         <button
           aria-label={i18n('icu:CompositionArea__edit-action--send')}
           className="CompositionArea__edit-button CompositionArea__edit-button--accept"
+          disabled={!canSend}
           onClick={() => inputApiRef.current?.submit()}
           type="button"
         />

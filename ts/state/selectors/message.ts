@@ -58,7 +58,10 @@ import type { AssertProps } from '../../types/Util';
 import type { LinkPreviewType } from '../../types/message/LinkPreviews';
 import { getMentionsRegex } from '../../types/Message';
 import { SignalService as Proto } from '../../protobuf';
-import type { AttachmentType } from '../../types/Attachment';
+import type {
+  AttachmentForUIType,
+  AttachmentType,
+} from '../../types/Attachment';
 import {
   isVoiceMessage,
   canBeDownloaded,
@@ -774,7 +777,7 @@ export const getPropsForMessage = (
     status: getMessagePropStatus(message, ourConversationId),
     text: message.body,
     textDirection: getTextDirection(message.body),
-    timestamp: getMessageSentTimestamp(message, { includeEdits: true, log }),
+    timestamp: getMessageSentTimestamp(message, { includeEdits: false, log }),
     receivedAtMS: message.received_at_ms,
   };
 };
@@ -1821,12 +1824,13 @@ export function getPropsForEmbeddedContact(
 
 export function getPropsForAttachment(
   attachment: AttachmentType
-): AttachmentType | undefined {
+): AttachmentForUIType | undefined {
   if (!attachment) {
     return undefined;
   }
 
-  const { path, pending, size, screenshot, thumbnail } = attachment;
+  const { path, pending, size, screenshot, thumbnail, thumbnailFromBackup } =
+    attachment;
 
   return {
     ...attachment,
@@ -1834,6 +1838,12 @@ export function getPropsForAttachment(
     isVoiceMessage: isVoiceMessage(attachment),
     pending,
     url: path ? getLocalAttachmentUrl(attachment) : undefined,
+    thumbnailFromBackup: thumbnailFromBackup?.path
+      ? {
+          ...thumbnailFromBackup,
+          url: getLocalAttachmentUrl(thumbnailFromBackup),
+        }
+      : undefined,
     screenshot: screenshot?.path
       ? {
           ...screenshot,

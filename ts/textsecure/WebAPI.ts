@@ -537,7 +537,7 @@ function makeHTTPError(
 
 const URL_CALLS = {
   accountExistence: 'v1/accounts/account',
-  attachmentUploadForm: 'v3/attachments/form/upload',
+  attachmentUploadForm: 'v4/attachments/form/upload',
   attestation: 'v1/attestation',
   batchIdentityCheck: 'v1/profile/identity_check/batch',
   challenge: 'v1/challenge',
@@ -982,14 +982,16 @@ export type ReportMessageOptionsType = Readonly<{
   token?: string;
 }>;
 
-const attachmentV3Response = z.object({
+const attachmentUploadFormResponse = z.object({
   cdn: z.literal(2).or(z.literal(3)),
   key: z.string(),
   headers: z.record(z.string()),
   signedUploadLocation: z.string(),
 });
 
-export type AttachmentV3ResponseType = z.infer<typeof attachmentV3Response>;
+export type AttachmentUploadFormResponseType = z.infer<
+  typeof attachmentUploadFormResponse
+>;
 
 export type ServerKeyCountType = {
   count: number;
@@ -1214,7 +1216,7 @@ export type WebAPIType = {
       timeout?: number;
     };
   }) => Promise<Readable>;
-  getAttachmentUploadForm: () => Promise<AttachmentV3ResponseType>;
+  getAttachmentUploadForm: () => Promise<AttachmentUploadFormResponseType>;
   getAvatar: (path: string) => Promise<Uint8Array>;
   getHasSubscription: (subscriberId: Uint8Array) => Promise<boolean>;
   getGroup: (options: GroupCredentialsType) => Promise<Proto.IGroupResponse>;
@@ -1303,8 +1305,9 @@ export type WebAPIType = {
     elements: VerifyServiceIdRequestType
   ) => Promise<VerifyServiceIdResponseType>;
   putEncryptedAttachment: (
-    encryptedBin: Uint8Array | (() => Readable),
-    uploadForm: AttachmentV3ResponseType
+    encryptedBin: (start: number, end?: number) => Readable,
+    encryptedSize: number,
+    uploadForm: AttachmentUploadFormResponseType
   ) => Promise<void>;
   putProfile: (
     jsonData: ProfileRequestDataType
@@ -1368,17 +1371,17 @@ export type WebAPIType = {
     }
   ) => Promise<MultiRecipient200ResponseType>;
   createFetchForAttachmentUpload(
-    attachment: AttachmentV3ResponseType
+    attachment: AttachmentUploadFormResponseType
   ): FetchFunctionType;
   getBackupInfo: (
     headers: BackupPresentationHeadersType
   ) => Promise<GetBackupInfoResponseType>;
   getBackupUploadForm: (
     headers: BackupPresentationHeadersType
-  ) => Promise<AttachmentV3ResponseType>;
+  ) => Promise<AttachmentUploadFormResponseType>;
   getBackupMediaUploadForm: (
     headers: BackupPresentationHeadersType
-  ) => Promise<AttachmentV3ResponseType>;
+  ) => Promise<AttachmentUploadFormResponseType>;
   refreshBackup: (headers: BackupPresentationHeadersType) => Promise<void>;
   getBackupCredentials: (
     options: GetBackupCredentialsOptionsType
@@ -2769,14 +2772,14 @@ export function initialize({
         responseType: 'json',
       });
 
-      return attachmentV3Response.parse(res);
+      return attachmentUploadFormResponse.parse(res);
     }
 
     function createFetchForAttachmentUpload({
       signedUploadLocation,
       headers: uploadHeaders,
       cdn,
-    }: AttachmentV3ResponseType): FetchFunctionType {
+    }: AttachmentUploadFormResponseType): FetchFunctionType {
       strictAssert(cdn === 3, 'Fetch can only be created for CDN 3');
       const { origin: expectedOrigin } = new URL(signedUploadLocation);
 
@@ -2820,7 +2823,7 @@ export function initialize({
         responseType: 'json',
       });
 
-      return attachmentV3Response.parse(res);
+      return attachmentUploadFormResponse.parse(res);
     }
 
     async function refreshBackup(headers: BackupPresentationHeadersType) {
@@ -3520,7 +3523,7 @@ export function initialize({
     }
 
     async function getAttachmentUploadForm() {
-      return attachmentV3Response.parse(
+      return attachmentUploadFormResponse.parse(
         await _ajax({
           call: 'attachmentUploadForm',
           httpType: 'GET',
@@ -3530,8 +3533,9 @@ export function initialize({
     }
 
     async function putEncryptedAttachment(
-      encryptedBin: Uint8Array | (() => Readable),
-      uploadForm: AttachmentV3ResponseType
+      encryptedBin: (start: number, end?: number) => Readable,
+      encryptedSize: number,
+      uploadForm: AttachmentUploadFormResponseType
     ) {
       const { signedUploadLocation, headers } = uploadForm;
 
@@ -3558,24 +3562,81 @@ export function initialize({
       const uploadLocation = uploadResponse.headers.get('location');
       strictAssert(
         uploadLocation,
-        'attachment v3 response header has no location'
+        'attachment upload form header has no location'
       );
 
-      // This is going to the CDN, not the service, so we use _outerAjax
-      await _outerAjax(uploadLocation, {
-        certificateAuthority,
-        proxyUrl,
-        timeout: 0,
-        type: 'PUT',
-        version,
-        data: encryptedBin,
-        redactUrl: () => {
-          const tmp = new URL(uploadLocation);
-          tmp.search = '';
-          tmp.pathname = '';
-          return `${tmp}[REDACTED]`;
-        },
-      });
+      const redactUrl = () => {
+        const tmp = new URL(uploadLocation);
+        tmp.search = '';
+        tmp.pathname = '';
+        return `${tmp}[REDACTED]`;
+      };
+
+      const MAX_RETRIES = 10;
+      for (
+        let start = 0, retries = 0;
+        start < encryptedSize && retries < MAX_RETRIES;
+        retries += 1
+      ) {
+        const logId = `putEncryptedAttachment(attempt=${retries})`;
+
+        if (retries !== 0) {
+          log.warn(`${logId}: resuming from ${start}`);
+        }
+
+        try {
+          // This is going to the CDN, not the service, so we use _outerAjax
+          // eslint-disable-next-line no-await-in-loop
+          await _outerAjax(uploadLocation, {
+            disableRetries: true,
+            certificateAuthority,
+            proxyUrl,
+            timeout: 0,
+            type: 'PUT',
+            version,
+            headers: {
+              'Content-Range': `bytes ${start}-*/${encryptedSize}`,
+            },
+            data: () => encryptedBin(start),
+            redactUrl,
+          });
+
+          if (retries !== 0) {
+            log.warn(`${logId}: Attachment upload succeeded`);
+          }
+          return;
+        } catch (error) {
+          log.warn(
+            `${logId}: Failed to upload attachment chunk: ${toLogFormat(error)}`
+          );
+        }
+
+        // eslint-disable-next-line no-await-in-loop
+        const result: BytesWithDetailsType = await _outerAjax(uploadLocation, {
+          certificateAuthority,
+          proxyUrl,
+          type: 'PUT',
+          version,
+          headers: {
+            'Content-Range': `bytes */${encryptedSize}`,
+          },
+          data: new Uint8Array(0),
+          redactUrl,
+          responseType: 'byteswithdetails',
+        });
+        const { response } = result;
+        strictAssert(response.status === 308, 'Invalid server response');
+        const range = response.headers.get('range');
+        if (range != null) {
+          const match = range.match(/^bytes=0-(\d+)$/);
+          strictAssert(match != null, `Invalid range header: ${range}`);
+          start = parseInt(match[1], 10);
+        } else {
+          log.warn(`${logId}: No range header`);
+        }
+      }
+
+      throw new Error('Upload failed');
     }
 
     function getHeaderPadding() {
