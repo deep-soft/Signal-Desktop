@@ -5,6 +5,7 @@ import Long from 'long';
 import { join } from 'path';
 import * as sinon from 'sinon';
 import { BackupLevel } from '@signalapp/libsignal-client/zkgroup';
+import { DataWriter } from '../../sql/Client';
 import { Backups } from '../../protobuf';
 import {
   getFilePointerForAttachment,
@@ -74,7 +75,7 @@ describe('convertFilePointerToAttachment', () => {
         backupLocator: new Backups.FilePointer.BackupLocator({
           mediaName: 'mediaName',
           cdnNumber: 3,
-          size: 128,
+          size: Long.fromNumber(128),
           key: Bytes.fromString('key'),
           digest: Bytes.fromString('digest'),
           transitCdnKey: 'transitCdnKey',
@@ -212,7 +213,7 @@ const defaultBackupLocator = new Backups.FilePointer.BackupLocator({
   cdnNumber: null,
   key: Bytes.fromBase64('key'),
   digest: Bytes.fromBase64('digest'),
-  size: 100,
+  size: Long.fromNumber(100),
   transitCdnKey: 'cdnKey',
   transitCdnNumber: 2,
 });
@@ -552,7 +553,7 @@ describe('getBackupJobForAttachmentAndFilePointer', async () => {
     await window.storage.put('masterKey', Bytes.toBase64(getRandomBytes(32)));
   });
   afterEach(async () => {
-    await window.Signal.Data.removeAll();
+    await DataWriter.removeAll();
   });
   const attachment = composeAttachment();
 

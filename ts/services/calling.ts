@@ -105,7 +105,7 @@ import { callingMessageToProto } from '../util/callingMessageToProto';
 import { requestMicrophonePermissions } from '../util/requestMicrophonePermissions';
 import OS from '../util/os/osMain';
 import { SignalService as Proto } from '../protobuf';
-import dataInterface from '../sql/Client';
+import { DataReader, DataWriter } from '../sql/Client';
 import {
   notificationService,
   NotificationSetting,
@@ -158,12 +158,13 @@ import type {
 } from '../types/CallLink';
 import { CallLinkRestrictions } from '../types/CallLink';
 import { getConversationIdForLogging } from '../util/idForLogging';
+import { sendCallLinkUpdateSync } from '../util/sendCallLinkUpdateSync';
 
+const { wasGroupCallRingPreviouslyCanceled } = DataReader;
 const {
   processGroupCallRingCancellation,
   cleanExpiredGroupCallRingCancellations,
-  wasGroupCallRingPreviouslyCanceled,
-} = dataInterface;
+} = DataWriter;
 
 const RINGRTC_HTTP_METHOD_TO_OUR_HTTP_METHOD: Map<
   HttpMethod,
@@ -671,12 +672,16 @@ export class CallingClass {
     log.info(`${logId}: success`);
     const state = callLinkStateFromRingRTC(result.value);
 
-    return {
+    const callLink: CallLinkType = {
       roomId: roomIdHex,
       rootKey: rootKey.toString(),
       adminKey: adminKey.toString('base64'),
       ...state,
     };
+
+    drop(sendCallLinkUpdateSync(callLink));
+
+    return callLink;
   }
 
   async updateCallLinkName(
@@ -710,6 +715,8 @@ export class CallingClass {
       log.error(`${logId}: ${message}`);
       throw new Error(message);
     }
+
+    drop(sendCallLinkUpdateSync(callLink));
 
     log.info(`${logId}: success`);
     return callLinkStateFromRingRTC(result.value);
@@ -753,6 +760,8 @@ export class CallingClass {
       log.error(`${logId}: ${message}`);
       throw new Error(message);
     }
+
+    drop(sendCallLinkUpdateSync(callLink));
 
     log.info(`${logId}: success`);
     return callLinkStateFromRingRTC(result.value);
@@ -933,7 +942,7 @@ export class CallingClass {
   }
 
   public async cleanupStaleRingingCalls(): Promise<void> {
-    const calls = await dataInterface.getRecentStaleRingsAndMarkOlderMissed();
+    const calls = await DataWriter.getRecentStaleRingsAndMarkOlderMissed();
 
     const results = await Promise.all(
       calls.map(async call => {
@@ -950,7 +959,7 @@ export class CallingClass {
         return result.callId;
       });
 
-    await dataInterface.markCallHistoryMissed(staleCallIds);
+    await DataWriter.markCallHistoryMissed(staleCallIds);
   }
 
   public async peekGroupCall(conversationId: string): Promise<PeekInfo> {
@@ -3281,11 +3290,10 @@ export class CallingClass {
       return;
     }
 
-    const prevMessageId =
-      await window.Signal.Data.getCallHistoryMessageByCallId({
-        conversationId: conversation.id,
-        callId: groupCallMeta.callId,
-      });
+    const prevMessageId = await DataReader.getCallHistoryMessageByCallId({
+      conversationId: conversation.id,
+      callId: groupCallMeta.callId,
+    });
 
     const isNewCall = prevMessageId == null;
 
@@ -3387,9 +3395,8 @@ export class CallingClass {
   // https://bugs.chromium.org/p/chromium/issues/detail?id=1287628
   private async enumerateMediaDevices(): Promise<void> {
     try {
-      const microphoneStatus = await window.IPC.getMediaAccessStatus(
-        'microphone'
-      );
+      const microphoneStatus =
+        await window.IPC.getMediaAccessStatus('microphone');
       if (microphoneStatus !== 'granted') {
         return;
       }

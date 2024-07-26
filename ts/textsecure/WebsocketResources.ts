@@ -243,7 +243,10 @@ export type WebSocketResourceOptions = {
 };
 
 export class CloseEvent extends Event {
-  constructor(public readonly code: number, public readonly reason: string) {
+  constructor(
+    public readonly code: number,
+    public readonly reason: string
+  ) {
     super('close');
   }
 }
@@ -369,7 +372,7 @@ export class WebSocketResourceWithShadowing implements IWebSocketResource {
 
   private stats: AggregatedStats;
 
-  private statsTimer: NodeJS.Timer;
+  private statsTimer: NodeJS.Timeout;
 
   private shadowingWithReporting: boolean;
 

@@ -9,7 +9,12 @@ import pTimeout from 'p-timeout';
 import { Readable } from 'stream';
 
 import { Backups, SignalService } from '../../protobuf';
-import Data from '../../sql/Client';
+import {
+  DataReader,
+  DataWriter,
+  pauseWriteAccess,
+  resumeWriteAccess,
+} from '../../sql/Client';
 import type { PageMessagesCursorType } from '../../sql/Interface';
 import * as log from '../../logging/log';
 import { GiftBadgeStates } from '../../components/conversation/Message';
@@ -183,15 +188,16 @@ export class BackupExportStream extends Readable {
       (async () => {
         log.info('BackupExportStream: starting...');
         drop(AttachmentBackupManager.stop());
-        await Data.pauseWriteAccess();
+        await pauseWriteAccess();
         try {
           await this.unsafeRun(backupLevel);
         } catch (error) {
           this.emit('error', error);
         } finally {
-          await Data.resumeWriteAccess();
+          await resumeWriteAccess();
+
           // TODO (DESKTOP-7344): Clear & add backup jobs in a single transaction
-          await Data.clearAllAttachmentBackupJobs();
+          await DataWriter.clearAllAttachmentBackupJobs();
           await Promise.all(
             this.attachmentBackupJobs.map(job =>
               AttachmentBackupManager.addJobAndMaybeThumbnailJob(job)
@@ -248,7 +254,8 @@ export class BackupExportStream extends Readable {
       stats.conversations += 1;
     }
 
-    const distributionLists = await Data.getAllStoryDistributionsWithMembers();
+    const distributionLists =
+      await DataReader.getAllStoryDistributionsWithMembers();
 
     for (const list of distributionLists) {
       const { PrivacyMode } = Backups.DistributionList;
@@ -296,7 +303,7 @@ export class BackupExportStream extends Readable {
       stats.distributionLists += 1;
     }
 
-    const stickerPacks = await Data.getInstalledStickerPacks();
+    const stickerPacks = await DataReader.getInstalledStickerPacks();
 
     for (const { id, key } of stickerPacks) {
       this.pushFrame({
@@ -353,6 +360,7 @@ export class BackupExportStream extends Readable {
             wallpaperPreset: attributes.wallpaperPreset,
             color: attributes.conversationColor,
             customColorId: attributes.customColorId,
+            dimWallpaperInDarkMode: attributes.dimWallpaperInDarkMode,
           }),
         },
       });
@@ -378,8 +386,9 @@ export class BackupExportStream extends Readable {
 
     try {
       while (!cursor?.done) {
-        // eslint-disable-next-line no-await-in-loop
-        const { messages, cursor: newCursor } = await Data.pageMessages(cursor);
+        const { messages, cursor: newCursor } =
+          // eslint-disable-next-line no-await-in-loop
+          await DataReader.pageMessages(cursor);
 
         // eslint-disable-next-line no-await-in-loop
         const items = await pMap(
@@ -413,7 +422,7 @@ export class BackupExportStream extends Readable {
       }
     } finally {
       if (cursor !== undefined) {
-        await Data.finishPageMessages(cursor);
+        await DataReader.finishPageMessages(cursor);
       }
     }
 
@@ -546,7 +555,7 @@ export class BackupExportStream extends Readable {
             storage.get('phoneNumberDiscoverability')
           ) === PhoneNumberDiscoverability.NotDiscoverable,
         preferContactAvatars: storage.get('preferContactAvatars'),
-        universalExpireTimer: storage.get('universalExpireTimer'),
+        universalExpireTimerSeconds: storage.get('universalExpireTimer'),
         preferredReactionEmoji,
         displayBadgesOnProfile: storage.get('displayBadgesOnProfile'),
         keepMutedChatsArchived: storage.get('keepMutedChatsArchived'),
@@ -1166,7 +1175,10 @@ export class BackupExportStream extends Readable {
 
     if (isExpirationTimerUpdate(message)) {
       const expiresInSeconds = message.expirationTimerUpdate?.expireTimer;
-      const expiresInMs = (expiresInSeconds ?? 0) * 1000;
+      const expiresInMs =
+        expiresInSeconds == null
+          ? 0
+          : DurationInSeconds.toMillis(expiresInSeconds);
 
       const conversation = window.ConversationController.get(
         message.conversationId
@@ -1176,7 +1188,7 @@ export class BackupExportStream extends Readable {
         const groupChatUpdate = new Backups.GroupChangeChatUpdate();
 
         const timerUpdate = new Backups.GroupExpirationTimerUpdate();
-        timerUpdate.expiresInMs = expiresInMs;
+        timerUpdate.expiresInMs = Long.fromNumber(expiresInMs);
 
         const sourceServiceId = message.expirationTimerUpdate?.sourceServiceId;
         if (sourceServiceId && Aci.parseFromServiceIdString(sourceServiceId)) {
@@ -1204,7 +1216,7 @@ export class BackupExportStream extends Readable {
       }
 
       const expirationTimerChange = new Backups.ExpirationTimerChatUpdate();
-      expirationTimerChange.expiresInMs = expiresInMs;
+      expirationTimerChange.expiresInMs = Long.fromNumber(expiresInMs);
 
       updateMessage.expirationTimerChange = expirationTimerChange;
 
@@ -2301,6 +2313,10 @@ export class BackupExportStream extends Readable {
       wallpaperPreset: window.storage.get('defaultWallpaperPreset'),
       color: defaultColor?.color,
       customColorId: defaultColor?.customColorData?.id,
+      dimWallpaperInDarkMode: window.storage.get(
+        'defaultDimWallpaperInDarkMode',
+        false
+      ),
     });
   }
 
@@ -2309,8 +2325,11 @@ export class BackupExportStream extends Readable {
     wallpaperPreset,
     color,
     customColorId,
+    dimWallpaperInDarkMode,
   }: LocalChatStyle): Backups.IChatStyle {
-    const result: Backups.IChatStyle = {};
+    const result: Backups.IChatStyle = {
+      dimWallpaperInDarkMode,
+    };
 
     if (Bytes.isNotEmpty(wallpaperPhotoPointer)) {
       result.wallpaperPhoto = Backups.FilePointer.decode(wallpaperPhotoPointer);

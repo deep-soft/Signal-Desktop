@@ -13,7 +13,6 @@ import {
   GroupCallEndReason,
   type Reaction as CallReaction,
 } from '@signalapp/ringrtc';
-import { v4 as generateUuid } from 'uuid';
 import { getOwn } from '../../util/getOwn';
 import * as Errors from '../../types/errors';
 import { getIntl, getPlatform } from '../selectors/user';
@@ -55,6 +54,7 @@ import {
   getRoomIdFromRootKey,
   isCallLinksCreateEnabled,
   toAdminKeyBytes,
+  toCallHistoryFromUnusedCallLink,
 } from '../../util/callLinks';
 import { sendCallLinkUpdateSync } from '../../util/sendCallLinkUpdateSync';
 import { sleep } from '../../util/sleep';
@@ -86,17 +86,12 @@ import type { ShowErrorModalActionType } from './globalModals';
 import { SHOW_ERROR_MODAL } from './globalModals';
 import { ButtonVariant } from '../../components/Button';
 import { getConversationIdForLogging } from '../../util/idForLogging';
-import dataInterface from '../../sql/Client';
+import { DataReader, DataWriter } from '../../sql/Client';
 import { isAciString } from '../../util/isAciString';
-import type { CallHistoryDetails } from '../../types/CallDisposition';
-import {
-  AdhocCallStatus,
-  CallDirection,
-  CallType,
-} from '../../types/CallDisposition';
 import type { CallHistoryAdd } from './callHistory';
 import { addCallHistory } from './callHistory';
 import { saveDraftRecordingIfNeeded } from './composer';
+import type { CallHistoryDetails } from '../../types/CallDisposition';
 
 // State
 
@@ -1396,7 +1391,12 @@ function groupCallStateChange(
 // From sync messages, to notify us that another device joined or changed a call link.
 function handleCallLinkUpdate(
   payload: HandleCallLinkUpdateType
-): ThunkAction<void, RootStateType, unknown, HandleCallLinkUpdateActionType> {
+): ThunkAction<
+  void,
+  RootStateType,
+  unknown,
+  HandleCallLinkUpdateActionType | CallHistoryAdd
+> {
   return async dispatch => {
     const { rootKey, adminKey } = payload;
     const callLinkRootKey = CallLinkRootKey.parse(rootKey);
@@ -1415,7 +1415,7 @@ function handleCallLinkUpdate(
     }
 
     const { callLinkState: freshCallLinkState } = readResult;
-    const existingCallLink = await dataInterface.getCallLinkByRoomId(roomId);
+    const existingCallLink = await DataReader.getCallLinkByRoomId(roomId);
     const existingCallLinkState = pick(existingCallLink, [
       'name',
       'restrictions',
@@ -1432,18 +1432,24 @@ function handleCallLinkUpdate(
       adminKey,
     };
 
+    let callHistory: CallHistoryDetails | null = null;
+
     if (existingCallLink) {
       if (adminKey && adminKey !== existingCallLink.adminKey) {
-        await dataInterface.updateCallLinkAdminKeyByRoomId(roomId, adminKey);
+        await DataWriter.updateCallLinkAdminKeyByRoomId(roomId, adminKey);
         log.info(`${logId}: Updated existing call link with new adminKey`);
       }
 
       if (freshCallLinkState) {
-        await dataInterface.updateCallLinkState(roomId, freshCallLinkState);
+        await DataWriter.updateCallLinkState(roomId, freshCallLinkState);
         log.info(`${logId}: Updated existing call link state`);
       }
     } else {
-      await dataInterface.insertCallLink(callLink);
+      await DataWriter.insertCallLink(callLink);
+      if (adminKey != null) {
+        callHistory = toCallHistoryFromUnusedCallLink(callLink);
+        await DataWriter.saveCallHistory(callHistory);
+      }
       log.info(`${logId}: Saved new call link`);
     }
 
@@ -1451,6 +1457,10 @@ function handleCallLinkUpdate(
       type: HANDLE_CALL_LINK_UPDATE,
       payload: { callLink },
     });
+
+    if (callHistory != null) {
+      dispatch(addCallHistory(callHistory));
+    }
   };
 }
 
@@ -1974,19 +1984,10 @@ function createCallLink(
     strictAssert(isCallLinksCreateEnabled(), 'Call links creation is disabled');
 
     const callLink = await calling.createCallLink();
-    const callHistory: CallHistoryDetails = {
-      callId: generateUuid(),
-      peerId: callLink.roomId,
-      ringerId: null,
-      mode: CallMode.Adhoc,
-      type: CallType.Adhoc,
-      direction: CallDirection.Incoming,
-      timestamp: Date.now(),
-      status: AdhocCallStatus.Pending,
-    };
+    const callHistory = toCallHistoryFromUnusedCallLink(callLink);
     await Promise.all([
-      dataInterface.insertCallLink(callLink),
-      dataInterface.saveCallHistory(callHistory),
+      DataWriter.insertCallLink(callLink),
+      DataWriter.saveCallHistory(callHistory),
     ]);
     dispatch({
       type: HANDLE_CALL_LINK_UPDATE,
@@ -2003,13 +2004,13 @@ function updateCallLinkName(
   name: string
 ): ThunkAction<void, RootStateType, unknown, HandleCallLinkUpdateActionType> {
   return async dispatch => {
-    const prevCallLink = await dataInterface.getCallLinkByRoomId(roomId);
+    const prevCallLink = await DataReader.getCallLinkByRoomId(roomId);
     strictAssert(
       prevCallLink,
       `updateCallLinkName(${roomId}): call link not found`
     );
     const callLinkState = await calling.updateCallLinkName(prevCallLink, name);
-    const callLink = await dataInterface.updateCallLinkState(
+    const callLink = await DataWriter.updateCallLinkState(
       roomId,
       callLinkState
     );
@@ -2025,7 +2026,7 @@ function updateCallLinkRestrictions(
   restrictions: CallLinkRestrictions
 ): ThunkAction<void, RootStateType, unknown, HandleCallLinkUpdateActionType> {
   return async dispatch => {
-    const prevCallLink = await dataInterface.getCallLinkByRoomId(roomId);
+    const prevCallLink = await DataReader.getCallLinkByRoomId(roomId);
     strictAssert(
       prevCallLink,
       `updateCallLinkRestrictions(${roomId}): call link not found`
@@ -2034,7 +2035,7 @@ function updateCallLinkRestrictions(
       prevCallLink,
       restrictions
     );
-    const callLink = await dataInterface.updateCallLinkState(
+    const callLink = await DataWriter.updateCallLinkState(
       roomId,
       callLinkState
     );
@@ -2126,13 +2127,13 @@ const _startCallLinkLobby = async ({
   }
 
   try {
-    const callLinkExists = await dataInterface.callLinkExists(roomId);
+    const callLinkExists = await DataReader.callLinkExists(roomId);
     if (callLinkExists) {
-      await dataInterface.updateCallLinkState(roomId, callLinkState);
+      await DataWriter.updateCallLinkState(roomId, callLinkState);
       log.info('startCallLinkLobby: Updated existing call link', roomId);
     } else {
       const { name, restrictions, expiration, revoked } = callLinkState;
-      await dataInterface.insertCallLink({
+      await DataWriter.insertCallLink({
         roomId,
         rootKey,
         adminKey: null,

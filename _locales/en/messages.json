@@ -131,6 +131,14 @@
     "messageformat": "Recover data",
     "description": "(Deleted 2024/07/11) Text of a button shown in a popup if the database cannot start up properly; allows user to attempt data recovery of their database"
   },
+  "icu:databaseError__safeStorageBackendChange": {
+    "messageformat": "Unable to access the database encryption key because the OS encryption keyring backend has changed from {previousBackend} to {currentBackend}. This can occur if the desktop environment changes, for example between GNOME and KDE.\n\nPlease switch to the previous desktop environment.",
+    "description": "On Linux, text in a popup shown if the app cannot start because the system's keyring encryption backend has changed. Example values: previousBackend=gnome_libsecret, currentBackend=kwallet5"
+  },
+  "icu:databaseError__safeStorageBackendChangeWithPreviousFlag": {
+    "messageformat": "Unable to access the database encryption key because the OS encryption keyring backend has changed from {previousBackend} to {currentBackend}. This can occur if the desktop environment changes, for example between GNOME and KDE.\n\nPlease switch to the previous desktop environment or try to run signal with the command line flag --password-store=\"{previousBackendFlag}\"",
+    "description": "On Linux, text in a popup shown if the app cannot start because the system's keyring encryption backend has changed. We suggest a command line flag they can use to recover the app. Example values: previousBackend=gnome_libsecret, currentBackend=kwallet5, previousBackendFlag: gnome-libsecret"
+  },
   "icu:mainMenuFile": {
     "messageformat": "&File",
     "description": "The label that is used for the File menu in the program main menu. The '&' indicates that the following letter will be used as the keyboard 'shortcut letter' for accessing the menu with the Alt-<letter> combination."
@@ -1108,10 +1116,18 @@
   },
   "icu:cannotUpdateDetail": {
     "messageformat": "Signal couldn't update. {retry} or visit {url} to install it manually. Then, {support} about this problem",
+    "description": "(Deleted 2024/07/23) Shown if a general error happened while trying to install update package"
+  },
+  "icu:cannotUpdateDetail-v2": {
+    "messageformat": "Signal couldn't update. <retryUpdateButton>Retry update</retryUpdateButton> or visit {url} to install it manually. Then, <contactSupportLink>contact support</contactSupportLink> about this problem",
     "description": "Shown if a general error happened while trying to install update package"
   },
   "icu:cannotUpdateRequireManualDetail": {
     "messageformat": "Signal couldn't update. Visit {url} to install it manually. Then, {support} about this problem",
+    "description": "(Deleted 2024/07/23) Shown if a general error happened while trying to install update package and manual update is required"
+  },
+  "icu:cannotUpdateRequireManualDetail-v2": {
+    "messageformat": "Signal couldn't update. Visit {url} to install it manually. Then, <contactSupportLink>contact support</contactSupportLink> about this problem",
     "description": "Shown if a general error happened while trying to install update package and manual update is required"
   },
   "icu:readOnlyVolume": {
@@ -1467,8 +1483,8 @@
     "description": "Used in the guidance to help people find the 'link new device' area of their Signal mobile app"
   },
   "icu:linkNewDevice": {
-    "messageformat": "Link New Device",
-    "description": "The menu option shown in Signal iOS to add a new linked device"
+    "messageformat": "Link a New Device",
+    "description": "The menu option shown in Signal mobile clients to add a new linked device"
   },
   "icu:Install__learn-more": {
     "messageformat": "Learn more",
@@ -1491,7 +1507,7 @@
     "description": "Part of the 2nd instruction on the device link screen"
   },
   "icu:Install__instructions__3": {
-    "messageformat": "Tap {plusButton} (Android) or {linkNewDevice} (iPhone)",
+    "messageformat": "Tap {linkNewDevice}",
     "description": "Instructions on the device link screen"
   },
   "icu:Install__qr-failed-load": {
@@ -2436,7 +2452,8 @@
     "messageformat": "Retry update"
   },
   "icu:autoUpdateContactSupport": {
-    "messageformat": "contact support"
+    "messageformat": "contact support",
+    "description": "(Deleted 2024/07/23)"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "Click to restart Signal"
@@ -7363,12 +7380,12 @@
     "description": "Release notes for releases that only include bug fixes",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.16--0": {
-    "messageformat": "We fixed a bug that prevented the button to minimize a call from appearing while that call was reconnecting. Now you don't need to feel disconnected from previous chats even if the internet is feeling disconnected.",
-    "description": "(Deleted 2024/07/17) Release notes for version 7.16"
-  },
   "icu:WhatsNew__v7.17--0": {
     "messageformat": "We wanted things to be slicker and quicker for sticker clickers, so we fixed a bug that sometimes prevented Signal from launching the sticker viewer if you tried to open a sticker pack link while the app was closed.",
-    "description": "Release notes for version 7.17"
+    "description": "(Deleted 2024/07/25) Release notes for version 7.17"
+  },
+  "icu:WhatsNew__v7.18--0": {
+    "messageformat": "A quick goodbye is sometimes easier than a slow farewell, so we sped up the process of deleting large message threads.",
+    "description": "Release notes for version 7.18"
   }
 }

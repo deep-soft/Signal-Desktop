@@ -14,6 +14,7 @@ import {
 import { v4 as generateGuid } from 'uuid';
 import { isEqual } from 'lodash';
 import { strictAssert } from './assert';
+import { DataReader, DataWriter } from '../sql/Client';
 import { SignalService as Proto } from '../protobuf';
 import { bytesToUuid, uuidToBytes } from './uuidToBytes';
 import { missingCaseError } from './missingCaseError';
@@ -566,7 +567,9 @@ export function transitionCallHistory(
     strictAssert(callHistory.callId === callId, 'callId must be same');
     strictAssert(callHistory.peerId === peerId, 'peerId must be same');
     strictAssert(
-      ringerId == null || callHistory.ringerId === ringerId,
+      ringerId == null ||
+        callHistory.ringerId == null ||
+        callHistory.ringerId === ringerId,
       'ringerId must be same if it exists'
     );
     strictAssert(callHistory.direction === direction, 'direction must be same');
@@ -930,10 +933,8 @@ async function updateLocalCallHistory(
       );
 
       const prevCallHistory =
-        (await window.Signal.Data.getCallHistory(
-          callEvent.callId,
-          callEvent.peerId
-        )) ?? null;
+        (await DataReader.getCallHistory(callEvent.callId, callEvent.peerId)) ??
+        null;
 
       if (prevCallHistory != null) {
         log.info(
@@ -987,10 +988,8 @@ export async function updateLocalAdhocCallHistory(
   );
 
   const prevCallHistory =
-    (await window.Signal.Data.getCallHistory(
-      callEvent.callId,
-      callEvent.peerId
-    )) ?? null;
+    (await DataReader.getCallHistory(callEvent.callId, callEvent.peerId)) ??
+    null;
 
   if (prevCallHistory != null) {
     log.info(
@@ -1031,7 +1030,7 @@ export async function updateLocalAdhocCallHistory(
       'updateAdhocCallHistory: Saving call history:',
       formatCallHistory(callHistory)
     );
-    await window.Signal.Data.saveCallHistory(callHistory);
+    await DataWriter.saveCallHistory(callHistory);
 
     /*
       If we're not a call link admin and this is the first call history for this link,
@@ -1040,9 +1039,7 @@ export async function updateLocalAdhocCallHistory(
       message refers to a valid call link.
     */
     if (prevCallHistory == null) {
-      const callLink = await window.Signal.Data.getCallLinkByRoomId(
-        callEvent.peerId
-      );
+      const callLink = await DataReader.getCallLinkByRoomId(callEvent.peerId);
       if (callLink) {
         log.info(
           `updateAdhocCallHistory: Syncing new observed call link ${callEvent.peerId}`
@@ -1085,7 +1082,7 @@ async function saveCallHistory({
     callHistory.status === DirectCallStatus.Deleted ||
     callHistory.status === GroupCallStatus.Deleted;
 
-  await window.Signal.Data.saveCallHistory(callHistory);
+  await DataWriter.saveCallHistory(callHistory);
 
   if (isDeleted) {
     window.reduxActions.callHistory.removeCallHistory(callHistory.callId);
@@ -1093,7 +1090,7 @@ async function saveCallHistory({
     window.reduxActions.callHistory.addCallHistory(callHistory);
   }
 
-  const prevMessage = await window.Signal.Data.getCallHistoryMessageByCallId({
+  const prevMessage = await DataReader.getCallHistoryMessageByCallId({
     conversationId: conversation.id,
     callId: callHistory.callId,
   });
@@ -1112,7 +1109,7 @@ async function saveCallHistory({
 
   if (isDeleted) {
     if (prevMessage != null) {
-      await window.Signal.Data.removeMessage(prevMessage.id, {
+      await DataWriter.removeMessage(prevMessage.id, {
         fromSync: true,
         singleProtoJobQueue,
       });
@@ -1156,7 +1153,7 @@ async function saveCallHistory({
     callId: callHistory.callId,
   };
 
-  const id = await window.Signal.Data.saveMessage(message, {
+  const id = await DataWriter.saveMessage(message, {
     ourAci: window.textsecure.storage.user.getCheckedAci(),
     // We don't want to force save if we're updating an existing message
     forceSave: prevMessage == null,
@@ -1196,7 +1193,7 @@ async function saveCallHistory({
   if (canConversationBeUnarchived(conversation.attributes)) {
     conversation.setArchived(false);
   } else {
-    window.Signal.Data.updateConversation(conversation.attributes);
+    await DataWriter.updateConversation(conversation.attributes);
   }
 
   window.reduxActions.callHistory.updateCallHistoryUnreadCount();
@@ -1300,7 +1297,7 @@ export async function clearCallHistoryDataAndSync(
     log.info(
       `clearCallHistory: Clearing call history before (${latestCall.callId}, ${latestCall.timestamp})`
     );
-    const messageIds = await window.Signal.Data.clearCallHistory(latestCall);
+    const messageIds = await DataWriter.clearCallHistory(latestCall);
     updateDeletedMessages(messageIds);
     log.info('clearCallHistory: Queueing sync message');
     await singleProtoJobQueue.add(
@@ -1320,9 +1317,9 @@ export async function markAllCallHistoryReadAndSync(
       `markAllCallHistoryReadAndSync: Marking call history read before (${latestCall.callId}, ${latestCall.timestamp})`
     );
     if (inConversation) {
-      await window.Signal.Data.markAllCallHistoryReadInConversation(latestCall);
+      await DataWriter.markAllCallHistoryReadInConversation(latestCall);
     } else {
-      await window.Signal.Data.markAllCallHistoryRead(latestCall);
+      await DataWriter.markAllCallHistoryRead(latestCall);
     }
 
     const ourAci = window.textsecure.storage.user.getCheckedAci();
@@ -1375,7 +1372,7 @@ export async function updateLocalGroupCallHistoryTimestamp(
   const peerId = getPeerIdFromConversation(conversation.attributes);
 
   const prevCallHistory =
-    (await window.Signal.Data.getCallHistory(callId, peerId)) ?? null;
+    (await DataReader.getCallHistory(callId, peerId)) ?? null;
 
   // We don't have all the details to add new call history here
   if (prevCallHistory != null) {
