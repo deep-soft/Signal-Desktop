@@ -199,7 +199,7 @@ import { deriveStorageServiceKey } from './Crypto';
 import { getThemeType } from './util/getThemeType';
 import { AttachmentDownloadManager } from './jobs/AttachmentDownloadManager';
 import { onCallLinkUpdateSync } from './util/onCallLinkUpdateSync';
-import { CallMode } from './types/Calling';
+import { CallMode } from './types/CallDisposition';
 import type { SyncTaskType } from './util/syncTasks';
 import { queueSyncTasks } from './util/syncTasks';
 import type { ViewSyncTaskType } from './messageModifiers/ViewSyncs';
@@ -735,6 +735,9 @@ export async function startApp(): Promise<void> {
           'background/shutdown: shutdown requested'
         );
 
+        const attachmentDownloadStopPromise = AttachmentDownloadManager.stop();
+        const attachmentBackupStopPromise = AttachmentBackupManager.stop();
+
         server?.cancelInflightRequests('shutdown');
 
         // Stop background processing
@@ -815,13 +818,12 @@ export async function startApp(): Promise<void> {
         ]);
 
         log.info(
-          'background/shutdown: waiting for all attachment downloads to finish'
+          'background/shutdown: waiting for all attachment backups & downloads to finish'
         );
-
         // Since we canceled the inflight requests earlier in shutdown, these should
         // resolve quickly
-        await AttachmentDownloadManager.stop();
-        await AttachmentBackupManager.stop();
+        await attachmentDownloadStopPromise;
+        await attachmentBackupStopPromise;
 
         log.info('background/shutdown: closing the database');
 
@@ -987,8 +989,8 @@ export async function startApp(): Promise<void> {
       `Starting background data migration. Target version: ${Message.CURRENT_SCHEMA_VERSION}`
     );
     idleDetector.on('idle', async () => {
-      const NUM_MESSAGES_PER_BATCH = 25;
-      const BATCH_DELAY = 10 * durations.SECOND;
+      const NUM_MESSAGES_PER_BATCH = 1000;
+      const BATCH_DELAY = durations.SECOND / 4;
 
       if (isIdleTaskProcessing) {
         log.warn(
@@ -1409,6 +1411,8 @@ export async function startApp(): Promise<void> {
 
     void badgeImageFileDownloader.checkForFilesToDownload();
 
+    initializeExpiringMessageService(singleProtoJobQueue);
+
     log.info('Expiration start timestamp cleanup: starting...');
     const messagesUnexpectedlyMissingExpirationStartTimestamp =
       await DataReader.getMessagesUnexpectedlyMissingExpirationStartTimestamp();
@@ -1501,8 +1505,6 @@ export async function startApp(): Promise<void> {
     startTimeTravelDetector(() => {
       window.Whisper.events.trigger('timetravel');
     });
-
-    initializeExpiringMessageService(singleProtoJobQueue);
 
     void updateExpiringMessagesService();
     void tapToViewMessagesDeletionService.update();

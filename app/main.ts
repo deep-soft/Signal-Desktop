@@ -365,13 +365,18 @@ async function getResolvedThemeSetting(
   return ThemeType[theme];
 }
 
+type GetBackgroundColorOptionsType = GetThemeSettingOptionsType &
+  Readonly<{
+    signalColors?: boolean;
+  }>;
+
 async function getBackgroundColor(
-  options?: GetThemeSettingOptionsType
+  options?: GetBackgroundColorOptionsType
 ): Promise<string> {
   const theme = await getResolvedThemeSetting(options);
 
   if (theme === 'light') {
-    return '#3a76f0';
+    return options?.signalColors ? '#3a76f0' : '#ffffff';
   }
 
   if (theme === 'dark') {
@@ -695,7 +700,7 @@ async function createWindow() {
     titleBarStyle: mainTitleBarStyle,
     backgroundColor: isTestEnvironment(getEnvironment())
       ? '#ffffff' // Tests should always be rendered on a white background
-      : await getBackgroundColor(),
+      : await getBackgroundColor({ signalColors: true }),
     webPreferences: {
       ...defaultWebPrefs,
       nodeIntegration: false,
@@ -843,12 +848,6 @@ async function createWindow() {
   // App dock icon bounce
   bounce.init(mainWindow);
 
-  mainWindow.on('hide', () => {
-    if (mainWindow && !windowState.shouldQuit()) {
-      mainWindow.webContents.send('set-media-playback-disabled', true);
-    }
-  });
-
   // Emitted when the window is about to be closed.
   // Note: We do most of our shutdown logic here because all windows are closed by
   //   Electron before the app quits.
@@ -872,6 +871,9 @@ async function createWindow() {
 
     // Prevent the shutdown
     e.preventDefault();
+
+    // Disable media playback
+    mainWindow.webContents.send('set-media-playback-disabled', true);
 
     // In certain cases such as during an active call, we ask the user to confirm close
     // which includes shutdown, clicking X on MacOS or closing to tray.
@@ -1350,7 +1352,7 @@ async function showAbout() {
     title: getResolvedMessagesLocale().i18n('icu:aboutSignalDesktop'),
     titleBarStyle: nonMainTitleBarStyle,
     autoHideMenuBar: true,
-    backgroundColor: await getBackgroundColor(),
+    backgroundColor: await getBackgroundColor({ signalColors: true }),
     show: false,
     webPreferences: {
       ...defaultWebPrefs,
@@ -2145,7 +2147,10 @@ app.on('ready', async () => {
   // This color is to be used only in loading screen and in this case we should
   // never wait for the database to be initialized. Thus the theme setting
   // lookup should be done only in ephemeral config.
-  const backgroundColor = await getBackgroundColor({ ephemeralOnly: true });
+  const backgroundColor = await getBackgroundColor({
+    ephemeralOnly: true,
+    signalColors: true,
+  });
 
   drop(
     // eslint-disable-next-line more/no-then

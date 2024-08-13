@@ -41,21 +41,21 @@ import {
   MAX_CALLING_REACTIONS,
   CallEndedReason,
   CallingDeviceType,
-  CallMode,
   CallViewMode,
   CallState,
   GroupCallConnectionState,
   GroupCallJoinState,
 } from '../../types/Calling';
+import { CallMode } from '../../types/CallDisposition';
 import { callingTones } from '../../util/callingTones';
 import { requestCameraPermissions } from '../../util/callingPermissions';
 import {
   CALL_LINK_DEFAULT_STATE,
-  getRoomIdFromRootKey,
   isCallLinksCreateEnabled,
   toAdminKeyBytes,
   toCallHistoryFromUnusedCallLink,
 } from '../../util/callLinks';
+import { getRoomIdFromRootKey } from '../../util/callLinksRingrtc';
 import { sendCallLinkUpdateSync } from '../../util/sendCallLinkUpdateSync';
 import { sleep } from '../../util/sleep';
 import { LatestQueue } from '../../util/LatestQueue';
@@ -92,10 +92,12 @@ import { getConversationIdForLogging } from '../../util/idForLogging';
 import { DataReader, DataWriter } from '../../sql/Client';
 import { isAciString } from '../../util/isAciString';
 import type { CallHistoryAdd } from './callHistory';
-import { addCallHistory } from './callHistory';
+import { addCallHistory, reloadCallHistory } from './callHistory';
 import { saveDraftRecordingIfNeeded } from './composer';
 import type { CallHistoryDetails } from '../../types/CallDisposition';
 import type { StartCallData } from '../../components/ConfirmLeaveCallModal';
+import { callLinksDeleteJobQueue } from '../../jobs/callLinksDeleteJobQueue';
+import { getCallLinksByRoomId } from '../selectors/calling';
 
 // State
 
@@ -254,6 +256,10 @@ type HandleCallLinkUpdateActionPayloadType = ReadonlyDeep<{
   callLink: CallLinkType;
 }>;
 
+type HandleCallLinkDeleteActionPayloadType = ReadonlyDeep<{
+  roomId: string;
+}>;
+
 type HangUpActionPayloadType = ReadonlyDeep<{
   conversationId: string;
 }>;
@@ -261,6 +267,10 @@ type HangUpActionPayloadType = ReadonlyDeep<{
 export type HandleCallLinkUpdateType = ReadonlyDeep<{
   rootKey: string;
   adminKey: string | null;
+}>;
+
+export type HandleCallLinkDeleteType = ReadonlyDeep<{
+  roomId: string;
 }>;
 
 export type IncomingDirectCallType = ReadonlyDeep<{
@@ -597,6 +607,7 @@ const GROUP_CALL_STATE_CHANGE = 'calling/GROUP_CALL_STATE_CHANGE';
 const GROUP_CALL_REACTIONS_RECEIVED = 'calling/GROUP_CALL_REACTIONS_RECEIVED';
 const GROUP_CALL_REACTIONS_EXPIRED = 'calling/GROUP_CALL_REACTIONS_EXPIRED';
 const HANDLE_CALL_LINK_UPDATE = 'calling/HANDLE_CALL_LINK_UPDATE';
+const HANDLE_CALL_LINK_DELETE = 'calling/HANDLE_CALL_LINK_DELETE';
 const HANG_UP = 'calling/HANG_UP';
 const INCOMING_DIRECT_CALL = 'calling/INCOMING_DIRECT_CALL';
 const INCOMING_GROUP_CALL = 'calling/INCOMING_GROUP_CALL';
@@ -739,8 +750,13 @@ type GroupCallReactionsExpiredActionType = ReadonlyDeep<{
 }>;
 
 type HandleCallLinkUpdateActionType = ReadonlyDeep<{
-  type: 'calling/HANDLE_CALL_LINK_UPDATE';
+  type: typeof HANDLE_CALL_LINK_UPDATE;
   payload: HandleCallLinkUpdateActionPayloadType;
+}>;
+
+type HandleCallLinkDeleteActionType = ReadonlyDeep<{
+  type: typeof HANDLE_CALL_LINK_DELETE;
+  payload: HandleCallLinkDeleteActionPayloadType;
 }>;
 
 type HangUpActionType = ReadonlyDeep<{
@@ -902,6 +918,7 @@ export type CallingActionType =
   | GroupCallReactionsReceivedActionType
   | GroupCallReactionsExpiredActionType
   | HandleCallLinkUpdateActionType
+  | HandleCallLinkDeleteActionType
   | HangUpActionType
   | IncomingDirectCallActionType
   | IncomingGroupCallActionType
@@ -1465,6 +1482,19 @@ function handleCallLinkUpdate(
   };
 }
 
+function handleCallLinkDelete(
+  payload: HandleCallLinkDeleteType
+): ThunkAction<void, RootStateType, unknown, HandleCallLinkDeleteActionType> {
+  return async dispatch => {
+    dispatch({
+      type: HANDLE_CALL_LINK_DELETE,
+      payload,
+    });
+
+    dispatch(reloadCallHistory());
+  };
+}
+
 function hangUpActiveCall(
   reason: string
 ): ThunkAction<void, RootStateType, unknown, HangUpActionType> {
@@ -1794,7 +1824,9 @@ function setPresenting(
   sourceToPresent?: PresentedSource
 ): ThunkAction<void, RootStateType, unknown, SetPresentingFulfilledActionType> {
   return async (dispatch, getState) => {
-    const callingState = getState().calling;
+    const state = getState();
+    const callingState = state.calling;
+
     const { activeCallState } = callingState;
     const activeCall = getActiveCall(callingState);
     if (!activeCall || !activeCallState) {
@@ -1802,10 +1834,20 @@ function setPresenting(
       return;
     }
 
+    let rootKey: string | undefined;
+    if (activeCall.callMode === CallMode.Adhoc) {
+      const callLink = getOwn(
+        getCallLinksByRoomId(state),
+        activeCall.conversationId
+      );
+      rootKey = callLink?.rootKey;
+    }
+
     await calling.setPresenting(
       activeCall.conversationId,
       activeCallState.hasLocalVideo,
-      sourceToPresent
+      sourceToPresent,
+      rootKey
     );
 
     dispatch({
@@ -1955,6 +1997,16 @@ function createCallLink(
     dispatch(addCallHistory(callHistory));
     // Call after dispatching the action to ensure the call link is in the store
     onCreated(callLink.roomId);
+  };
+}
+
+function deleteCallLink(
+  roomId: string
+): ThunkAction<void, RootStateType, unknown, HandleCallLinkDeleteActionType> {
+  return async dispatch => {
+    await DataWriter.beginDeleteCallLink(roomId);
+    await callLinksDeleteJobQueue.add({ source: 'deleteCallLink' });
+    dispatch(handleCallLinkDelete({ roomId }));
   };
 }
 
@@ -2381,6 +2433,7 @@ export const actions = {
   closeNeedPermissionScreen,
   createCallLink,
   declineCall,
+  deleteCallLink,
   denyUser,
   getPresentingSources,
   groupCallAudioLevelsChange,
@@ -2389,6 +2442,7 @@ export const actions = {
   groupCallStateChange,
   hangUpActiveCall,
   handleCallLinkUpdate,
+  handleCallLinkDelete,
   joinedAdhocCall,
   leaveCurrentCallAndStartCallingLobby,
   onOutgoingVideoCallInConversation,

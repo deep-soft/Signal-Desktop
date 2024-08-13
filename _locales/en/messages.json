@@ -7325,6 +7325,26 @@
     "messageformat": "Share link via Signal",
     "description": "Call History > Call Link Details > Share Link via Signal Button"
   },
+  "icu:CallLinkDetails__DeleteLink": {
+    "messageformat": "Delete link",
+    "description": "Call History > Call Link Details > Delete Link Button"
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Title": {
+    "messageformat": "Delete call link?",
+    "description": "Call History > Call Link Details > Delete Link Modal > Title"
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Body": {
+    "messageformat": "This link will no longer work for anyone who has it.",
+    "description": "Call History > Call Link Details > Delete Link Modal > Body"
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Cancel": {
+    "messageformat": "Cancel",
+    "description": "Call History > Call Link Details > Delete Link Modal > Cancel Button"
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Delete": {
+    "messageformat": "Delete",
+    "description": "Call History > Call Link Details > Delete Link Modal > Delete Button"
+  },
   "icu:CallLinkEditModal__Title": {
     "messageformat": "Call link details",
     "description": "Call Link Edit Modal > Title"
@@ -7422,10 +7442,18 @@
   },
   "icu:WhatsNew__v7.19--0": {
     "messageformat": "If another call is calling your name, we added a shortcut to leave the current call and join a new one. You'll be prompted to confirm your departure, but it's up to you whether or not you say goodbye first.",
-    "description": "Release notes for version 7.19"
+    "description": "(Deleted 2024/08/07) Release notes for version 7.19"
   },
   "icu:WhatsNew__v7.19--1": {
     "messageformat": "This update also fixes a startup crash on Linux for users whose locale is set to `POSIX`.",
-    "description": "Release notes for version 7.19, part 2"
+    "description": "(Deleted 2024/08/07) Release notes for version 7.19, part 2"
+  },
+  "icu:WhatsNew__v7.20--0": {
+    "messageformat": "Stories with long captions are displayed on a subtle gradient background that improves contrast and makes the text easier to read. Now that people can see what you're saying, feel free to write a couple paragraphs about why something really made you laugh instead of just saying \"lol.\"",
+    "description": "Release notes for version 7.20, part 1"
+  },
+  "icu:WhatsNew__v7.20--1": {
+    "messageformat": "This release also improves the performance of link preview generation and fixes a bug that caused the Settings window to briefly flash a lovely shade of ultramarine whenever it was closed (instead of just closing right away).",
+    "description": "Release notes for version 7.20, part 2"
   }
 }
