@@ -35,6 +35,7 @@ import { ChallengeHandler } from './challenge';
 import * as durations from './util/durations';
 import { drop } from './util/drop';
 import { explodePromise } from './util/explodePromise';
+import type { ExplodePromiseResultType } from './util/explodePromise';
 import { isWindowDragElement } from './util/isWindowDragElement';
 import { assertDev, strictAssert } from './util/assert';
 import { filter } from './util/iterables';
@@ -209,6 +210,7 @@ import { AttachmentBackupManager } from './jobs/AttachmentBackupManager';
 import { getConversationIdForLogging } from './util/idForLogging';
 import { encryptConversationAttachments } from './util/encryptConversationAttachments';
 import { DataReader, DataWriter } from './sql/Client';
+import { restoreRemoteConfigFromStorage } from './RemoteConfig';
 
 export function isOverHourIntoPast(timestamp: number): boolean {
   return isNumber(timestamp) && isOlderThan(timestamp, HOUR);
@@ -501,6 +503,7 @@ export async function startApp(): Promise<void> {
     }
     first = false;
 
+    restoreRemoteConfigFromStorage();
     server = window.WebAPI.connect({
       ...window.textsecure.storage.user.getWebAPICredentials(),
       hasStoriesDisabled: window.storage.get('hasStoriesDisabled', false),
@@ -891,14 +894,6 @@ export async function startApp(): Promise<void> {
         ]);
       }
 
-      if (window.isBeforeVersion(lastVersion, 'v1.26.0')) {
-        // Ensure that we re-register our support for sealed sender
-        await window.storage.put(
-          'hasRegisterSupportForUnauthenticatedDelivery',
-          false
-        );
-      }
-
       if (window.isBeforeVersion(lastVersion, 'v1.32.0-beta.4')) {
         drop(DataWriter.ensureFilePermissions());
       }
@@ -959,6 +954,12 @@ export async function startApp(): Promise<void> {
       if (window.isBeforeVersion(lastVersion, 'v7.8.0-beta.1')) {
         await window.storage.remove('sendEditWarningShown');
         await window.storage.remove('formattingWarningShown');
+      }
+
+      if (window.isBeforeVersion(lastVersion, 'v7.21.0-beta.1')) {
+        await window.storage.remove(
+          'hasRegisterSupportForUnauthenticatedDelivery'
+        );
       }
     }
 
@@ -1462,7 +1463,7 @@ export async function startApp(): Promise<void> {
       log.info(`Startup/syncTasks: Queueing ${syncTasks.length} sync tasks`);
       await queueSyncTasks(syncTasks, DataWriter.removeSyncTaskById);
 
-      log.info('`Startup/syncTasks: Done');
+      log.info('Startup/syncTasks: Done');
     }
 
     log.info('listening for registration events');
@@ -1479,6 +1480,12 @@ export async function startApp(): Promise<void> {
           window.textsecure.storage.user.getWebAPICredentials()
         )
       );
+
+      // Now that we authenticated - time to download the backup!
+      if (isBackupEnabled()) {
+        backupsService.start();
+        drop(backupsService.download());
+      }
 
       // Cancel throttled calls to refreshRemoteConfig since our auth changed.
       window.Signal.RemoteConfig.maybeRefreshRemoteConfig.cancel();
@@ -1702,14 +1709,29 @@ export async function startApp(): Promise<void> {
   }
 
   let connectCount = 0;
-  let connecting = false;
+  let connectPromise: ExplodePromiseResultType<void> | undefined;
   let remotelyExpired = false;
   async function connect(firstRun?: boolean) {
-    if (connecting) {
+    if (connectPromise && !firstRun) {
       log.warn('background: connect already running', {
         connectCount,
         firstRun,
       });
+      return;
+    }
+    if (connectPromise && firstRun) {
+      while (connectPromise) {
+        log.warn(
+          'background: connect already running; waiting for previous run',
+          {
+            connectCount,
+            firstRun,
+          }
+        );
+        // eslint-disable-next-line no-await-in-loop
+        await connectPromise.promise;
+      }
+      await connect(firstRun);
       return;
     }
 
@@ -1721,8 +1743,7 @@ export async function startApp(): Promise<void> {
     strictAssert(server !== undefined, 'WebAPI not connected');
 
     try {
-      connecting = true;
-
+      connectPromise = explodePromise();
       // Reset the flag and update it below if needed
       setIsInitialSync(false);
 
@@ -1798,12 +1819,13 @@ export async function startApp(): Promise<void> {
         window.textsecure.storage.user.getDeviceId() !== 1
       ) {
         log.info('Boot after upgrading. Requesting contact sync');
-        window.getSyncRequest();
-
-        void StorageService.reprocessUnknownFields();
-        void runStorageService();
 
         try {
+          window.getSyncRequest();
+
+          void StorageService.reprocessUnknownFields();
+          void runStorageService();
+
           const manager = window.getAccountManager();
           await Promise.all([
             manager.maybeUpdateDeviceName(),
@@ -1811,21 +1833,8 @@ export async function startApp(): Promise<void> {
           ]);
         } catch (e) {
           log.error(
-            'Problem with account manager updates after starting new version: ',
+            "Problem with 'boot after upgrade' tasks: ",
             Errors.toLogFormat(e)
-          );
-        }
-      }
-
-      const udSupportKey = 'hasRegisterSupportForUnauthenticatedDelivery';
-      if (!window.storage.get(udSupportKey)) {
-        try {
-          await server.registerSupportForUnauthenticatedDelivery();
-          await window.storage.put(udSupportKey, true);
-        } catch (error) {
-          log.error(
-            'Error: Unable to register for unauthenticated delivery support.',
-            Errors.toLogFormat(error)
           );
         }
       }
@@ -1989,7 +1998,15 @@ export async function startApp(): Promise<void> {
 
       reconnectBackOff.reset();
     } finally {
-      connecting = false;
+      if (connectPromise) {
+        connectPromise.resolve();
+        connectPromise = undefined;
+      } else {
+        log.warn('background connect: in finally, no connectPromise!', {
+          connectCount,
+          firstRun,
+        });
+      }
     }
   }
 
@@ -3089,6 +3106,10 @@ export async function startApp(): Promise<void> {
       );
     } finally {
       await Registration.markEverDone();
+
+      if (window.SignalCI) {
+        window.SignalCI.handleEvent('unlinkCleanupComplete', null);
+      }
     }
   }
 

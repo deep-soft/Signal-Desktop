@@ -1820,7 +1820,7 @@ export class ConversationModel extends window.Backbone
         let upgradedMessage = message;
         if ((schemaVersion || 0) < Message.VERSION_NEEDED_FOR_DISPLAY) {
           // Yep, we really do want to wait for each of these
-          upgradedMessage = await upgradeMessageSchema(message);
+          upgradedMessage = await upgradeMessageSchema(model.attributes);
           model.set(upgradedMessage);
           await DataWriter.saveMessage(upgradedMessage, { ourAci });
           upgraded += 1;
@@ -4152,7 +4152,7 @@ export class ConversationModel extends window.Backbone
       )
     );
     drop(
-      this.queueJob('maybeAddRemovedNotificaiton', async () =>
+      this.queueJob('maybeAddRemovedNotification', async () =>
         this.maybeSetContactRemoved()
       )
     );

@@ -646,8 +646,6 @@ type ReadableInterface = {
 type WritableInterface = {
   close: () => void;
 
-  removeDB: () => void;
-
   removeIndexedDBFiles: () => void;
 
   removeIdentityKeyById: (id: IdentityKeyIdType) => number;
@@ -781,6 +779,7 @@ type WritableInterface = {
   _removeAllMessages: () => void;
 
   clearCallHistory: (target: CallLogEventTarget) => ReadonlyArray<string>;
+  _removeAllCallHistory: () => void;
   markCallHistoryDeleted: (callId: string) => void;
   cleanupCallHistoryMessages: () => void;
   markCallHistoryRead(callId: string): void;
@@ -798,6 +797,7 @@ type WritableInterface = {
   beginDeleteAllCallLinks(): void;
   beginDeleteCallLink(roomId: string): void;
   finalizeDeleteCallLink(roomId: string): void;
+  _removeAllCallLinks(): void;
   deleteCallLinkFromSync(roomId: string): void;
   migrateConversationMessages: (obsoleteId: string, currentId: string) => void;
   saveEditedMessage: (
@@ -1118,6 +1118,7 @@ export type ClientOnlyWritableInterface = ClientInterfaceWrap<{
   // Client-side only
 
   shutdown: () => void;
+  removeDB: () => void;
   removeMessagesInConversation: (
     conversationId: string,
     options: {

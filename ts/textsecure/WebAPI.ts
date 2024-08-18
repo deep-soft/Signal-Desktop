@@ -587,7 +587,6 @@ const URL_CALLS = {
   storageToken: 'v1/storage/auth',
   subscriptions: 'v1/subscription',
   subscriptionConfiguration: 'v1/subscription/configuration',
-  supportUnauthenticatedDelivery: 'v1/devices/unauthenticated_delivery',
   updateDeviceName: 'v1/accounts/name',
   username: 'v1/accounts/username_hash',
   reserveUsername: 'v1/accounts/username_hash/reserve',
@@ -619,7 +618,6 @@ const WEBSOCKET_CALLS = new Set<keyof typeof URL_CALLS>([
   // Devices
   'linkDevice',
   'registerCapabilities',
-  'supportUnauthenticatedDelivery',
 
   // Directory
   'directoryAuthV2',
@@ -1147,8 +1145,15 @@ export type GetBackupCDNCredentialsResponseType = z.infer<
   typeof getBackupCDNCredentialsResponseSchema
 >;
 
+export type GetBackupStreamOptionsType = Readonly<{
+  cdn: number;
+  backupDir: string;
+  backupName: string;
+  headers: Record<string, string>;
+}>;
+
 export const getBackupInfoResponseSchema = z.object({
-  cdn: z.number(),
+  cdn: z.literal(3),
   backupDir: z.string(),
   mediaDir: z.string(),
   backupName: z.string(),
@@ -1339,7 +1344,6 @@ export type WebAPIType = {
     genKeys: UploadKeysType,
     serviceIdKind: ServiceIdKind
   ) => Promise<void>;
-  registerSupportForUnauthenticatedDelivery: () => Promise<void>;
   reportMessage: (options: ReportMessageOptionsType) => Promise<void>;
   requestVerification: (
     number: string,
@@ -1380,6 +1384,7 @@ export type WebAPIType = {
   getBackupInfo: (
     headers: BackupPresentationHeadersType
   ) => Promise<GetBackupInfoResponseType>;
+  getBackupStream: (options: GetBackupStreamOptionsType) => Promise<Readable>;
   getBackupUploadForm: (
     headers: BackupPresentationHeadersType
   ) => Promise<AttachmentUploadFormResponseType>;
@@ -1707,6 +1712,7 @@ export function initialize({
       getBackupCredentials,
       getBackupCDNCredentials,
       getBackupInfo,
+      getBackupStream,
       getBackupMediaUploadForm,
       getBackupUploadForm,
       getBadgeImageFile,
@@ -1754,7 +1760,6 @@ export function initialize({
       registerCapabilities,
       registerKeys,
       registerRequestHandler,
-      registerSupportForUnauthenticatedDelivery,
       resolveUsernameLink,
       replaceUsernameLink,
       reportMessage,
@@ -2071,14 +2076,6 @@ export function initialize({
         //   it will will be an Uint8Array at the response key on the Error
         responseType: 'bytes',
         ...credentials,
-      });
-    }
-
-    async function registerSupportForUnauthenticatedDelivery() {
-      await _ajax({
-        call: 'supportUnauthenticatedDelivery',
-        httpType: 'PUT',
-        responseType: 'json',
       });
     }
 
@@ -2762,6 +2759,20 @@ export function initialize({
       });
 
       return getBackupInfoResponseSchema.parse(res);
+    }
+
+    async function getBackupStream({
+      headers,
+      cdn,
+      backupDir,
+      backupName,
+    }: GetBackupStreamOptionsType): Promise<Readable> {
+      return _getAttachment({
+        cdnPath: `/backups/${encodeURIComponent(backupDir)}/${encodeURIComponent(backupName)}`,
+        cdnNumber: cdn,
+        redactor: _createRedactor(backupDir, backupName),
+        headers,
+      });
     }
 
     async function getBackupMediaUploadForm(
@@ -3503,7 +3514,7 @@ export function initialize({
           disableRetries: options?.disableRetries,
           proxyUrl,
           responseType: 'stream',
-          timeout: options?.timeout || 0,
+          timeout: options?.timeout ?? DEFAULT_TIMEOUT,
           type: 'GET',
           redactUrl: redactor,
           version,
