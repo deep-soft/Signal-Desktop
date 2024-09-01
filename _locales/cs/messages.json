@@ -821,14 +821,8 @@
   "icu:mute": {
     "messageformat": "Ztlumit"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "Signal se nepodařilo aktualizavoat. {retry} nebo navštivte {url} pro manuální instalaci. A pak o svém problému napište na {support}."
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "Aplikaci Signal nebylo možné aktualizovat. <retryUpdateButton>Zkuste aktualizaci opakovat</retryUpdateButton> nebo navštivte {url} a nainstalujte ji ručně. Poté <contactSupportLink>kontaktujte podporu</contactSupportLink> ohledně tohoto problému"
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "Signal se nepodařilo aktualizovat. Navštivte {url} pro manuální instalaci. A pak o problému napište na {support}."
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "Aplikaci Signal nebylo možné aktualizovat. Navštivte {url} a nainstalujte ji ručně. Poté <contactSupportLink>kontaktujte podporu</contactSupportLink> ohledně tohoto problému"
@@ -1834,9 +1828,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "Znovu aktualizovat"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "kontaktovat podporu"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "Kliknutím restartujete aplikaci Signal"
@@ -3353,6 +3344,9 @@
   "icu:GroupV2--admin-approval-bounce": {
     "messageformat": "{joinerName} požádal a následně zrušil {numberOfRequests,number}své žádosti o připojení ke skupině přes odkaz skupiny"
   },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{numberOfRequests, plural, one {{joinerName} požádal/a a zrušil/a žádost o připojení ke skupině pomocí skupinového odkazu.} few {{joinerName} požádal/a a zrušil/a {numberOfRequests,number} žádosti o připojení ke skupině pomocí skupinového odkazu.} many {{joinerName} požádal/a a zrušil/a {numberOfRequests,number} žádostí o připojení ke skupině pomocí skupinového odkazu.} other {{joinerName} požádal/a a zrušil/a {numberOfRequests,number} žádostí o připojení ke skupině pomocí skupinového odkazu.}}"
+  },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "Zapnuli jste odkaz skupiny bez schvalování správcem."
   },
@@ -3526,6 +3520,15 @@
   },
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "Klepněte na „Podpořit Signal finančně“ a přihlaste se k odběru"
+  },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "Syncing messages"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "Downloading {currentSize} of {totalSize} ({fractionComplete,number,percent})..."
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "This may take a few minutes depending on the size of your backup"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Rozbalit"
@@ -3954,10 +3957,10 @@
     "messageformat": "tlačítko napsat"
   },
   "icu:emptyInbox__title": {
-    "messageformat": "No chats"
+    "messageformat": "Žádné chaty"
   },
   "icu:emptyInbox__subtitle": {
-    "messageformat": "Recent chats will appear here."
+    "messageformat": "Zde se objeví poslední chaty."
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "Přeposlat uživateli"
@@ -4848,10 +4851,10 @@
     "messageformat": "Žádné nové příběhy k zobrazení"
   },
   "icu:Stories__list__empty--title": {
-    "messageformat": "No stories"
+    "messageformat": "Žádné příběhy"
   },
   "icu:Stories__list__empty--subtitle": {
-    "messageformat": "New updates will appear here."
+    "messageformat": "Zde se objeví nové příspěvky."
   },
   "icu:Stories__list--sending": {
     "messageformat": "Odesílání…"
@@ -4869,7 +4872,10 @@
     "messageformat": "Kliknutím zobrazíte příběh"
   },
   "icu:Stories__placeholder-with-icon--text": {
-    "messageformat": "Click <newStoryIcon>Add a story</newStoryIcon> to add an update."
+    "messageformat": "Klikněte na <newStoryIcon>Přidat příběh</newStoryIcon> a přidejte příspěvek."
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "Click <newStoryButtonIcon></newStoryButtonIcon> to add an update."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} skupině {group}"
@@ -5113,6 +5119,12 @@
   },
   "icu:StoryViewsNRepliesModal__reacted": {
     "messageformat": "Reagoval/a na příběh"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "Reacted to the story"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
+    "messageformat": "Reacted to the story"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
     "messageformat": "Na tento příběh nemůžete reagovat, protože už nejste členem této skupiny."
@@ -5413,7 +5425,10 @@
     "messageformat": "Kliknutím zobrazíte nebo zahájíte hovor"
   },
   "icu:CallsTab__EmptyStateText--with-icon": {
-    "messageformat": "Click <newCallIcon>New Call</newCallIcon> to start a new voice or video call."
+    "messageformat": "Klikněte na <newCallIcon>Nový hovor</newCallIcon> a zahajte nový hlasový nebo video hovor."
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call."
   },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Hledat"
@@ -5428,16 +5443,16 @@
     "messageformat": "Žádné nedávné hovory. Začněte tím, že zavoláte příteli."
   },
   "icu:CallsList__EmptyState--noQuery__title": {
-    "messageformat": "No calls"
+    "messageformat": "Žádné hovory"
   },
   "icu:CallsList__EmptyState--noQuery__subtitle": {
-    "messageformat": "Recent calls will appear here."
+    "messageformat": "Zde se objeví poslední hovory."
   },
   "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "No missed calls"
+    "messageformat": "Žádné zmeškané hovory"
   },
   "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Missed calls will appear here."
+    "messageformat": "Zde se objeví zmeškané hovory."
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "Pro „{query}“ nebylo nic nalezeno"
@@ -5456,9 +5471,6 @@
   },
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "Odmítnuto"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "Skupinový hovor"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "Odkaz na hovor"
@@ -5617,22 +5629,13 @@
     "messageformat": "Drobná vylepšení, opravy chyb a zvýšení výkonu. Děkujeme, že používáte Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "Toto vydání urychluje proces mazání velkých vláken zpráv."
+  "icu:WhatsNew__v7.22--0": {
+    "messageformat": "Aplikace Signal Desktop nyní dokáže automaticky obnovit přerušené stahování příloh."
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "Pokud již probíhá jiný hovor, přidali jsme zkratku pro jeho zavěšení a připojení se k novému hovoru."
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "Chats now open faster than ever thanks to another round of performance improvements, so you can click on your cliques and see what they're saying real quick."
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "Tato aktualizace také opravuje pády při spuštění na platformě Linux u uživatelů, jejichž místní nastavení je na POSIX."
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "Dlouhé příběhy se nyní zobrazují s vylepšeným kontrastem, takže je text čitelnější."
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "Toto vydání také vylepšuje generování náhledu odkazu a opravuje drobnou chybu zobrazení při zavírání okna nastavení."
-  },
-  "icu:WhatsNew__v7.21--0": {
-    "messageformat": "Everyone loves a good story, and we could tell you the tale of a bug that sometimes caused the progress bar to freeze right in the middle of watching a good story — but that bug's adventure already has a happy ending because we fixed it in this release."
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "We also fixed a handful of bugs, including one that sometimes caused \"Unknown contact started a video call\" to appear in the chat list summary after you started the call. Even if you're still on a journey of self-discovery, you are never completely unknown to yourself."
   }
 }

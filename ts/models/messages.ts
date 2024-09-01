@@ -156,6 +156,8 @@ import {
   copyFromQuotedMessage,
   copyQuoteContentFromOriginal,
 } from '../messages/copyQuote';
+import { getRoomIdFromCallLink } from '../util/callLinksRingrtc';
+import { explodePromise } from '../util/explodePromise';
 
 /* eslint-disable more/no-then */
 
@@ -1823,19 +1825,34 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
         const urls = LinkPreview.findLinks(dataMessage.body || '');
         const incomingPreview = dataMessage.preview || [];
-        const preview = incomingPreview.filter((item: LinkPreviewType) => {
-          if (!item.image && !item.title) {
-            return false;
-          }
-          // Story link previews don't have to correspond to links in the
-          // message body.
-          if (isStory(message.attributes)) {
-            return true;
-          }
-          return (
-            urls.includes(item.url) && LinkPreview.shouldPreviewHref(item.url)
-          );
-        });
+        const preview = incomingPreview
+          .map((item: LinkPreviewType) => {
+            if (!item.image && !item.title) {
+              return null;
+            }
+            // Story link previews don't have to correspond to links in the
+            // message body.
+            if (isStory(message.attributes)) {
+              return item;
+            }
+            if (
+              !urls.includes(item.url) ||
+              !LinkPreview.shouldPreviewHref(item.url)
+            ) {
+              return undefined;
+            }
+
+            if (LinkPreview.isCallLink(item.url)) {
+              return {
+                ...item,
+                isCallLink: true,
+                callLinkRoomId: getRoomIdFromCallLink(item.url),
+              };
+            }
+
+            return item;
+          })
+          .filter(isNotNil);
         if (preview.length < incomingPreview.length) {
           log.info(
             `${message.idForLogging()}: Eliminated ${
@@ -1975,6 +1992,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
                 receivedAtMS: message.get('received_at_ms'),
                 sentAt: message.get('sent_at'),
                 reason: idLog,
+                version: initialMessage.expireTimerVersion,
               });
             } else if (
               // We won't turn off timers for these kinds of messages:
@@ -1987,6 +2005,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
                 receivedAtMS: message.get('received_at_ms'),
                 sentAt: message.get('sent_at'),
                 reason: idLog,
+                version: initialMessage.expireTimerVersion,
               });
             }
           }
@@ -2099,7 +2118,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         }
 
         log.info(`${idLog}: Batching save`);
-        void this.saveAndNotify(conversation, confirm);
+        drop(this.saveAndNotify(conversation, confirm));
       } catch (error) {
         const errorForLog = Errors.toLogFormat(error);
         log.error(`${idLog}: error:`, errorForLog);
@@ -2112,40 +2131,51 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     conversation: ConversationModel,
     confirm: () => void
   ): Promise<void> {
-    await saveNewMessageBatcher.add(this.attributes);
+    const { resolve, promise } = explodePromise<void>();
+    try {
+      conversation.addSavePromise(promise);
 
-    log.info('Message saved', this.get('sent_at'));
+      await saveNewMessageBatcher.add(this.attributes);
 
-    // Once the message is saved to DB, we queue attachment downloads
-    await this.handleAttachmentDownloadsForNewMessage(conversation);
+      log.info('Message saved', this.get('sent_at'));
 
-    // We'd like to check for deletions before scheduling downloads, but if an edit comes
-    //   in, we want to have kicked off attachment downloads for the original message.
-    const isFirstRun = false;
-    const result = await this.modifyTargetMessage(conversation, isFirstRun);
-    if (result === ModifyTargetMessageResult.Deleted) {
+      // Once the message is saved to DB, we queue attachment downloads
+      await this.handleAttachmentDownloadsForNewMessage(conversation);
+
+      // We'd like to check for deletions before scheduling downloads, but if an edit
+      //   comes in, we want to have kicked off attachment downloads for the original
+      //   message.
+      const isFirstRun = false;
+      const result = await this.modifyTargetMessage(conversation, isFirstRun);
+      if (result === ModifyTargetMessageResult.Deleted) {
+        confirm();
+        return;
+      }
+
+      conversation.trigger('newmessage', this.attributes);
+
+      if (await shouldReplyNotifyUser(this.attributes, conversation)) {
+        await conversation.notify(this.attributes);
+      }
+
+      // Increment the sent message count if this is an outgoing message
+      if (this.get('type') === 'outgoing') {
+        conversation.incrementSentMessageCount();
+      }
+
+      window.Whisper.events.trigger('incrementProgress');
       confirm();
-      return;
-    }
 
-    conversation.trigger('newmessage', this.attributes);
-
-    if (await shouldReplyNotifyUser(this.attributes, conversation)) {
-      await conversation.notify(this.attributes);
-    }
-
-    // Increment the sent message count if this is an outgoing message
-    if (this.get('type') === 'outgoing') {
-      conversation.incrementSentMessageCount();
-    }
-
-    window.Whisper.events.trigger('incrementProgress');
-    confirm();
-
-    if (!isStory(this.attributes)) {
-      drop(
-        conversation.queueJob('updateUnread', () => conversation.updateUnread())
-      );
+      if (!isStory(this.attributes)) {
+        drop(
+          conversation.queueJob('updateUnread', () =>
+            conversation.updateUnread()
+          )
+        );
+      }
+    } finally {
+      resolve();
+      conversation.removeSavePromise(promise);
     }
   }
 
@@ -2510,6 +2540,9 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       await DataWriter.saveMessage(this.attributes, {
         ourAci: window.textsecure.storage.user.getCheckedAci(),
       });
+      window.reduxActions.conversations.markOpenConversationRead(
+        conversation.id
+      );
     }
   }
 

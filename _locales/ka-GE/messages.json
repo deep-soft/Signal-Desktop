@@ -821,14 +821,8 @@
   "icu:mute": {
     "messageformat": "დადუმება"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "Signal-ი ვერ განახლდა. {retry} ან ხელით დასაყენებლად გადადი {url}. შემდეგ კი {support}-ს ამ პრობლემის თაობაზე"
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "Signal-ი ვერ განახლდა. <retryUpdateButton>თავიდან სცადე განახლება</retryUpdateButton> ან ხელით გადმოსაწერად {url}-ს ეწვიე. შემდეგ, <contactSupportLink>მხარდაჭერის გუნდს დაუკავშირდი</contactSupportLink> ამ პრობლემის თაობაზე"
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "Signal-ი ვერ განახლდა. ხელით დასაყენებლად გადადი {url}. შემდეგ კი {support}-ს ამ პრობლემის თაობაზე"
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "Signal-ი ვერ განახლდა. ხელით გადმოსაწერად ეწვიე {url}-ს. შემდეგ, <contactSupportLink>მხარდაჭერის გუნდს დაუკავშირდი</contactSupportLink> ამ პრობლემის თაობაზე"
@@ -1834,9 +1828,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "განახლების ხელახლა ცდა"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "მხარდაჭერის გუნდთან დაკავშირება"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "დააჭირე Signal-ის გადასატვირტად"
@@ -3353,6 +3344,9 @@
   "icu:GroupV2--admin-approval-bounce": {
     "messageformat": "{joinerName} -მა მოითხოვა ჯგუფის ბმულით გაწევრიანება და გააუქმა თავისი {numberOfRequests,number} მოთხოვნა"
   },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{numberOfRequests, plural, one {{joinerName}-მა ჯგუფში ბმულით გაწევრიანება მოითხოვა და მოთხოვნა გააუქმა.} other {{joinerName}-მა ჯგუფში ბმულით გაწევრიანება მოითხოვა და {numberOfRequests,number} მოთხოვნა გააუქმა.}}"
+  },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "შენ ჩართე ჯგუფის ბმული ადმინის დასტურის გათიშული ფუნქციით."
   },
@@ -3526,6 +3520,15 @@
   },
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "დააჭირე \"Signal-ისთვის დონაციის გაკეთება“ და გამოიწერე"
+  },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "Syncing messages"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "Downloading {currentSize} of {totalSize} ({fractionComplete,number,percent})..."
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "This may take a few minutes depending on the size of your backup"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "გაფართოება"
@@ -3954,10 +3957,10 @@
     "messageformat": "შეტყობინების შედგენის ღილაკი"
   },
   "icu:emptyInbox__title": {
-    "messageformat": "No chats"
+    "messageformat": "ჩატები ვერ მოიძებნა"
   },
   "icu:emptyInbox__subtitle": {
-    "messageformat": "Recent chats will appear here."
+    "messageformat": "ბოლო ჩატები აქ გამოჩნდება."
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "გაეგზავნოთ ჩამოთვლილებს"
@@ -4848,10 +4851,10 @@
     "messageformat": "უახლესი Stories-ები ვერ მოიძებნა"
   },
   "icu:Stories__list__empty--title": {
-    "messageformat": "No stories"
+    "messageformat": "Stories-ები ვერ მოიძებნა"
   },
   "icu:Stories__list__empty--subtitle": {
-    "messageformat": "New updates will appear here."
+    "messageformat": "ბოლო განახლებები აქ გამოჩნდება."
   },
   "icu:Stories__list--sending": {
     "messageformat": "იგზავნება…"
@@ -4869,7 +4872,10 @@
     "messageformat": "დააწკაპუნე Story-ის სანახავად"
   },
   "icu:Stories__placeholder-with-icon--text": {
-    "messageformat": "Click <newStoryIcon>Add a story</newStoryIcon> to add an update."
+    "messageformat": "განახლების დასამატებლად დააჭირე <newStoryIcon>Story-ის დამატება</newStoryIcon>."
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "Click <newStoryButtonIcon></newStoryButtonIcon> to add an update."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} {group}-ს"
@@ -5113,6 +5119,12 @@
   },
   "icu:StoryViewsNRepliesModal__reacted": {
     "messageformat": "Story-ის გამოეხმაურა"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "Reacted to the story"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
+    "messageformat": "Reacted to the story"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
     "messageformat": "ამ Story-ის ვერ უპასუხებ, რადგან ამ ჯგუფის წევრი აღარ ხარ."
@@ -5413,7 +5425,10 @@
     "messageformat": "დააწკაპუნე ზარის სანახავად ან დასაწყებად"
   },
   "icu:CallsTab__EmptyStateText--with-icon": {
-    "messageformat": "Click <newCallIcon>New Call</newCallIcon> to start a new voice or video call."
+    "messageformat": "ახალი ხმოვანი ან ვიდეო ზარის დასაწყებად დააჭირე <newCallIcon>ახალი ზარი</newCallIcon>."
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call."
   },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "ძიება"
@@ -5428,16 +5443,16 @@
     "messageformat": "ბოლოდროინდელი ზარები ვერ მოიძებნა. დაიწყე მეგობართან დარეკვით."
   },
   "icu:CallsList__EmptyState--noQuery__title": {
-    "messageformat": "No calls"
+    "messageformat": "ზარები ვერ მოიძებნა"
   },
   "icu:CallsList__EmptyState--noQuery__subtitle": {
-    "messageformat": "Recent calls will appear here."
+    "messageformat": "ბოლო ზარები აქ გამოჩნდება."
   },
   "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "No missed calls"
+    "messageformat": "გამოტოვებული ზარები ვერ მოიძებნა"
   },
   "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Missed calls will appear here."
+    "messageformat": "გამოტოვებული ზარები აქ გამოჩნდება."
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "„{query}“-ზე ვერაფერი მოიძებნა"
@@ -5456,9 +5471,6 @@
   },
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "უარყოფილი"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "ჯგუფური ზარი"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "ზარის ბმული"
@@ -5617,22 +5629,13 @@
     "messageformat": "მცირე შესწორებები, ბაგების გამოსწორება და წარმადობის გაუმჯობესება. მადლობას გიხდით სიგნალის გამოყენებისთვის!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "ეს გამოშვება დიდი მიმოწერის წაშლის პროცესს აჩქარებს."
+  "icu:WhatsNew__v7.22--0": {
+    "messageformat": "Signal Desktop-ს ახლა უკვე შეუძლია ავტომატურად განაგრძოს შეჩერებული მიმაგრებული ფაილების გადმოწერა."
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "ჩვენ დავამატეთ მალსახმობი, რომ გათიშო მიმდინარე ზარი და ახალს შეუერთდე, როდესაც სხვა ზარი უკვე მიმდინარეობს."
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "Chats now open faster than ever thanks to another round of performance improvements, so you can click on your cliques and see what they're saying real quick."
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "ეს განახლება ასევე აგვარებს Linux-ზე ავარიული გაშვების პრობლემას იმ მომხმარებლებისთვის, რომელთა ადგილმდებარეობა `POSIX`-ზეა დაყენებული."
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "გრძელი ტექსტის მქონე Stories-ები ახლა გაუმჯობესებული კონტრასტით ჩნდება, რაც აადვილებს ტექსტის წაკითხვას."
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "ეს გამოშვება ასევე აუმჯობესებს ბმულის წინასწარი ნახვის დაგენერირებას და ასწორებს ეკრანის მცირე ხარვეზს პარამეტრების ფანჯრის დახურვისას."
-  },
-  "icu:WhatsNew__v7.21--0": {
-    "messageformat": "Everyone loves a good story, and we could tell you the tale of a bug that sometimes caused the progress bar to freeze right in the middle of watching a good story — but that bug's adventure already has a happy ending because we fixed it in this release."
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "We also fixed a handful of bugs, including one that sometimes caused \"Unknown contact started a video call\" to appear in the chat list summary after you started the call. Even if you're still on a journey of self-discovery, you are never completely unknown to yourself."
   }
 }

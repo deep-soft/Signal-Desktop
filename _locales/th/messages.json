@@ -821,14 +821,8 @@
   "icu:mute": {
     "messageformat": "ปิดเสียง"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "ไม่สามารถปรับรุ่น Signal ได้ กรุณา {retry} หรือไปที่ {url} เพื่อติดตั้งด้วยตัวเอง จากนั้น {support} ปัญหานี้"
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "ไม่สามารถอัปเดต Signal ได้ โปรด<retryUpdateButton>ลองอัปเดตอีกครั้ง</retryUpdateButton> หรือไปที่ {url} เพื่อติดตั้งด้วยตัวเอง จากนั้น<contactSupportLink>ติดต่อฝ่ายสนับสนุน</contactSupportLink>เพื่อแจ้งเกี่ยวกับปัญหานี้"
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "ไม่สามารถปรับรุ่น Signal ได้ ไปที่ {url} เพื่อติดตั้งด้วยตัวเอง จากนั้น {support} ปัญหานี้"
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "ไม่สามารถอัปเดต Signal ได้ โปรดไปที่ {url} เพื่อติดตั้งด้วยตัวเอง จากนั้น<contactSupportLink>ติดต่อฝ่ายสนับสนุน</contactSupportLink>เพื่อแจ้งเกี่ยวกับปัญหานี้"
@@ -1834,9 +1828,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "ลองปรับรุ่นอีกครั้ง"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "ติดต่อฝ่ายสนับสนุน"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "คลิกเพื่อเริ่ม Signal ใหม่"
@@ -3353,6 +3344,9 @@
   "icu:GroupV2--admin-approval-bounce": {
     "messageformat": "{joinerName} ส่งคำขอและยกเลิก {numberOfRequests,number} คำขอเพื่อเข้าร่วมผ่านลิงก์กลุ่มนี้"
   },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{numberOfRequests, plural, other {{joinerName} ส่งและยกเลิกคำขอ {numberOfRequests,number} รายการในการเข้าร่วมผ่านลิงก์กลุ่มนี้}}"
+  },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "คุณได้เปิดลิงก์กลุ่ม โดยการอนุมัติโดยผู้ดูแลปิดอยู่"
   },
@@ -3526,6 +3520,15 @@
   },
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "แตะที่ \"บริจาคให้ Signal\" แล้วสมัคร"
+  },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "Syncing messages"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "Downloading {currentSize} of {totalSize} ({fractionComplete,number,percent})..."
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "This may take a few minutes depending on the size of your backup"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "ขยาย"
@@ -3954,10 +3957,10 @@
     "messageformat": "ปุ่มเขียนข้อความ"
   },
   "icu:emptyInbox__title": {
-    "messageformat": "No chats"
+    "messageformat": "ไม่มีแชท"
   },
   "icu:emptyInbox__subtitle": {
-    "messageformat": "Recent chats will appear here."
+    "messageformat": "แชทล่าสุดจะปรากฏที่นี่"
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "ส่งต่อไปยัง"
@@ -4848,10 +4851,10 @@
     "messageformat": "ไม่มีสตอรี่ใหม่ๆ ให้แสดงในตอนนี้"
   },
   "icu:Stories__list__empty--title": {
-    "messageformat": "No stories"
+    "messageformat": "ไม่มีสตอรี่"
   },
   "icu:Stories__list__empty--subtitle": {
-    "messageformat": "New updates will appear here."
+    "messageformat": "สตอรี่ใหม่จะปรากฏที่นี่"
   },
   "icu:Stories__list--sending": {
     "messageformat": "กำลังส่ง…"
@@ -4869,7 +4872,10 @@
     "messageformat": "คลิกเพื่อดูสตอรี่"
   },
   "icu:Stories__placeholder-with-icon--text": {
-    "messageformat": "Click <newStoryIcon>Add a story</newStoryIcon> to add an update."
+    "messageformat": "คลิก<newStoryIcon>เพิ่มสตอรี่</newStoryIcon>เพื่อเพิ่มสตอรี่ใหม่"
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "Click <newStoryButtonIcon></newStoryButtonIcon> to add an update."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} ส่งไปยัง {group}"
@@ -5113,6 +5119,12 @@
   },
   "icu:StoryViewsNRepliesModal__reacted": {
     "messageformat": "แสดงความรู้สึกต่อสตอรี่"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "Reacted to the story"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
+    "messageformat": "Reacted to the story"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
     "messageformat": "คุณไม่สามารถตอบกลับสตอรี่นี้ได้ เนื่องจากคุณไม่ได้เป็นสมาชิกในกลุ่มนี้แล้ว"
@@ -5413,7 +5425,10 @@
     "messageformat": "คลิกเพื่อดูหรือเริ่มการโทร"
   },
   "icu:CallsTab__EmptyStateText--with-icon": {
-    "messageformat": "Click <newCallIcon>New Call</newCallIcon> to start a new voice or video call."
+    "messageformat": "คลิก<newCallIcon>การโทรใหม่</newCallIcon>เพื่อเริ่มต้นการโทรด้วยเสียงหรือวิดีโอคอล"
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call."
   },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "ค้นหา"
@@ -5428,16 +5443,16 @@
     "messageformat": "ยังไม่มีการโทรล่าสุด เริ่มต้นด้วยการโทรหาเพื่อนของคุณ"
   },
   "icu:CallsList__EmptyState--noQuery__title": {
-    "messageformat": "No calls"
+    "messageformat": "ไม่มีการโทร"
   },
   "icu:CallsList__EmptyState--noQuery__subtitle": {
-    "messageformat": "Recent calls will appear here."
+    "messageformat": "การโทรล่าสุดจะปรากฏที่นี่"
   },
   "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "No missed calls"
+    "messageformat": "ไม่มีสายที่ไม่ได้รับ"
   },
   "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Missed calls will appear here."
+    "messageformat": "สายที่ไม่ได้รับจะปรากฏที่นี่"
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "ไม่พบผลลัพธ์สำหรับ “{query}”"
@@ -5456,9 +5471,6 @@
   },
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "ปฏิเสธ"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "โทรกลุ่ม"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "ลิงก์การโทร"
@@ -5617,22 +5629,13 @@
     "messageformat": "มีการปรับเปลี่ยนเล็กน้อย พร้อมแก้ไขบั๊ก และการพัฒนาประสิทธิภาพให้ดียิ่งขึ้น ขอขอบคุณที่เลือกใช้ Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "การอัปเดตครั้งนี้ปรับความเร็วให้คุณลบข้อความไซส์ใหญ่ได้ทันใจยิ่งขึ้น"
+  "icu:WhatsNew__v7.22--0": {
+    "messageformat": "เน็ตหลุดหรือคอมสะดุดก็ไม่หวั่น เพราะจากนี้ไป Signal เดสก์ท็อปจะสามารถดำเนินการดาวน์โหลดไฟล์แนบต่อให้คุณได้แบบอัตโนมัติ"
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "เราเพิ่มทางลัดที่ให้คุณวางสายที่ใช้งานอยู่ก่อนเพื่อเข้าร่วมการโทรใหม่ได้สะดวกยิ่งกว่าเดิม"
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "Chats now open faster than ever thanks to another round of performance improvements, so you can click on your cliques and see what they're saying real quick."
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "การอัปเดตครั้งนี้ยังมาพร้อมกับการแก้ไขปัญหาในการเปิดแอปสำหรับผู้ใช้ Linux ที่ตั้ง Locale เป็น POSIX"
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "อัปเดตหน้าตาของการแสดงสตอรี่ที่มีคำบรรยายยาวๆ ด้วยการปรับคอนทราสต์ให้ตัวอักษรอ่านง่ายสบายตายิ่งขึ้น"
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "การอัปเดตครั้งนี้ยังมาพร้อมการพัฒนาประสิทธิภาพในการสร้างตัวอย่างลิงก์ รวมถึงแก้ไขบั๊กที่อาจเคยเป็นอุปสรรคในตอนปิดหน้าต่างการตั้งค่า"
-  },
-  "icu:WhatsNew__v7.21--0": {
-    "messageformat": "Everyone loves a good story, and we could tell you the tale of a bug that sometimes caused the progress bar to freeze right in the middle of watching a good story — but that bug's adventure already has a happy ending because we fixed it in this release."
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "We also fixed a handful of bugs, including one that sometimes caused \"Unknown contact started a video call\" to appear in the chat list summary after you started the call. Even if you're still on a journey of self-discovery, you are never completely unknown to yourself."
   }
 }

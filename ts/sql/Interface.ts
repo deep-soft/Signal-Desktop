@@ -406,6 +406,7 @@ export type MessageAttachmentsCursorType = MessageCursorType &
 export type GetKnownMessageAttachmentsResultType = Readonly<{
   cursor: MessageAttachmentsCursorType;
   attachments: ReadonlyArray<string>;
+  downloads: ReadonlyArray<string>;
 }>;
 
 export type PageMessagesCursorType = MessageCursorType &
@@ -777,14 +778,17 @@ type WritableInterface = {
   ) => void;
   _removeAllReactions: () => void;
   _removeAllMessages: () => void;
+  incrementMessagesMigrationAttempts: (
+    messageIds: ReadonlyArray<string>
+  ) => void;
 
   clearCallHistory: (target: CallLogEventTarget) => ReadonlyArray<string>;
   _removeAllCallHistory: () => void;
   markCallHistoryDeleted: (callId: string) => void;
   cleanupCallHistoryMessages: () => void;
   markCallHistoryRead(callId: string): void;
-  markAllCallHistoryRead(target: CallLogEventTarget): void;
-  markAllCallHistoryReadInConversation(target: CallLogEventTarget): void;
+  markAllCallHistoryRead(target: CallLogEventTarget): number;
+  markAllCallHistoryReadInConversation(target: CallLogEventTarget): number;
   saveCallHistory(callHistory: CallHistoryDetails): void;
   markCallHistoryMissed(callIds: ReadonlyArray<string>): void;
   getRecentStaleRingsAndMarkOlderMissed(): ReadonlyArray<MaybeStaleCallHistory>;
@@ -979,6 +983,7 @@ export type ServerReadableDirectInterface = ReadableInterface & {
   finishGetKnownMessageAttachments: (
     cursor: MessageAttachmentsCursorType
   ) => void;
+  getKnownDownloads: () => Array<string>;
   getKnownConversationAttachments: () => Array<string>;
 
   getAllBadgeImageFileLocalPaths: () => Set<string>;

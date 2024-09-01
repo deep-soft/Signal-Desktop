@@ -821,14 +821,8 @@
   "icu:mute": {
     "messageformat": "အသံပိတ်ရန်"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "Signal အပ်ဒိတ်လုပ်၍ မရပါ။ {retry} သို့မဟုတ် ကိုယ်တိုင် ထည့်သွင်းရန် {url} သို့ သွားပါ။ ထို့နောက် ဤပြဿနာနှင့်ပတ်သက်၍ {support}"
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "Signal အပ်ဒိတ်လုပ်၍ မရပါ။ <retryUpdateButton>အပ်ဒိတ် ထပ်လုပ်ကြည့်ပါ</retryUpdateButton> သို့မဟုတ် ၎င်းကို ကိုယ်တိုင်ထည့်သွင်းရန် {url} သို့ သွားပါ။ ထို့နောက် ဤပြဿနာနှင့်ပတ်သက်၍ <contactSupportLink>ပံ့ပိုးမှုသို့ ဆက်သွယ်ပါ။</contactSupportLink>"
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "Signal အပ်ဒိတ်လုပ်၍ မရပါ။ ကိုယ်တိုင် ထည့်သွင်းရန်{url} သို့ သွားပါ။ ထို့နောက် ဤပြဿနာနှင့်ပတ်သက်၍ {support}"
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "Signal အပ်ဒိတ်လုပ်၍ မရပါ။ ကိုယ်တိုင် ထည့်သွင်းရန် {url} သို့ သွားပါ။ ထို့နောက် ဤပြဿနာနှင့်ပတ်သက်၍ <contactSupportLink>ပံ့ပိုးမှုသို့ ဆက်သွယ်ပါ။</contactSupportLink>"
@@ -1834,9 +1828,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "အပ်ဒိတ်လုပ်ဆောင်မှု ပြန်ကြိုးစားရန်"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "အကူအညီ ရယူရန် ဆက်သွယ်ပါ"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "Signal ကို ပြန်စတင်ရန် နှိပ်ပါ"
@@ -3353,6 +3344,9 @@
   "icu:GroupV2--admin-approval-bounce": {
     "messageformat": "{joinerName} သည် အဖွဲ့လင့်ခ်မှတစ်ဆင့် ပါဝင်ရန် တောင်းဆိုချက် {numberOfRequests,number} ခုကို တောင်းဆိုပြီးနောက် ပယ်ဖျက်ခဲ့ပါသည်။"
   },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{numberOfRequests, plural, other {{joinerName} သည် အဖွဲ့လင့်ခ်မှတစ်ဆင့် ပါဝင်ရန် တောင်းဆိုချက် {numberOfRequests,number} ခုကို တောင်းဆိုပြီးနောက် ဖျက်သိမ်းခဲ့ပါသည်}}"
+  },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "သင်သည် ပိတ်ထားသော အက်ဒ်မင် အတည်ပြုမှုဖြင့် အဖွဲ့လင့်ခ်ကို ဖွင့်ခဲ့ပါသည်။"
   },
@@ -3526,6 +3520,15 @@
   },
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "\"Signal အတွက် လှူရန်\" ကို နှိပ်ပြီး ပုံမှန်လှူဒါန်းပါ"
+  },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "Syncing messages"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "Downloading {currentSize} of {totalSize} ({fractionComplete,number,percent})..."
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "This may take a few minutes depending on the size of your backup"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "ဖြန့်ရန်"
@@ -3954,10 +3957,10 @@
     "messageformat": "ရေးသားရန် ခလုတ်"
   },
   "icu:emptyInbox__title": {
-    "messageformat": "No chats"
+    "messageformat": "ချက်(တ်)များမရှိပါ"
   },
   "icu:emptyInbox__subtitle": {
-    "messageformat": "Recent chats will appear here."
+    "messageformat": "လတ်တလောချက်(တ်)များ ဤနေရာတွင် ပေါ်လာပါမည်။"
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "ဒီကို ထပ်ဆင့်ပို့မည်"
@@ -4848,10 +4851,10 @@
     "messageformat": "ယခု ပြသရန် မကြာသေးမီက စတိုရီများ မရှိသေးပါ"
   },
   "icu:Stories__list__empty--title": {
-    "messageformat": "No stories"
+    "messageformat": "စတိုရီများမရှိပါ"
   },
   "icu:Stories__list__empty--subtitle": {
-    "messageformat": "New updates will appear here."
+    "messageformat": "အပ်ဒိတ်အသစ်များ ဤနေရာတွင် ပေါ်လာပါမည်။"
   },
   "icu:Stories__list--sending": {
     "messageformat": "ပို့နေဆဲ..."
@@ -4869,7 +4872,10 @@
     "messageformat": "စတိုရီကို ကြည့်ရန် နှိပ်ပါ"
   },
   "icu:Stories__placeholder-with-icon--text": {
-    "messageformat": "Click <newStoryIcon>Add a story</newStoryIcon> to add an update."
+    "messageformat": "အပ်ဒိတ်တစ်ခုထည့်ရန် <newStoryIcon>စတိုရီတစ်ခု ပေါင်းထည့်ရန်</newStoryIcon>ကို နှိပ်ပါ။"
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "Click <newStoryButtonIcon></newStoryButtonIcon> to add an update."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} မှ {group}"
@@ -5113,6 +5119,12 @@
   },
   "icu:StoryViewsNRepliesModal__reacted": {
     "messageformat": "စတိုရီကို တုံ့ပြန်မှု ပေးခဲ့ပါသည်"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "Reacted to the story"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
+    "messageformat": "Reacted to the story"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
     "messageformat": "You can’t reply to this story because you’re no longer a member of this group."
@@ -5413,7 +5425,10 @@
     "messageformat": "ကောလ်တစ်ခုကို ကြည့်ရှုရန် သို့မဟုတ် စတင်ရန် နှိပ်ပါ"
   },
   "icu:CallsTab__EmptyStateText--with-icon": {
-    "messageformat": "Click <newCallIcon>New Call</newCallIcon> to start a new voice or video call."
+    "messageformat": "အသံ သို့မဟုတ် ဗီဒီယိုကောလ် အသစ်တစ်ခုစတင်ရန် <newCallIcon>ကောလ်အသစ်</newCallIcon> ကိုနှိပ်ပါ။"
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call."
   },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "ရှာရန်"
@@ -5428,16 +5443,16 @@
     "messageformat": "လတ်တလော ခေါ်ဆိုမှုများမရှိ။ သူငယ်ချင်းတစ်ယောက်ကို ခေါ်ဆိုခြင်းဖြင့် စတင်လိုက်ပါ။"
   },
   "icu:CallsList__EmptyState--noQuery__title": {
-    "messageformat": "No calls"
+    "messageformat": "ကောလ်များ မရှိပါ"
   },
   "icu:CallsList__EmptyState--noQuery__subtitle": {
-    "messageformat": "Recent calls will appear here."
+    "messageformat": "လတ်တလောကောလ်များ ဤနေရာတွင် ပေါ်လာပါမည်။"
   },
   "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "No missed calls"
+    "messageformat": "လွတ်သွားသော ကောလ်များမရှိပါ"
   },
   "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Missed calls will appear here."
+    "messageformat": "လွတ်သွားသော ကောလ်များ ဤနေရာတွင် ပေါ်လာပါမည်။"
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "“{query}” အတွက် ရလဒ်မရှိပါ"
@@ -5456,9 +5471,6 @@
   },
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "ငြင်းပယ်သည်"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "အဖွဲ့လိုက် ခေါ်ဆိုမှု"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "ကောလ်လင့်ခ်"
@@ -5617,22 +5629,13 @@
     "messageformat": "အနေအထား ပြုပြင်မှုလေးများ၊ ချို့ယွင်းချက် ပြင်ဆင်မှုများနှင့် စွမ်းဆောင်ရည် မြှင့်တင်မှုများ။ Signal ကို သုံးသည့်အတွက် ကျေးဇူးတင်ပါသည်။",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "ယခုထုတ်ဝေမှုတွင် မက်ဆေ့ချ်တွဲ အရှည်ကြီးများကို ဖျက်ခြင်းလုပ်ငန်းစဉ်ကို အရှိန်မြှင့်တင် ပေးထားပါသည်။"
+  "icu:WhatsNew__v7.22--0": {
+    "messageformat": "ယခုအခါ Signal Desktop သည် ဒေါင်းလုဒ် လုပ်လက်စဖြင့် ပြတ်တောက်သွားသော ပူးတွဲဖိုင်များကို အလိုအလျောက် ဆက်၍ဒေါင်းလုဒ်လုပ်နိုင်ပါပြီ။"
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "အခြားခေါ်ဆိုမှုတစ်ခုသည် သင့်အမည်ကိုခေါ်ဆိုပါက လက်ရှိခေါ်ဆိုမှုမှထွက်ပြီး အသစ်တစ်ခုဖြင့် ချိတ်ဆက်နိုင်ရန် ရှော့တ်ကတ်တစ်ခုကို ထည့်သွင်းထားသည်။ သင်ထွက်ခွာသွားခြင်းကို အတည်ပြုရန် သင့်အား အသိပေးသွားမည်ဖြစ်သော်လည်း မထွက်ခွာမီ နှုတ်ဆက်ခြင်း မနှုတ်ဆက်ခြင်းသည် သင့်သဘောဖြစ်သည်။"
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "Chats now open faster than ever thanks to another round of performance improvements, so you can click on your cliques and see what they're saying real quick."
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "ဤအပ်ဒိတ်သည် စက်တွင်း `POSIX` သုံးစွဲသူများအတွက် Linux တွင် စတင်ချိန် ပျက်ယွင်းမှုကိုလည်း ပြင်ဆင်ပေးပါသည်။"
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "စာတန်းရှည်များပါသော စတိုရီများကို အလင်းအမှောင် ပိုမိုကောင်းမွန်စေပြီး စာသားကိုဖတ်ရလွယ်ကူစေရန် ယခုအခါ ဖော်ပြထားပြီဖြစ်သည်။"
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "ဤထုတ်ဝေမှုသည် လင့်ခ်ကြိုတင်ကြည့်ရှုမှု အဆင့်၏ စွမ်းဆောင်ရည်ကိုလည်း မြှင့်တင်ပေးထားပြီး ဆက်တင်ဝင်းဒိုး ပိတ်သည့်အခါတိုင်း ဖြစ်တတ်သည့် အသေးစားချွတ်ယွင်းချက်တစ်ခုကို ပြင်ဆင်ပေးထားသည်။"
-  },
-  "icu:WhatsNew__v7.21--0": {
-    "messageformat": "Everyone loves a good story, and we could tell you the tale of a bug that sometimes caused the progress bar to freeze right in the middle of watching a good story — but that bug's adventure already has a happy ending because we fixed it in this release."
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "We also fixed a handful of bugs, including one that sometimes caused \"Unknown contact started a video call\" to appear in the chat list summary after you started the call. Even if you're still on a journey of self-discovery, you are never completely unknown to yourself."
   }
 }

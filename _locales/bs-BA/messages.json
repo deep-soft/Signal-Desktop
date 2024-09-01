@@ -821,14 +821,8 @@
   "icu:mute": {
     "messageformat": "Isključi zvuk"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "Signal se nije mogao ažurirati. {retry} ili posjetite {url} da ga ručno instalirate. Zatim {support} u vezi s ovim problemom"
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "Signal se nije mogao ažurirati. <retryUpdateButton>Ponovo pokušajte ažurirati</retryUpdateButton> ili posjetite {url} da ga instalirate ručno. Zatim, <contactSupportLink>kontaktirajte podršku</contactSupportLink> u vezi s ovim problemom"
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "Signal se nije mogao ažurirati. Posjetite {url} da ga ručno instalirate. Zatim,{support} u vezi s ovim problemom"
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "Signal se nije mogao ažurirati. Posjetite {url} da ga instalirate ručno. Zatim, <contactSupportLink>kontaktirajte podršku</contactSupportLink> u vezi s ovim problemom"
@@ -1834,9 +1828,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "Ponovo pokušajte ažurirati"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "kontaktirajte podršku"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "Kliknite da ponovo pokrenete Signal"
@@ -3353,6 +3344,9 @@
   "icu:GroupV2--admin-approval-bounce": {
     "messageformat": "{joinerName} je zatražio i otkazao zahtjeve (njih {numberOfRequests,number}) da se pridruži putem linka grupe."
   },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{numberOfRequests, plural, one {{joinerName} podnio/la i otkazao/la zahtjev za pridruživanje grupi putem linka} few {{joinerName} podnio/la i otkazao/la {numberOfRequests,number} zahtjeva za pridruživanje grupi putem linka} many {{joinerName} je zatražio i otkazao {numberOfRequests,number}) zahtjeva za pridruživanje grupi putem linka} other {{joinerName} podnio/la i otkazao/la {numberOfRequests,number} zahtjeva za pridruživanje grupi putem linka}}"
+  },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "Uključili ste link grupe s onemogućenim odobrenjem administratora."
   },
@@ -3526,6 +3520,15 @@
   },
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "Dodirnite \"Doniraj Signalu\" i pretplatite se"
+  },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "Syncing messages"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "Downloading {currentSize} of {totalSize} ({fractionComplete,number,percent})..."
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "This may take a few minutes depending on the size of your backup"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Proširi"
@@ -3954,10 +3957,10 @@
     "messageformat": "dugme za pisanje"
   },
   "icu:emptyInbox__title": {
-    "messageformat": "No chats"
+    "messageformat": "Nema chatova"
   },
   "icu:emptyInbox__subtitle": {
-    "messageformat": "Recent chats will appear here."
+    "messageformat": "Ovdje će se pojaviti nedavni chatovi."
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "Proslijedi"
@@ -4848,10 +4851,10 @@
     "messageformat": "Trenutno nema nedavnih priča za prikaz"
   },
   "icu:Stories__list__empty--title": {
-    "messageformat": "No stories"
+    "messageformat": "Nema priča"
   },
   "icu:Stories__list__empty--subtitle": {
-    "messageformat": "New updates will appear here."
+    "messageformat": "Ovdje će se pojaviti nova ažuriranja."
   },
   "icu:Stories__list--sending": {
     "messageformat": "Slanje…"
@@ -4869,7 +4872,10 @@
     "messageformat": "Kliknite da prikažete priču"
   },
   "icu:Stories__placeholder-with-icon--text": {
-    "messageformat": "Click <newStoryIcon>Add a story</newStoryIcon> to add an update."
+    "messageformat": "Kliknite na <newStoryIcon>Dodaj priču</newStoryIcon> da dodate ažuriranje."
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "Click <newStoryButtonIcon></newStoryButtonIcon> to add an update."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} šalje u grupu {group}"
@@ -5113,6 +5119,12 @@
   },
   "icu:StoryViewsNRepliesModal__reacted": {
     "messageformat": "Reagirao/la na priču"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "Reacted to the story"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
+    "messageformat": "Reacted to the story"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
     "messageformat": "You can’t reply to this story because you’re no longer a member of this group."
@@ -5413,7 +5425,10 @@
     "messageformat": "Kliknite da vidite ili započnete poziv"
   },
   "icu:CallsTab__EmptyStateText--with-icon": {
-    "messageformat": "Click <newCallIcon>New Call</newCallIcon> to start a new voice or video call."
+    "messageformat": "Kliknite na <newCallIcon>Novi poziv</newCallIcon> da započnete novi glasovni ili video poziv."
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call."
   },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Traži"
@@ -5428,16 +5443,16 @@
     "messageformat": "Nema nedavnih poziva. Započnite pozivom prijatelja."
   },
   "icu:CallsList__EmptyState--noQuery__title": {
-    "messageformat": "No calls"
+    "messageformat": "Nema poziva"
   },
   "icu:CallsList__EmptyState--noQuery__subtitle": {
-    "messageformat": "Recent calls will appear here."
+    "messageformat": "Ovdje će se pojaviti nedavni pozivi."
   },
   "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "No missed calls"
+    "messageformat": "Nema propuštenih poziva"
   },
   "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Missed calls will appear here."
+    "messageformat": "Propušteni pozivi će se pojaviti ovdje."
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "Nema rezultata za “{query}”"
@@ -5456,9 +5471,6 @@
   },
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "Odbijeno"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "Grupni poziv"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "Link za poziv"
@@ -5617,22 +5629,13 @@
     "messageformat": "Mala podešavanja, otklanjanje grešaka i poboljšanja performansi. Hvala vam što koristite Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "Brzi rastanak je ponekad lakši od sporog pa smo ubrzali proces brisanja velikih niti poruka."
+  "icu:WhatsNew__v7.22--0": {
+    "messageformat": "Signal Desktop sada može automatski nastaviti s prekinutim preuzimanjima privitaka."
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "Dodali smo prečac za prekidanje veze i pridruživanje novom pozivu kada je drugi poziv već u tijeku."
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "Chats now open faster than ever thanks to another round of performance improvements, so you can click on your cliques and see what they're saying real quick."
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "Ovo ažuriranje također popravlja rušenje pri pokretanju Linuxa za korisnike čija je lokalizacija postavljena na `POSIX`."
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "Priče s dugim naslovima sada se prikazuju s poboljšanim kontrastom koji čini tekst lakšim za čitanje."
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "Ovo izdanje također poboljšava izvedbu generiranja pregleda linka i ispravlja manju pogrešku prikaza prilikom zatvaranja prozora postavki."
-  },
-  "icu:WhatsNew__v7.21--0": {
-    "messageformat": "Everyone loves a good story, and we could tell you the tale of a bug that sometimes caused the progress bar to freeze right in the middle of watching a good story — but that bug's adventure already has a happy ending because we fixed it in this release."
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "We also fixed a handful of bugs, including one that sometimes caused \"Unknown contact started a video call\" to appear in the chat list summary after you started the call. Even if you're still on a journey of self-discovery, you are never completely unknown to yourself."
   }
 }

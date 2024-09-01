@@ -821,14 +821,8 @@
   "icu:mute": {
     "messageformat": "ミュート"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "Signalをアップデートできませんでした。{retry} か {url} から手動でインストールしてください。{support}"
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "Signalをアップデートできませんでした。<retryUpdateButton>もう一度アップデートを試す</retryUpdateButton>か、{url}から手動でインストールしてください。その後、この問題を<contactSupportLink>サポートまでお知らせください</contactSupportLink>"
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "Signalをアップデートできませんでした。{url}から手動でインストールしてください。またこの問題を、{support}までお知らせください。"
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "Signalをアップデートできませんでした。{url}から手動でインストールしてください。その後、この問題について<contactSupportLink>サポートに連絡してください</contactSupportLink>"
@@ -1834,9 +1828,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "アップデートを再試行"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "お問い合わせ"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "Signalを再起動する"
@@ -3353,6 +3344,9 @@
   "icu:GroupV2--admin-approval-bounce": {
     "messageformat": "{joinerName} は、グループリンクからの参加申請を{numberOfRequests,number}件キャンセルしました。"
   },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{numberOfRequests, plural, other {{joinerName} がグループリンクから参加を申請して、{numberOfRequests,number}件の申請をキャンセルしました。}}"
+  },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "管理者承認が不要なグループリンクを有効にしました。"
   },
@@ -3526,6 +3520,15 @@
   },
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "「シグナルに寄付する」をタップして申し込む"
+  },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "Syncing messages"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "Downloading {currentSize} of {totalSize} ({fractionComplete,number,percent})..."
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "This may take a few minutes depending on the size of your backup"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "大きく"
@@ -3954,10 +3957,10 @@
     "messageformat": "作成ボタン"
   },
   "icu:emptyInbox__title": {
-    "messageformat": "No chats"
+    "messageformat": "チャットがありません"
   },
   "icu:emptyInbox__subtitle": {
-    "messageformat": "Recent chats will appear here."
+    "messageformat": "最近のチャットがここに表示されます。"
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "転送先"
@@ -4848,10 +4851,10 @@
     "messageformat": "表示できる最近のストーリーはありません"
   },
   "icu:Stories__list__empty--title": {
-    "messageformat": "No stories"
+    "messageformat": "ストーリーがありません"
   },
   "icu:Stories__list__empty--subtitle": {
-    "messageformat": "New updates will appear here."
+    "messageformat": "新しい更新がここに表示されます"
   },
   "icu:Stories__list--sending": {
     "messageformat": "送信中…"
@@ -4869,7 +4872,10 @@
     "messageformat": "クリックしてストーリーを表示"
   },
   "icu:Stories__placeholder-with-icon--text": {
-    "messageformat": "Click <newStoryIcon>Add a story</newStoryIcon> to add an update."
+    "messageformat": "<newStoryIcon>ストーリーを追加</newStoryIcon> をクリックして更新を追加します。"
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "Click <newStoryButtonIcon></newStoryButtonIcon> to add an update."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} から {group}"
@@ -5113,6 +5119,12 @@
   },
   "icu:StoryViewsNRepliesModal__reacted": {
     "messageformat": "ストーリーにリアクションがありました"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "Reacted to the story"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
+    "messageformat": "Reacted to the story"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
     "messageformat": "このグループのメンバーではなくなったので、このストーリーに返信することはできません。"
@@ -5413,7 +5425,10 @@
     "messageformat": "クリックして通話を表示、または通話を開始します"
   },
   "icu:CallsTab__EmptyStateText--with-icon": {
-    "messageformat": "Click <newCallIcon>New Call</newCallIcon> to start a new voice or video call."
+    "messageformat": "<newCallIcon>通話する</newCallIcon> をクリックして、音声通話またはビデオ通話を開始します。"
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call."
   },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "検索"
@@ -5428,16 +5443,16 @@
     "messageformat": "最近の通話はありません。 友達に電話をかけましょう。"
   },
   "icu:CallsList__EmptyState--noQuery__title": {
-    "messageformat": "No calls"
+    "messageformat": "通話がありません"
   },
   "icu:CallsList__EmptyState--noQuery__subtitle": {
-    "messageformat": "Recent calls will appear here."
+    "messageformat": "最近の通話がここに表示されます。"
   },
   "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "No missed calls"
+    "messageformat": "不在着信はありません"
   },
   "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Missed calls will appear here."
+    "messageformat": "最近の不在着信がここに表示されます。"
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "“{query}” の検索結果はありません"
@@ -5456,9 +5471,6 @@
   },
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "拒否"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "グループ通話"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "通話リンク"
@@ -5617,22 +5629,13 @@
     "messageformat": "細かな微調整、バグ修正、パフォーマンスの向上。 Signalをご利用いただきありがとうございます。",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "このリリースでは、サイズの大きいメッセージスレッドの消去プロセスが高速化されました。"
+  "icu:WhatsNew__v7.22--0": {
+    "messageformat": "Signal Desktopで、中断された添付ファイルのダウンロードが自動的に再開されるようになりました。"
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "別の通話が進行中の場合、現在の通話を終了して新しい通話に参加するためのショートカットを追加しました。"
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "Chats now open faster than ever thanks to another round of performance improvements, so you can click on your cliques and see what they're saying real quick."
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "このアップデートでは、ロケールが「POSIX」に設定されているユーザーのLinuxでの起動クラッシュも修正されています。"
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "長いキャプションがあるストーリーは、テキストが読みやすくなるようにコントラストを改善して表示されるようになりました。"
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "このリリースでは、リンクプレビュー生成のパフォーマンスも改善され、設定画面を閉じた時の軽微な表示バグも修正されました。"
-  },
-  "icu:WhatsNew__v7.21--0": {
-    "messageformat": "Everyone loves a good story, and we could tell you the tale of a bug that sometimes caused the progress bar to freeze right in the middle of watching a good story — but that bug's adventure already has a happy ending because we fixed it in this release."
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "We also fixed a handful of bugs, including one that sometimes caused \"Unknown contact started a video call\" to appear in the chat list summary after you started the call. Even if you're still on a journey of self-discovery, you are never completely unknown to yourself."
   }
 }

@@ -821,14 +821,8 @@
   "icu:mute": {
     "messageformat": "Redamkan"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "Signal tidak dapat dikemas kini. {retry} atau layari {url} untuk memasangnya secara manual. Kemudian, {support} tentang masalah ini"
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "Signal tidak dapat dikemas kini. <retryUpdateButton>Cuba kemas kini semula</retryUpdateButton> atau layari {url} untuk memasangnya secara manual. Kemudian, <contactSupportLink>hubungi sokongan</contactSupportLink> tentang masalah ini"
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "Signal tidak dapat dikemas kini. Layari {url} untuk memasangnya secara manual. Kemudian, {support} tentang masalah ini"
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "Signal tidak dapat dikemas kini. Layari {url} untuk memasangnya secara manual. Kemudian, <contactSupportLink>hubungi sokongan</contactSupportLink> tentang masalah ini"
@@ -1834,9 +1828,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "Cuba semula kemas kini"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "hubungi sokongan"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "Klik untuk membuka semula Signal"
@@ -3353,6 +3344,9 @@
   "icu:GroupV2--admin-approval-bounce": {
     "messageformat": "{joinerName} meminta dan membatalkan {numberOfRequests,number} permintaan untuk menyertai melalui pautan kumpulan"
   },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{numberOfRequests, plural, other {{joinerName} meminta dan telah membatalkan {numberOfRequests,number} permintaan untuk menyertai melalui pautan kumpulan}}"
+  },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "Anda telah menghidupkan pautan kumpulan dengan kelulusan pentadbir dinyahdayakan."
   },
@@ -3526,6 +3520,15 @@
   },
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "Ketik \"Derma kepada Signal\" dan langgan"
+  },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "Syncing messages"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "Downloading {currentSize} of {totalSize} ({fractionComplete,number,percent})..."
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "This may take a few minutes depending on the size of your backup"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Kembangkan"
@@ -3954,10 +3957,10 @@
     "messageformat": "butang mengarang"
   },
   "icu:emptyInbox__title": {
-    "messageformat": "No chats"
+    "messageformat": "Tiada sembang"
   },
   "icu:emptyInbox__subtitle": {
-    "messageformat": "Recent chats will appear here."
+    "messageformat": "Sembang terbaharu akan dipaparkan di sini."
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "Majukan Kepada"
@@ -4848,10 +4851,10 @@
     "messageformat": "Tiada cerita terkini untuk ditunjukkan sekarang"
   },
   "icu:Stories__list__empty--title": {
-    "messageformat": "No stories"
+    "messageformat": "Tiada cerita"
   },
   "icu:Stories__list__empty--subtitle": {
-    "messageformat": "New updates will appear here."
+    "messageformat": "Kemas kini baharu akan dipaparkan di sini."
   },
   "icu:Stories__list--sending": {
     "messageformat": "Menghantar..."
@@ -4869,7 +4872,10 @@
     "messageformat": "Klik untuk menonton cerita"
   },
   "icu:Stories__placeholder-with-icon--text": {
-    "messageformat": "Click <newStoryIcon>Add a story</newStoryIcon> to add an update."
+    "messageformat": "Klik <newStoryIcon>Tambah cerita</newStoryIcon> untuk menambah kemas kini."
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "Click <newStoryButtonIcon></newStoryButtonIcon> to add an update."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} kepada {group}"
@@ -5113,6 +5119,12 @@
   },
   "icu:StoryViewsNRepliesModal__reacted": {
     "messageformat": "Telah beri reaksi kepada cerita"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "Reacted to the story"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
+    "messageformat": "Reacted to the story"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
     "messageformat": "Anda tidak boleh membalas cerita ini kerana anda bukan lagi ahli kumpulan ini."
@@ -5413,7 +5425,10 @@
     "messageformat": "Klik untuk melihat atau memulakan panggilan"
   },
   "icu:CallsTab__EmptyStateText--with-icon": {
-    "messageformat": "Click <newCallIcon>New Call</newCallIcon> to start a new voice or video call."
+    "messageformat": "Klik <newCallIcon>Panggilan Baharu</newCallIcon> untuk memulakan panggilan suara atau video baharu."
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call."
   },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Cari"
@@ -5428,16 +5443,16 @@
     "messageformat": "Tiada panggilan terbaru. Mulakan dengan menghubungi rakan."
   },
   "icu:CallsList__EmptyState--noQuery__title": {
-    "messageformat": "No calls"
+    "messageformat": "Tiada panggilan"
   },
   "icu:CallsList__EmptyState--noQuery__subtitle": {
-    "messageformat": "Recent calls will appear here."
+    "messageformat": "Panggilan terbaharu akan dipaparkan di sini."
   },
   "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "No missed calls"
+    "messageformat": "Tiada panggilan terlepas"
   },
   "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Missed calls will appear here."
+    "messageformat": "Panggilan terlepas akan dipaparkan di sini."
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "Tiada hasil untuk “{query}”"
@@ -5456,9 +5471,6 @@
   },
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "Tolak"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "Panggilan kumpulan"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "Pautan panggilan"
@@ -5617,22 +5629,13 @@
     "messageformat": "Sedikit pengubahsuaian, pembaikan pepijat dan peningkatan prestasi. Terima kasih kerana menggunakan Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "Keluaran ini mempercepatkan proses memadamkan urutan mesej yang besar."
+  "icu:WhatsNew__v7.22--0": {
+    "messageformat": "Signal Desktop kini boleh menyambung semula muat turun lampiran yang terganggu secara automatik."
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "Kami telah menambahkan pintasan untuk meletakkan panggilan atau menyertai panggilan baharu apabila panggilan lain sedang berjalan."
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "Chats now open faster than ever thanks to another round of performance improvements, so you can click on your cliques and see what they're saying real quick."
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "Kemas kini ini juga membaiki ranap permulaan pada Linux untuk pengguna yang tempatnya ditetapkan kepada 'POSIX'."
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "Cerita dengan kapsyen panjang kini dipaparkan dengan kontras yang lebih baik, menjadikan teks lebih mudah untuk dibaca."
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "Keluaran ini juga meningkatkan prestasi penjanaan pratonton pautan dan membetulkan pepijat paparan kecil semasa menutup tetingkap Tetapan."
-  },
-  "icu:WhatsNew__v7.21--0": {
-    "messageformat": "Everyone loves a good story, and we could tell you the tale of a bug that sometimes caused the progress bar to freeze right in the middle of watching a good story — but that bug's adventure already has a happy ending because we fixed it in this release."
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "We also fixed a handful of bugs, including one that sometimes caused \"Unknown contact started a video call\" to appear in the chat list summary after you started the call. Even if you're still on a journey of self-discovery, you are never completely unknown to yourself."
   }
 }

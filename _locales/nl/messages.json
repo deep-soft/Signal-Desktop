@@ -84,7 +84,7 @@
     "messageformat": "Kan geen toegang krijgen tot de database-encryptiesleutel omdat de back-end voor de keyring van het besturingssysteem is gewijzigd van {previousBackend} in {currentBackend}. Dit kan gebeuren als de desktopomgeving verandert, bijvoorbeeld van GNOME naar KDE.\n\nSchakel over naar de vorige desktopomgeving."
   },
   "icu:databaseError__safeStorageBackendChangeWithPreviousFlag": {
-    "messageformat": "Kan geen toegang krijgen tot de database-encryptiesleutel omdat de back-end voor de keyring van het besturingssysteem is gewijzigd van {previousBackend} naar {currentBackend}. Dit kan gebeuren als de desktopomgeving verandert, bijvoorbeeld van GNOME naar KDE.\n\nSchakel over naar de vorige desktopomgeving of probeer Signal uit te voeren met de commandoregel-flag: --password-store=\"{previousBackendFlag}\""
+    "messageformat": "Kan geen toegang krijgen tot de database-encryptiesleutel omdat de back-end voor de keyring van het besturingssysteem is gewijzigd van {previousBackend} naar {currentBackend}. Dit kan gebeuren als de desktopomgeving verandert, bijvoorbeeld van GNOME naar KDE.\n\nSchakel over naar de vorige desktopomgeving of probeer Signal uit te voeren met de commandoregelvlag: --password-store=\"{previousBackendFlag}\""
   },
   "icu:mainMenuFile": {
     "messageformat": "&Bestand"
@@ -821,14 +821,8 @@
   "icu:mute": {
     "messageformat": "Dempen"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "Signal kon niet worden bijgewerkt. {retry} of bezoek {url} om Signal handmatig te installeren. Neem vervolgens {support} over dit probleem zodat we het in de toekomst kunnen voorkomen."
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "Signal kon niet worden bijgewerkt. <retryUpdateButton>Probeer opnieuw</retryUpdateButton> of bezoek {url} om Signal handmatig te installeren. Neem vervolgens <contactSupportLink>contact op met Support </contactSupportLink>over dit probleem"
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "Signal kan niet worden bijgewerkt. Bezoek {url} om handmatig een nieuwere versie te installeren. Neem vervolgens over dit probleem {support}."
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "Signal kon niet worden bijgewerkt. Bezoek {url} om handmatig een nieuwere versie te installeren. Neem vervolgens <contactSupportLink>contact op met Support </contactSupportLink>over dit probleem"
@@ -1233,10 +1227,10 @@
     "messageformat": "Signal-oproep"
   },
   "icu:calling__join-request-denied": {
-    "messageformat": "Je verzoek om deel te nemen aan deze oproep is geweigerd."
+    "messageformat": "Je verzoek om deel te nemen aan deze oproep is afgewezen."
   },
   "icu:calling__join-request-denied-title": {
-    "messageformat": "Deelnameverzoek geweigerd"
+    "messageformat": "Deelnameverzoek afgewezen"
   },
   "icu:calling__removed-from-call": {
     "messageformat": "Iemand heeft je uit de oproep verwijderd."
@@ -1311,7 +1305,7 @@
     "messageformat": "Deelnameverzoek goedkeuren"
   },
   "icu:CallingPendingParticipants__DenyUser": {
-    "messageformat": "Deelnameverzoek weigeren"
+    "messageformat": "Deelnameverzoek afwijzen"
   },
   "icu:CallingPendingParticipants__ApproveAll": {
     "messageformat": "Alle goedkeuren"
@@ -1834,9 +1828,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "Probeer Signal opnieuw bij te werken"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "contact op met ondersteuning"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "Klik hier om Signal opnieuw te starten"
@@ -3336,22 +3327,25 @@
     "messageformat": "Je verzoek om lid te worden van de groep is door een beheerder afgewezen."
   },
   "icu:GroupV2--admin-approval-remove-one--other--you": {
-    "messageformat": "Je hebt het verzoek van {joinerName} om lid te worden van de groep geweigerd."
+    "messageformat": "Je hebt het verzoek van {joinerName} om lid te worden van de groep afgewezen."
   },
   "icu:GroupV2--admin-approval-remove-one--other--own": {
     "messageformat": "{joinerName} heeft het verzoek om lid te worden van de groep ingetrokken."
   },
   "icu:GroupV2--admin-approval-remove-one--other--other": {
-    "messageformat": "{adminName} heeft een verzoek van {joinerName} om lid te worden van de groep geweigerd."
+    "messageformat": "{adminName} heeft een verzoek van {joinerName} om lid te worden van de groep afgewezen."
   },
   "icu:GroupV2--admin-approval-remove-one--other--unknown": {
-    "messageformat": "Een verzoek van {joinerName} om lid te worden van de groep is geweigerd."
+    "messageformat": "Een verzoek van {joinerName} om lid te worden van de groep is afgewezen."
   },
   "icu:GroupV2--admin-approval-bounce--one": {
     "messageformat": "{joinerName} heeft via de groepslink verzocht lid te worden van de groep en heeft dat verzoek weer ingetrokken"
   },
   "icu:GroupV2--admin-approval-bounce": {
-    "messageformat": "{joinerName} heeft {numberOfRequests,number} keer verzocht om lid te worden van de groep en die verzoeken weer ingetrokken"
+    "messageformat": "{joinerName} heeft {numberOfRequests,number} keer verzocht om lid te worden van de groep en die verzoeken weer ingetrokken."
+  },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{numberOfRequests, plural, one {{joinerName} heeft verzocht om lid te worden van de groep en dat verzoek weer ingetrokken} other {{joinerName} heeft verzocht om lid te worden van de groep en {numberOfRequests,number} verzoeken weer ingetrokken}}"
   },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "Je hebt de groepslink zonder beheerdersgoedkeuring van nieuwe leden ingeschakeld."
@@ -3527,6 +3521,15 @@
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "Tik op ‘Doneren aan Signal’ en meld je aan"
   },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "Syncing messages"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "Downloading {currentSize} of {totalSize} ({fractionComplete,number,percent})..."
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "This may take a few minutes depending on the size of your backup"
+  },
   "icu:CompositionArea--expand": {
     "messageformat": "Vergroten"
   },
@@ -3666,7 +3669,7 @@
     "messageformat": "De groep {groupName} deblokkeren?"
   },
   "icu:ConversationDetailsActions--block-group-modal-title": {
-    "messageformat": "De groep {groupName} blokkeren en verlaten?"
+    "messageformat": "De groep ‘{groupName}’ blokkeren en verlaten?"
   },
   "icu:ConversationDetailsActions--block-group-modal-content": {
     "messageformat": "Je zult niet langer berichten of meldingen van deze groep ontvangen."
@@ -3954,10 +3957,10 @@
     "messageformat": "Opstelknop"
   },
   "icu:emptyInbox__title": {
-    "messageformat": "No chats"
+    "messageformat": "Geen chats"
   },
   "icu:emptyInbox__subtitle": {
-    "messageformat": "Recent chats will appear here."
+    "messageformat": "Recente chats verschijnen hier."
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "Doorsturen naar"
@@ -4848,10 +4851,10 @@
     "messageformat": "Er zijn op dit moment geen recente verhalen om weer te geven"
   },
   "icu:Stories__list__empty--title": {
-    "messageformat": "No stories"
+    "messageformat": "Geen verhalen"
   },
   "icu:Stories__list__empty--subtitle": {
-    "messageformat": "New updates will appear here."
+    "messageformat": "Nieuwe updates verschijnen hier."
   },
   "icu:Stories__list--sending": {
     "messageformat": "Versturen…"
@@ -4869,7 +4872,10 @@
     "messageformat": "Klik op een verhaal om die weer te geven"
   },
   "icu:Stories__placeholder-with-icon--text": {
-    "messageformat": "Click <newStoryIcon>Add a story</newStoryIcon> to add an update."
+    "messageformat": "Klik op <newStoryIcon>Een verhaal toevoegen</newStoryIcon> om een update toe te voegen."
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "Click <newStoryButtonIcon></newStoryButtonIcon> to add an update."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} naar {group}"
@@ -5113,6 +5119,12 @@
   },
   "icu:StoryViewsNRepliesModal__reacted": {
     "messageformat": "Reageerde op dit verhaal"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "Reacted to the story"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
+    "messageformat": "Reacted to the story"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
     "messageformat": "Je kunt niet reageren op dit verhaal, omdat je geen lid van deze groep meer bent."
@@ -5413,7 +5425,10 @@
     "messageformat": "Klik op een oproep om details te bekijken of start een oproep"
   },
   "icu:CallsTab__EmptyStateText--with-icon": {
-    "messageformat": "Click <newCallIcon>New Call</newCallIcon> to start a new voice or video call."
+    "messageformat": "Klik op <newCallIcon>Nieuwe Oproep</newCallIcon> om een nieuwe spraak- of video-oproep te starten."
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call."
   },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Zoeken"
@@ -5428,16 +5443,16 @@
     "messageformat": "Geen recente oproepen. Begin door een contact te bellen."
   },
   "icu:CallsList__EmptyState--noQuery__title": {
-    "messageformat": "No calls"
+    "messageformat": "Geen oproepen"
   },
   "icu:CallsList__EmptyState--noQuery__subtitle": {
-    "messageformat": "Recent calls will appear here."
+    "messageformat": "Recente oproepen verschijnen hier."
   },
   "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "No missed calls"
+    "messageformat": "Geen gemiste oproepen"
   },
   "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Missed calls will appear here."
+    "messageformat": "Gemiste oproepen verschijnen hier."
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "Geen resultaten voor ‘{query}’"
@@ -5456,9 +5471,6 @@
   },
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "Geweigerd"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "Groepsoproep"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "Oproeplink"
@@ -5617,22 +5629,13 @@
     "messageformat": "Kleine aanpassingen, bugfixes en prestatieverbeteringen. Bedankt dat je Signal gebruikt!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "Soms is snel zwaaien makkelijker dan een uitgebreid afscheid, daarom hebben we het proces van het verwijderen van grote berichtenthreads versneld."
+  "icu:WhatsNew__v7.22--0": {
+    "messageformat": "Signal Desktop kan nu automatisch onderbroken downloads van bijlagen hervatten vanaf het punt waar ze zijn onderbroken, dus je hoeft niet meer zo lang te wachten om te kunnen lachen, zelfs als je je laptop sluit voordat de meme die je vriend je heeft gestuurd klaar is met downloaden."
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "We hebben een snelkoppeling toegevoegd om de huidige oproep te verlaten en deel te nemen aan een nieuwe. Je moet je vertrek eerst even bevestigen, maar afscheid nemen is niet verplicht. Of je gedag zegt is aan jou."
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "Chats now open faster than ever thanks to another round of performance improvements, so you can click on your cliques and see what they're saying real quick."
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "Deze update lost ook opstartproblemen op voor Linux-gebruikers die `POSIX` gebruiken."
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "Verhalen met lange bijschriften worden nu getoond met meer contrast, waardoor de tekst beter leesbaar is. Nu mensen daadwerkelijk kunnen zien wat je probeert te delen, kun je in detail beschrijven waarom je zo moet lachen in plaats van kort 'lol' zeggen."
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "Deze uitgave verbetert ook het genereren van linkvoorbeelden en er is een kleine fout opgelost die optrad bij het sluiten van het Instellingen-venster."
-  },
-  "icu:WhatsNew__v7.21--0": {
-    "messageformat": "Everyone loves a good story, and we could tell you the tale of a bug that sometimes caused the progress bar to freeze right in the middle of watching a good story — but that bug's adventure already has a happy ending because we fixed it in this release."
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "We also fixed a handful of bugs, including one that sometimes caused \"Unknown contact started a video call\" to appear in the chat list summary after you started the call. Even if you're still on a journey of self-discovery, you are never completely unknown to yourself."
   }
 }

@@ -821,14 +821,8 @@
   "icu:mute": {
     "messageformat": "Silenciar"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "Erro ao actualizar Signal. {retry} ou visita {url} para instalala de maneira manual. Logo, contacta co {support} sobre este problema"
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "Erro ao actualizar Signal. <retryUpdateButton>Volve intentalo</retryUpdateButton> ou visita {url} para instalala de maneira manual. Logo, <contactSupportLink>contacta co servizo de asistencia</contactSupportLink> sobre este problema"
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "Erro ao actualizar Signal. Visita {url} para instalala de maneira manual. Logo, contacta co {support} sobre este problema"
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "Erro ao actualizar Signal. Visita {url} para instalala de maneira manual. Logo, <contactSupportLink>contacta co servizo de asistencia</contactSupportLink> sobre este problema"
@@ -1834,9 +1828,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "Volver intentar actualización"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "Contactar co centro de axuda"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "Preme para volver iniciar Signal"
@@ -3353,6 +3344,9 @@
   "icu:GroupV2--admin-approval-bounce": {
     "messageformat": "{joinerName} enviou e cancelou {numberOfRequests,number} solicitudes para unirse ao grupo a través da ligazón."
   },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{numberOfRequests, plural, one {{joinerName} solicitou e cancelou a súa solicitude para unirse a través da ligazón de grupo.} other {{joinerName} solicitou e cancelou {numberOfRequests,number} solicitudes para unirse a través da ligazón de grupo.}}"
+  },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "Activaches a ligazón do grupo coa aprobación dos administradores desactivada."
   },
@@ -3526,6 +3520,15 @@
   },
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "Preme «Doar a Signal» e subscríbete"
+  },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "Syncing messages"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "Downloading {currentSize} of {totalSize} ({fractionComplete,number,percent})..."
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "This may take a few minutes depending on the size of your backup"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Expandir"
@@ -3954,10 +3957,10 @@
     "messageformat": "botón de escribir mensaxe"
   },
   "icu:emptyInbox__title": {
-    "messageformat": "No chats"
+    "messageformat": "Sen conversas"
   },
   "icu:emptyInbox__subtitle": {
-    "messageformat": "Recent chats will appear here."
+    "messageformat": "As conversas recentes aparecerán aquí."
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "Reenviar a"
@@ -4848,10 +4851,10 @@
     "messageformat": "Non hai historias recentes que mostrar"
   },
   "icu:Stories__list__empty--title": {
-    "messageformat": "No stories"
+    "messageformat": "Sen historias"
   },
   "icu:Stories__list__empty--subtitle": {
-    "messageformat": "New updates will appear here."
+    "messageformat": "As novidades aparecerán aquí."
   },
   "icu:Stories__list--sending": {
     "messageformat": "Enviando…"
@@ -4869,7 +4872,10 @@
     "messageformat": "Preme para ver historia"
   },
   "icu:Stories__placeholder-with-icon--text": {
-    "messageformat": "Click <newStoryIcon>Add a story</newStoryIcon> to add an update."
+    "messageformat": "Preme en <newStoryIcon>Engadir historia</newStoryIcon> para subir unha novidade."
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "Click <newStoryButtonIcon></newStoryButtonIcon> to add an update."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} a {group}"
@@ -5113,6 +5119,12 @@
   },
   "icu:StoryViewsNRepliesModal__reacted": {
     "messageformat": "Reaccionou á historia"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "Reacted to the story"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
+    "messageformat": "Reacted to the story"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
     "messageformat": "You can’t reply to this story because you’re no longer a member of this group."
@@ -5413,7 +5425,10 @@
     "messageformat": "Premer para ver ou comezar unha chamada"
   },
   "icu:CallsTab__EmptyStateText--with-icon": {
-    "messageformat": "Click <newCallIcon>New Call</newCallIcon> to start a new voice or video call."
+    "messageformat": "Preme en <newCallIcon>Nova chamada</newCallIcon> para iniciar unha nova chamada de voz ou videochamada."
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call."
   },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Buscar"
@@ -5428,16 +5443,16 @@
     "messageformat": "Sen chamadas recentes. Comeza chamando a un amigo."
   },
   "icu:CallsList__EmptyState--noQuery__title": {
-    "messageformat": "No calls"
+    "messageformat": "Sen chamadas"
   },
   "icu:CallsList__EmptyState--noQuery__subtitle": {
-    "messageformat": "Recent calls will appear here."
+    "messageformat": "As chamadas recentes aparecerán aquí."
   },
   "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "No missed calls"
+    "messageformat": "Sen chamadas perdidas"
   },
   "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Missed calls will appear here."
+    "messageformat": "As chamadas perdidas aparecerán aquí."
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "Ningún resultado para «{query}»"
@@ -5456,9 +5471,6 @@
   },
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "Rexeitada"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "Chamada en grupo"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "Ligazón de chamada"
@@ -5617,22 +5629,13 @@
     "messageformat": "Comprende pequenas modificacións e melloras no rendemento. Moitas grazas por empregar Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "Con esta actualización, o proceso de borrar conversas extensas é máis rápido."
+  "icu:WhatsNew__v7.22--0": {
+    "messageformat": "Signal Desktop agora pode retomar automaticamente a descarga de arquivos anexos interrompidos."
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "Engadimos un atallo para colgar e unirse a unha nova chamada cando xa hai outra chamada en curso."
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "Chats now open faster than ever thanks to another round of performance improvements, so you can click on your cliques and see what they're saying real quick."
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "Esta actualización tamén soluciona un erro de arranque en Linux para usuarios coa localización configurada en «POSIX»."
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "As historias con descricións longas móstranse agora cun contraste mellorado que facilita a lectura do texto."
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "A nova versión tamén optimiza a xeración de previsualizacións de enlaces e soluciona un pequeno erro de visualización ao pechar a ventá de Configuración."
-  },
-  "icu:WhatsNew__v7.21--0": {
-    "messageformat": "Everyone loves a good story, and we could tell you the tale of a bug that sometimes caused the progress bar to freeze right in the middle of watching a good story — but that bug's adventure already has a happy ending because we fixed it in this release."
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "We also fixed a handful of bugs, including one that sometimes caused \"Unknown contact started a video call\" to appear in the chat list summary after you started the call. Even if you're still on a journey of self-discovery, you are never completely unknown to yourself."
   }
 }

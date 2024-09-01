@@ -69,6 +69,7 @@ import { handleStatusCode, translateError } from './Utils';
 import * as log from '../logging/log';
 import { maybeParseUrl, urlPathFromComponents } from '../util/url';
 import { SECOND } from '../util/durations';
+import { safeParseNumber } from '../util/numbers';
 import type { IWebSocketResource } from './WebsocketResources';
 import { Environment, getEnvironment } from '../environment';
 
@@ -184,7 +185,8 @@ type PromiseAjaxOptionsType = {
     | 'jsonwithdetails'
     | 'bytes'
     | 'byteswithdetails'
-    | 'stream';
+    | 'stream'
+    | 'streamwithdetails';
   serverUrl?: string;
   stack?: string;
   timeout?: number;
@@ -211,6 +213,11 @@ type JSONWithDetailsType<Data = unknown> = {
 };
 type BytesWithDetailsType = {
   data: Uint8Array;
+  contentType: string | null;
+  response: Response;
+};
+type StreamWithDetailsType = {
+  stream: Readable;
   contentType: string | null;
   response: Response;
 };
@@ -386,7 +393,10 @@ async function _promiseAjax(
       options.responseType === 'byteswithdetails'
     ) {
       result = await response.buffer();
-    } else if (options.responseType === 'stream') {
+    } else if (
+      options.responseType === 'stream' ||
+      options.responseType === 'streamwithdetails'
+    ) {
       result = response.body;
     } else {
       result = await response.textConverted();
@@ -435,6 +445,24 @@ async function _promiseAjax(
       log.info(logId, response.status, 'Streaming ended');
     });
     return result;
+  }
+
+  if (options.responseType === 'streamwithdetails') {
+    log.info(logId, response.status, 'Streaming with details');
+    response.body.on('error', e => {
+      log.info(logId, 'Errored while streaming:', e.message);
+    });
+    response.body.on('end', () => {
+      log.info(logId, response.status, 'Streaming ended');
+    });
+
+    const fullResult: StreamWithDetailsType = {
+      stream: result as Readable,
+      contentType: getContentType(response),
+      response,
+    };
+
+    return fullResult;
   }
 
   log.info(logId, response.status, 'Success');
@@ -508,6 +536,10 @@ function _outerAjax(
 ): Promise<Readable>;
 function _outerAjax(
   providedUrl: string | null,
+  options: PromiseAjaxOptionsType & { responseType: 'streamwithdetails' }
+): Promise<StreamWithDetailsType>;
+function _outerAjax(
+  providedUrl: string | null,
   options: PromiseAjaxOptionsType
 ): Promise<unknown>;
 
@@ -547,6 +579,7 @@ const URL_CALLS = {
   challenge: 'v1/challenge',
   config: 'v1/config',
   deliveryCert: 'v1/certificate/delivery',
+  devices: 'v1/devices',
   directoryAuthV2: 'v2/directory/auth',
   discovery: 'v1/discovery',
   getGroupAvatarUpload: 'v1/groups/avatar/form',
@@ -616,6 +649,7 @@ const WEBSOCKET_CALLS = new Set<keyof typeof URL_CALLS>([
   'getGroupCredentials',
 
   // Devices
+  'devices',
   'linkDevice',
   'registerCapabilities',
 
@@ -705,11 +739,15 @@ export type WebAPIConnectType = {
   connect: (options: WebAPIConnectOptionsType) => WebAPIType;
 };
 
+// When updating this make sure to update `observedCapabilities` type in
+// ts/types/Storage.d.ts
 export type CapabilitiesType = {
   deleteSync: boolean;
+  versionedExpirationTimer: boolean;
 };
 export type CapabilitiesUploadType = {
   deleteSync: true;
+  versionedExpirationTimer: true;
 };
 
 type StickerPackManifestType = Uint8Array;
@@ -1150,6 +1188,8 @@ export type GetBackupStreamOptionsType = Readonly<{
   backupDir: string;
   backupName: string;
   headers: Record<string, string>;
+  downloadOffset: number;
+  onProgress: (currentBytes: number, totalBytes: number) => void;
 }>;
 
 export const getBackupInfoResponseSchema = z.object({
@@ -1215,6 +1255,7 @@ export type WebAPIType = {
     options?: {
       disableRetries?: boolean;
       timeout?: number;
+      downloadOffset?: number;
     };
   }) => Promise<Readable>;
   getAttachment: (args: {
@@ -1223,6 +1264,7 @@ export type WebAPIType = {
     options?: {
       disableRetries?: boolean;
       timeout?: number;
+      downloadOffset?: number;
     };
   }) => Promise<Readable>;
   getAttachmentUploadForm: () => Promise<AttachmentUploadFormResponseType>;
@@ -1294,6 +1336,7 @@ export type WebAPIType = {
     abortSignal: AbortSignal
   ) => Promise<null | linkPreviewFetch.LinkPreviewImage>;
   linkDevice: (options: LinkDeviceOptionsType) => Promise<LinkDeviceResultType>;
+  unlink: () => Promise<void>;
   makeProxiedRequest: (
     targetUrl: string,
     options?: ProxiedRequestOptionsType
@@ -1773,6 +1816,7 @@ export function initialize({
       setBackupSignatureKey,
       setPhoneNumberDiscoverability,
       startRegistration,
+      unlink,
       unregisterRequestHandler,
       updateDeviceName,
       uploadAvatar,
@@ -1789,6 +1833,9 @@ export function initialize({
     function _ajax(
       param: AjaxOptionsType & { responseType: 'stream' }
     ): Promise<Readable>;
+    function _ajax(
+      param: AjaxOptionsType & { responseType: 'streamwithdetails' }
+    ): Promise<StreamWithDetailsType>;
     function _ajax(
       param: AjaxOptionsType & { responseType: 'json' }
     ): Promise<unknown>;
@@ -2572,6 +2619,7 @@ export function initialize({
 
       const capabilities: CapabilitiesUploadType = {
         deleteSync: true,
+        versionedExpirationTimer: true,
       };
 
       const jsonData = {
@@ -2626,6 +2674,7 @@ export function initialize({
     }: LinkDeviceOptionsType) {
       const capabilities: CapabilitiesUploadType = {
         deleteSync: true,
+        versionedExpirationTimer: true,
       };
 
       const jsonData = {
@@ -2659,6 +2708,19 @@ export function initialize({
           return linkDeviceResultZod.parse(responseJson);
         }
       );
+    }
+
+    async function unlink() {
+      if (!username) {
+        return;
+      }
+
+      const [, deviceId] = username.split('.');
+      await _ajax({
+        call: 'devices',
+        httpType: 'DELETE',
+        urlParameters: `/${deviceId}`,
+      });
     }
 
     async function updateDeviceName(deviceName: string) {
@@ -2766,12 +2828,18 @@ export function initialize({
       cdn,
       backupDir,
       backupName,
+      downloadOffset,
+      onProgress,
     }: GetBackupStreamOptionsType): Promise<Readable> {
       return _getAttachment({
         cdnPath: `/backups/${encodeURIComponent(backupDir)}/${encodeURIComponent(backupName)}`,
         cdnNumber: cdn,
         redactor: _createRedactor(backupDir, backupName),
         headers,
+        options: {
+          downloadOffset,
+          onProgress,
+        },
       });
     }
 
@@ -3442,6 +3510,7 @@ export function initialize({
       options?: {
         disableRetries?: boolean;
         timeout?: number;
+        downloadOffset?: number;
       };
     }) {
       return _getAttachment({
@@ -3468,6 +3537,7 @@ export function initialize({
       options?: {
         disableRetries?: boolean;
         timeout?: number;
+        downloadOffset?: number;
       };
     }) {
       return _getAttachment({
@@ -3482,7 +3552,7 @@ export function initialize({
     async function _getAttachment({
       cdnPath,
       cdnNumber,
-      headers,
+      headers = {},
       redactor,
       options,
     }: {
@@ -3493,12 +3563,14 @@ export function initialize({
       options?: {
         disableRetries?: boolean;
         timeout?: number;
+        downloadOffset?: number;
+        onProgress?: (currentBytes: number, totalBytes: number) => void;
       };
     }): Promise<Readable> {
       const abortController = new AbortController();
       const cdnUrl = cdnUrlObject[cdnNumber] ?? cdnUrlObject['0'];
 
-      let downloadStream: Readable | undefined;
+      let streamWithDetails: StreamWithDetailsType | undefined;
 
       const cancelRequest = () => {
         abortController.abort();
@@ -3506,25 +3578,70 @@ export function initialize({
 
       registerInflightRequest(cancelRequest);
 
+      let totalBytes = 0;
+
       // This is going to the CDN, not the service, so we use _outerAjax
       try {
-        downloadStream = await _outerAjax(`${cdnUrl}${cdnPath}`, {
-          headers,
+        const targetHeaders = { ...headers };
+        if (options?.downloadOffset) {
+          targetHeaders.range = `bytes=${options.downloadOffset}-`;
+        }
+        streamWithDetails = await _outerAjax(`${cdnUrl}${cdnPath}`, {
+          headers: targetHeaders,
           certificateAuthority,
           disableRetries: options?.disableRetries,
           proxyUrl,
-          responseType: 'stream',
+          responseType: 'streamwithdetails',
           timeout: options?.timeout ?? DEFAULT_TIMEOUT,
           type: 'GET',
           redactUrl: redactor,
           version,
           abortSignal: abortController.signal,
         });
+
+        if (targetHeaders.range == null) {
+          const contentLength =
+            streamWithDetails.response.headers.get('content-length');
+          strictAssert(
+            contentLength != null,
+            'Attachment Content-Length is absent'
+          );
+
+          const maybeSize = safeParseNumber(contentLength);
+          strictAssert(
+            maybeSize != null,
+            'Attachment Content-Length is not a number'
+          );
+
+          totalBytes = maybeSize;
+        } else {
+          strictAssert(
+            streamWithDetails.response.status === 206,
+            `Expected 206 status code for offset ${options?.downloadOffset}`
+          );
+          strictAssert(
+            !streamWithDetails.contentType?.includes('multipart'),
+            `Expected non-multipart response for ${cdnUrl}${cdnPath}`
+          );
+
+          const range = streamWithDetails.response.headers.get('content-range');
+          strictAssert(range != null, 'Attachment Content-Range is absent');
+
+          const match = PARSE_RANGE_HEADER.exec(range);
+          strictAssert(match != null, 'Attachment Content-Range is invalid');
+          const maybeSize = safeParseNumber(match[1]);
+          strictAssert(
+            maybeSize != null,
+            'Attachment Content-Range[1] is not a number'
+          );
+
+          totalBytes = maybeSize;
+        }
       } finally {
-        if (!downloadStream) {
+        if (!streamWithDetails) {
           unregisterInFlightRequest(cancelRequest);
         } else {
-          downloadStream.on('close', () => {
+          streamWithDetails.stream.on('close', () => {
             unregisterInFlightRequest(cancelRequest);
           });
         }
@@ -3536,12 +3653,23 @@ export function initialize({
         abortController,
       });
 
-      const combinedStream = downloadStream
+      const combinedStream = streamWithDetails.stream
         // We do this manually; pipe() doesn't flow errors through the streams for us
         .on('error', (error: Error) => {
           timeoutStream.emit('error', error);
         })
         .pipe(timeoutStream);
+
+      if (options?.onProgress) {
+        const { onProgress } = options;
+        let currentBytes = options.downloadOffset ?? 0;
+
+        combinedStream.pause();
+        combinedStream.on('data', chunk => {
+          currentBytes += chunk.byteLength;
+          onProgress(currentBytes, totalBytes);
+        });
+      }
 
       return combinedStream;
     }

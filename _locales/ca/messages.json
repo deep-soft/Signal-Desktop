@@ -821,14 +821,8 @@
   "icu:mute": {
     "messageformat": "Silenciats"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "El Signal Desktop no es pot actualitzar. {retry} o visiteu {url} per a instal·lar la versió nova manualment. Després, {support} sobre aquest problema."
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "Signal no s'ha pogut actualitzar. <retryUpdateButton>Prova de tornar-lo a actualitzar</retryUpdateButton>, o ves a {url} per instal·lar-lo manualment. Després, <contactSupportLink>posa't en contacte amb el servei d'assistència</contactSupportLink> per informar d'aquest problema"
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "El Signal no s'ha pogut actualitzar. Visiteu {url} per instal·lar-lo manualment. Aleshores, {support} sobre aquest problema."
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "Signal no s'ha pogut actualitzar. Ves a {url} per instal·lar-lo manualment. Després, <contactSupportLink>posa't en contacte amb el servei d'assistència</contactSupportLink> per informar d'aquest problema"
@@ -1834,9 +1828,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "Torneu a intentar d'actualitzar"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "contacteu amb l'assistència"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "Cliqueu per a reiniciar el Signal"
@@ -3353,6 +3344,9 @@
   "icu:GroupV2--admin-approval-bounce": {
     "messageformat": "{joinerName} han sol·licitat i cancel·lat {numberOfRequests,number} sol·licituds per afegir-s'hi mitjançant l'enllaç del grup."
   },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{numberOfRequests, plural, one {{joinerName} ha sol·licitat i cancel·lat la seva sol·licitud per afegir-s'hi mitjançant l'enllaç del grup.} other {{joinerName} ha sol·licitat i cancel·lat {numberOfRequests,number} sol·licituds per afegir-s'hi mitjançant l'enllaç del grup.}}"
+  },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "Heu activat l'enllaç de grup amb l'aprovació de l'administrador desactivada."
   },
@@ -3526,6 +3520,15 @@
   },
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "Toca sobre \"Fer donació a Signal\" per a subscriure't"
+  },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "Syncing messages"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "Downloading {currentSize} of {totalSize} ({fractionComplete,number,percent})..."
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "This may take a few minutes depending on the size of your backup"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Expandeix"
@@ -3954,10 +3957,10 @@
     "messageformat": "botó per a escriure"
   },
   "icu:emptyInbox__title": {
-    "messageformat": "No chats"
+    "messageformat": "No hi ha xats"
   },
   "icu:emptyInbox__subtitle": {
-    "messageformat": "Recent chats will appear here."
+    "messageformat": "Els xats recents apareixeran aquí."
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "Reenvia a"
@@ -4848,10 +4851,10 @@
     "messageformat": "Ara no hi ha històries per veure"
   },
   "icu:Stories__list__empty--title": {
-    "messageformat": "No stories"
+    "messageformat": "No hi ha històries"
   },
   "icu:Stories__list__empty--subtitle": {
-    "messageformat": "New updates will appear here."
+    "messageformat": "Les actualitzacions apareixeran aquí."
   },
   "icu:Stories__list--sending": {
     "messageformat": "Enviant…"
@@ -4869,7 +4872,10 @@
     "messageformat": "Cliqueu per veure la història"
   },
   "icu:Stories__placeholder-with-icon--text": {
-    "messageformat": "Click <newStoryIcon>Add a story</newStoryIcon> to add an update."
+    "messageformat": "Fes clic a <newStoryIcon>Afegir una història</newStoryIcon> per afegir una actualització."
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "Click <newStoryButtonIcon></newStoryButtonIcon> to add an update."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} a {group}"
@@ -5113,6 +5119,12 @@
   },
   "icu:StoryViewsNRepliesModal__reacted": {
     "messageformat": "Ha reaccionat a la història"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "Reacted to the story"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
+    "messageformat": "Reacted to the story"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
     "messageformat": "No pots respondre a aquesta història perquè ja no pertanys a aquest grup."
@@ -5413,7 +5425,10 @@
     "messageformat": "Fes clic per veure o iniciar una trucada"
   },
   "icu:CallsTab__EmptyStateText--with-icon": {
-    "messageformat": "Click <newCallIcon>New Call</newCallIcon> to start a new voice or video call."
+    "messageformat": "Fes clic a <newCallIcon>Nova trucada</newCallIcon> per iniciar una nova trucada de veu o vídeo."
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call."
   },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Cerca"
@@ -5428,16 +5443,16 @@
     "messageformat": "No hi ha cap trucada recent. Comença trucant a algú."
   },
   "icu:CallsList__EmptyState--noQuery__title": {
-    "messageformat": "No calls"
+    "messageformat": "Cap trucada"
   },
   "icu:CallsList__EmptyState--noQuery__subtitle": {
-    "messageformat": "Recent calls will appear here."
+    "messageformat": "Les trucades recents apareixeran aquí."
   },
   "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "No missed calls"
+    "messageformat": "No hi ha trucades perdudes"
   },
   "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Missed calls will appear here."
+    "messageformat": "Les trucades perdudes apareixeran aquí."
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "No s'ha trobat cap resultat per a «{query}»"
@@ -5456,9 +5471,6 @@
   },
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "Rebutjada"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "Trucada de grup"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "Enllaç de trucada"
@@ -5617,22 +5629,13 @@
     "messageformat": "Petits ajustos, correccions d'errors i tasques de millora de rendiment. Gràcies per utilitzar Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "Aquesta actualització ha accelerat el procés d'eliminació de fils extensos de missatges."
+  "icu:WhatsNew__v7.22--0": {
+    "messageformat": "Ara, Signal Desktop pot reprendre automàticament les descàrregues interrompudes de fitxers adjunts des del punt on es van aturar."
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "Amb la drecera que hem afegit, quan estiguis en una trucada en curs podràs penjar i unir-te'n a una de nova."
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "Chats now open faster than ever thanks to another round of performance improvements, so you can click on your cliques and see what they're saying real quick."
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "Aquesta actualització també corregeix un error d'inici a Linux per als usuaris amb la configuració regional configurada en \"POSIX\"."
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "Les històries amb subtítols llargs es mostren sobre un fons degradat subtil que millora el contrast i facilita la lectura del text. Ara que la gent pot veure el que esteu dient, no dubtis a escriure un parell de paràgrafs sobre per què alguna cosa realment et va fer riure en lloc de dir només \"hehehe\"."
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "Aquesta versió també millora el rendiment de la previsualització d'enllaços i corregeix un petit error que apareixia en tancar-se la finestra de Configuració."
-  },
-  "icu:WhatsNew__v7.21--0": {
-    "messageformat": "Everyone loves a good story, and we could tell you the tale of a bug that sometimes caused the progress bar to freeze right in the middle of watching a good story — but that bug's adventure already has a happy ending because we fixed it in this release."
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "We also fixed a handful of bugs, including one that sometimes caused \"Unknown contact started a video call\" to appear in the chat list summary after you started the call. Even if you're still on a journey of self-discovery, you are never completely unknown to yourself."
   }
 }

@@ -821,14 +821,8 @@
   "icu:mute": {
     "messageformat": "Σίγαση"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "Το Signal δεν μπόρεσε να αναβαθμιστεί. {retry} ή επισκέψου το {url} για να το εγκαταστήσεις χειροκίνητα. Μετά, {support} σχετικά με αυτό το πρόβλημα."
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "Το Signal δεν μπόρεσε να ενημερωθεί. <retryUpdateButton>Επανάλαβε την ενημέρωση</retryUpdateButton> ή επισκέψου το {url} για χειροκίνητη εγκατάσταση. Έπειτα, <contactSupportLink>επικοινώνησε με την υποστήριξη</contactSupportLink> γι' αυτό το πρόβλημα"
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "Το Signal δεν μπόρεσε να ενημερωθεί. Πήγαινε στο {url} για να το εγκαταστήσεις χειροκίνητα. Έπειτα,{support} γι' αυτό το πρόβλημα."
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "Το Signal δεν μπόρεσε να ενημερωθεί. Επισκέψου το {url} για να το εγκαταστήσεις χειροκίνητα. Έπειτα, <contactSupportLink>επικοινώνησε με την υποστήριξη</contactSupportLink> γι' αυτό το πρόβλημα"
@@ -1834,9 +1828,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "Επανάληψη αναβάθμισης"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "επικοινώνησε με την υποστήριξη"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "Κάνε κλικ για επανεκκίνηση του Signal"
@@ -3353,6 +3344,9 @@
   "icu:GroupV2--admin-approval-bounce": {
     "messageformat": "Ο/Η {joinerName} έκανε και ακύρωσε {numberOfRequests,number} αιτήματα να μπει μέσω του συνδέσμου της ομάδας."
   },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{numberOfRequests, plural, one {Ο/Η {joinerName} έστειλε αίτημα και το ακύρωσε, για συμμετοχή μέσω του συνδέσμου της ομάδας} other {Ο/Η {joinerName} έστειλε και ακύρωσε {numberOfRequests,number} αιτήματα για συμμετοχή μέσω του συνδέσμου της ομάδας}}"
+  },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "Ενεργοποίησες το σύνδεσμο της ομάδας με απενεργοποιημένη την έγκριση διαχειριστή."
   },
@@ -3526,6 +3520,15 @@
   },
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "Πάτα την επιλογή \"Υποστήριξε το Signal\" και κάνε συνδρομή"
+  },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "Syncing messages"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "Downloading {currentSize} of {totalSize} ({fractionComplete,number,percent})..."
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "This may take a few minutes depending on the size of your backup"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Ανάπτυξη"
@@ -3954,10 +3957,10 @@
     "messageformat": "κουμπί σύνθεσης"
   },
   "icu:emptyInbox__title": {
-    "messageformat": "No chats"
+    "messageformat": "Καμία συνομιλία"
   },
   "icu:emptyInbox__subtitle": {
-    "messageformat": "Recent chats will appear here."
+    "messageformat": "Οι νέες συνομιλίες θα εμφανίζονται εδώ."
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "Προώθηση σε"
@@ -4848,10 +4851,10 @@
     "messageformat": "Δεν υπάρχουν πρόσφατες ιστορίες αυτή τη στιγμή"
   },
   "icu:Stories__list__empty--title": {
-    "messageformat": "No stories"
+    "messageformat": "Καμία ιστορία"
   },
   "icu:Stories__list__empty--subtitle": {
-    "messageformat": "New updates will appear here."
+    "messageformat": "Οι νέες ιστορίες θα εμφανίζονται εδώ."
   },
   "icu:Stories__list--sending": {
     "messageformat": "Αποστολή…"
@@ -4869,7 +4872,10 @@
     "messageformat": "Κάνε κλικ για να δεις μια ιστορία"
   },
   "icu:Stories__placeholder-with-icon--text": {
-    "messageformat": "Click <newStoryIcon>Add a story</newStoryIcon> to add an update."
+    "messageformat": "Πάτα <newStoryIcon>Προσθήκη ιστορίας</newStoryIcon> για να προσθέσεις κάποιο νέο."
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "Click <newStoryButtonIcon></newStoryButtonIcon> to add an update."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} προς {group}"
@@ -5113,6 +5119,12 @@
   },
   "icu:StoryViewsNRepliesModal__reacted": {
     "messageformat": "Αντέδρασε στην ιστορία"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "Reacted to the story"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
+    "messageformat": "Reacted to the story"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
     "messageformat": "Δεν μπορείς να απαντήσεις σε αυτήν την ιστορία γιατί δεν είσαι πια μέλος της ομάδας."
@@ -5413,7 +5425,10 @@
     "messageformat": "Κάνε κλικ για να δεις ή να ξεκινήσεις μια κλήση"
   },
   "icu:CallsTab__EmptyStateText--with-icon": {
-    "messageformat": "Click <newCallIcon>New Call</newCallIcon> to start a new voice or video call."
+    "messageformat": "Πάτα <newCallIcon>Νέα κλήση</newCallIcon> για να ξεκινήσεις μια νέα φωνητική κλήση ή μια βιντεοκλήση."
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call."
   },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Αναζήτηση"
@@ -5428,16 +5443,16 @@
     "messageformat": "Δεν υπάρχουν πρόσφατες κλήσεις. Ξεκίνα καλώντας κάποιο φιλαράκι."
   },
   "icu:CallsList__EmptyState--noQuery__title": {
-    "messageformat": "No calls"
+    "messageformat": "Καμία κλήση"
   },
   "icu:CallsList__EmptyState--noQuery__subtitle": {
-    "messageformat": "Recent calls will appear here."
+    "messageformat": "Οι νέες κλήσεις θα εμφανίζονται εδώ."
   },
   "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "No missed calls"
+    "messageformat": "Δεν υπάρχουν αναπάντητες κλήσεις"
   },
   "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Missed calls will appear here."
+    "messageformat": "Οι χαμένες κλήσεις θα εμφανίζονται εδώ."
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "Δεν βρέθηκαν αποτελέσματα για “{query}”"
@@ -5456,9 +5471,6 @@
   },
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "Απορρίφθηκε"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "Ομαδική κλήση"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "Σύνδεσμος κλήσης"
@@ -5617,22 +5629,13 @@
     "messageformat": "Μικρές τροποποιήσεις, επιδιορθώσεις σφαλμάτων και βελτιώσεις απόδοσης. Ευχαριστούμε που χρησιμοποιείς το Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "Αυτή η έκδοση επιταχύνει τη διαδικασία διαγραφής μεγάλων νημάτων μηνυμάτων."
+  "icu:WhatsNew__v7.22--0": {
+    "messageformat": "Το Signal Desktop μπορεί τώρα να συνεχίσει αυτόματα τις λήψεις συνημμένων που έχουν διακοπεί."
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "Προσθέσαμε μια συντόμευση για να κλείνεις και να συνδέεσαι σε μια νέα κλήση όταν μια άλλη κλήση είναι ήδη σε εξέλιξη."
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "Chats now open faster than ever thanks to another round of performance improvements, so you can click on your cliques and see what they're saying real quick."
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "Αυτή η ενημέρωση διορθώνει επίσης απρόσμενους τερματισμούς λειτουργίας κατά την εκκίνηση σε Linux για χρήστες των οποίων η γλώσσα έχει οριστεί σε `POSIX`."
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "Οι ιστορίες με μακροσκελείς λεζάντες εμφανίζονται τώρα με βελτιωμένη αντίθεση που κάνει το κείμενο πιο ευανάγνωστο."
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "Αυτή η έκδοση βελτιώνει επίσης την απόδοση της δημιουργίας προεπισκόπησης συνδέσμων και διορθώνει ένα μικρό σφάλμα εμφάνισης κατά το κλείσιμο του παραθύρου Ρυθμίσεων."
-  },
-  "icu:WhatsNew__v7.21--0": {
-    "messageformat": "Everyone loves a good story, and we could tell you the tale of a bug that sometimes caused the progress bar to freeze right in the middle of watching a good story — but that bug's adventure already has a happy ending because we fixed it in this release."
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "We also fixed a handful of bugs, including one that sometimes caused \"Unknown contact started a video call\" to appear in the chat list summary after you started the call. Even if you're still on a journey of self-discovery, you are never completely unknown to yourself."
   }
 }

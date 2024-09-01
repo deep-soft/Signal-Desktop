@@ -821,14 +821,8 @@
   "icu:mute": {
     "messageformat": "كتم"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "‫لقد تعذر تحديث سيجنال. {retry}‏ أو يكفي زيارة {url}‏ لتثبيته يدويا. بعدها، {support}‏ حول هذا المشكل"
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "تعذّر تحديث سيجنال. <retryUpdateButton>جرّب التحديث من جديد</retryUpdateButton> أو زُر {url} لتثبيته يدويًا. ثم <contactSupportLink>اتصل بالدعم</contactSupportLink> حول هذه المشكلة"
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "لقد تعذر تحديث سيجنال. يُرجى زيارة {url} لتثبيته يدويا. ثم {support} حول هذه المشكلة"
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "تعذّر تحديث سيجنال. زُر {url} لتثبيته يدويًا. ثم <contactSupportLink>اتصل بالدعم</contactSupportLink> حول هذه المشكلة"
@@ -1834,9 +1828,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "إعادة محاولة التحديث"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "جهة اتصال الدعم"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "‫يُرجى الضغط على زر الفأرة لإعادة تشغيل سيجنال"
@@ -3353,6 +3344,9 @@
   "icu:GroupV2--admin-approval-bounce": {
     "messageformat": "‫لقد أرسل المستخدم {joinerName} {numberOfRequests,number} طلب الانضمام بواسطة وصلة المجموعة، ثم ألغى ذلك."
   },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{numberOfRequests, plural, zero {أرسل {joinerName} {numberOfRequests,number} طلبًا للانضمام وألغاه عبر رابط المجموعة} one {أرسل {joinerName} طلبًا للانضمام وألغاه عبر رابط المجموعة} two {أرسل {joinerName} {numberOfRequests,number} طلبين للانضمام وألغاهما عبر رابط المجموعة} few {أرسل {joinerName} {numberOfRequests,number} طلبات للانضمام وألغاها عبر رابط المجموعة} many {أرسل {joinerName} {numberOfRequests,number} طلبًا للانضمام وألغاها عبر رابط المجموعة} other {أرسل {joinerName} {numberOfRequests,number} طلب للانضمام وألغاها عبر رابط المجموعة}}"
+  },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "لقد قمت بتشغيل وصلة المجموعة مع تعطيل موافقة المشرف."
   },
@@ -3526,6 +3520,15 @@
   },
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "انقر على \"تبرّع لسيجنال\" واشترك"
+  },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "Syncing messages"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "Downloading {currentSize} of {totalSize} ({fractionComplete,number,percent})..."
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "This may take a few minutes depending on the size of your backup"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "عرض المزيد"
@@ -3954,10 +3957,10 @@
     "messageformat": "زر الكتابة"
   },
   "icu:emptyInbox__title": {
-    "messageformat": "No chats"
+    "messageformat": "لا توجد دردشات"
   },
   "icu:emptyInbox__subtitle": {
-    "messageformat": "Recent chats will appear here."
+    "messageformat": "سَتظهر آخر الدردشات هنا."
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "إعادة التوجيه نحو"
@@ -4848,10 +4851,10 @@
     "messageformat": "لا توجد قصص حديثة للمشاهدة حاليا"
   },
   "icu:Stories__list__empty--title": {
-    "messageformat": "No stories"
+    "messageformat": "لا توجد قصص"
   },
   "icu:Stories__list__empty--subtitle": {
-    "messageformat": "New updates will appear here."
+    "messageformat": "سَتظهر آخر المستجدات هنا."
   },
   "icu:Stories__list--sending": {
     "messageformat": "جارٍ الإرسال…"
@@ -4869,7 +4872,10 @@
     "messageformat": "يُرجى الضغط لمشاهدة قصة"
   },
   "icu:Stories__placeholder-with-icon--text": {
-    "messageformat": "Click <newStoryIcon>Add a story</newStoryIcon> to add an update."
+    "messageformat": "انقر على <newStoryIcon>أضف قصة</newStoryIcon> لإضافة آخر المستجدات."
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "Click <newStoryButtonIcon></newStoryButtonIcon> to add an update."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "‫من {name} إلى {group}"
@@ -5113,6 +5119,12 @@
   },
   "icu:StoryViewsNRepliesModal__reacted": {
     "messageformat": "المتفاعلون مع القصة"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "Reacted to the story"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
+    "messageformat": "Reacted to the story"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
     "messageformat": "لا تستطيع الردّ على هذه المجموعة لأنك لم تعد عضواً فيها."
@@ -5413,7 +5425,10 @@
     "messageformat": "انقر لعرض أو بدء مكالمة"
   },
   "icu:CallsTab__EmptyStateText--with-icon": {
-    "messageformat": "Click <newCallIcon>New Call</newCallIcon> to start a new voice or video call."
+    "messageformat": "انقر على <newCallIcon>مكالمة جديدة</newCallIcon> لبدء مكالمة صوتية أو مكالمة فيديو جديدة."
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call."
   },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "بحث"
@@ -5428,16 +5443,16 @@
     "messageformat": "لا توجد مكالمات حديثة. ابدأ بالاتصال بصديق."
   },
   "icu:CallsList__EmptyState--noQuery__title": {
-    "messageformat": "No calls"
+    "messageformat": "لا توجد مكالمات"
   },
   "icu:CallsList__EmptyState--noQuery__subtitle": {
-    "messageformat": "Recent calls will appear here."
+    "messageformat": "سَتظهر آخر المكالمات هنا."
   },
   "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "No missed calls"
+    "messageformat": "لا توجد مكالمات فائتة"
   },
   "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Missed calls will appear here."
+    "messageformat": "سَتظهر المكالمات الفائتة هنا."
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "لا توجد نتيجة لـ \"{query}\""
@@ -5456,9 +5471,6 @@
   },
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "مرفوضة"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "المكالمة الجماعية"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "اتصال بالرابط"
@@ -5617,22 +5629,13 @@
     "messageformat": "تعديلات صغيرة، تصليح الأعطال، وتحسينات للأداء. شكرًا على استخدامكم سيجنال!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "يسرّع هذا الإصدار عميلة حذف سلاسل الرسائل الكبيرة."
+  "icu:WhatsNew__v7.22--0": {
+    "messageformat": "يمكن لسيجنال Desktop الآن استئناف تنزيلات المرفقات المتوقفة بشكل تلقائي."
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "أضفنا اختصارًا لقفل الخط والانضمام إلى مُكالمة جديدة عندما تكون مكالمة أخرى جارية."
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "Chats now open faster than ever thanks to another round of performance improvements, so you can click on your cliques and see what they're saying real quick."
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "يُصلح هذا التحديث أيضًا عطلاً على Linux للمُستخدمين الذين اختاروا تحديد إعداداتهم المحلية إلى \"POSIX\"."
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "تظهر القِصص ذات التعليقات الطويلة الآن بتباين أفضل ما يجعل النص أوضح للقراءة."
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "يُحسّن هذا الإصدار أيضًا أداء إنشاء معاينة الروابط ويصلح خطأ متعلقًا بالعرض عند إغلاق نافذة الإعدادات."
-  },
-  "icu:WhatsNew__v7.21--0": {
-    "messageformat": "Everyone loves a good story, and we could tell you the tale of a bug that sometimes caused the progress bar to freeze right in the middle of watching a good story — but that bug's adventure already has a happy ending because we fixed it in this release."
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "We also fixed a handful of bugs, including one that sometimes caused \"Unknown contact started a video call\" to appear in the chat list summary after you started the call. Even if you're still on a journey of self-discovery, you are never completely unknown to yourself."
   }
 }

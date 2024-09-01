@@ -175,6 +175,16 @@ export type StorageAccessType = {
     serverId: Uint8Array;
   };
   needOrphanedAttachmentCheck: boolean;
+  observedCapabilities: {
+    deleteSync?: true;
+    versionedExpirationTimer?: true;
+
+    // Note: Upon capability deprecation - change the value type to `never` and
+    // remove it in `ts/background.ts`
+  };
+
+  // If present - we are downloading backup
+  backupDownloadPath: string;
 
   // Deprecated
   'challenge:retry-message-ids': never;

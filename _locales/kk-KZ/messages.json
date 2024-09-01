@@ -821,14 +821,8 @@
   "icu:mute": {
     "messageformat": "Дыбысын өшіру"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "Signal жаңартылмады. {retry} немесе {url} бетіне кіріп, оны қолмен орнатыңыз. Содан кейін осы мәселе туралы {support}"
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "Signal-ды жаңарту мүмкін болмады. <retryUpdateButton>Қайта жаңартып көріңіз</retryUpdateButton> немесе {url} бетіне кіріп, оны қолмен орнатыңыз. Содан кейін бұл мәселе жайында <contactSupportLink>қолдау көрсету орталығына</contactSupportLink> хабарлаңыз."
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "Signal-ды жаңарту мүмкін болмады. {url} бетіне кіріп, оны қолмен орнатыңыз. Содан кейін осы мәселе туралы {support}"
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "Signal-ды жаңарту мүмкін болмады. {url} бетіне кіріп, оны қолмен орнатыңыз. Содан кейін бұл мәселе жайында <contactSupportLink>қолдау көрсету орталығына</contactSupportLink> хабарлаңыз."
@@ -1834,9 +1828,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "Қайта жаңартып көру"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "қолдау көрсету қызметіне хабарласу"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "Signal-ды өшіріп, қайта қосу үшін басыңыз"
@@ -3353,6 +3344,9 @@
   "icu:GroupV2--admin-approval-bounce": {
     "messageformat": "{joinerName} топ сілтемесі арқылы топқа қосылуға {numberOfRequests,number} өтініш жіберді және бас тартты"
   },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{numberOfRequests, plural, one {{joinerName} өтініш білдірді және топ сілтемесі арқылы топқа қосылуға өтініштен бас тартты.} other {{joinerName} өтініш білдірді және топ сілтемесі арқылы топқа қосылуға {numberOfRequests,number} өтініштен бас тартты.}}"
+  },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "Әкімшінің мақұлдауын өшіріп, топ сілтемесін қостыңыз."
   },
@@ -3526,6 +3520,15 @@
   },
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "\"Signal-ға демеу көрсету\" түймесін басыңыз да, жазылыңыз"
+  },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "Syncing messages"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "Downloading {currentSize} of {totalSize} ({fractionComplete,number,percent})..."
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "This may take a few minutes depending on the size of your backup"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Кеңейту"
@@ -3954,10 +3957,10 @@
     "messageformat": "хат жазу"
   },
   "icu:emptyInbox__title": {
-    "messageformat": "No chats"
+    "messageformat": "Чаттар жоқ"
   },
   "icu:emptyInbox__subtitle": {
-    "messageformat": "Recent chats will appear here."
+    "messageformat": "Соңғы чаттар осындай көрінеді."
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "Жіберілетін контакт"
@@ -4848,10 +4851,10 @@
     "messageformat": "Дәл қазір көрсететін жақында салынған стористер жоқ"
   },
   "icu:Stories__list__empty--title": {
-    "messageformat": "No stories"
+    "messageformat": "Стористер жоқ"
   },
   "icu:Stories__list__empty--subtitle": {
-    "messageformat": "New updates will appear here."
+    "messageformat": "Жаңа жаңартулар осында көрінеді."
   },
   "icu:Stories__list--sending": {
     "messageformat": "Жіберілуде..."
@@ -4869,7 +4872,10 @@
     "messageformat": "Стористі көру үшін басыңыз"
   },
   "icu:Stories__placeholder-with-icon--text": {
-    "messageformat": "Click <newStoryIcon>Add a story</newStoryIcon> to add an update."
+    "messageformat": "Жаңартуды қосу үшін <newStoryIcon>Сторис қосу</newStoryIcon> түймесін басыңыз."
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "Click <newStoryButtonIcon></newStoryButtonIcon> to add an update."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} -> {group}"
@@ -5113,6 +5119,12 @@
   },
   "icu:StoryViewsNRepliesModal__reacted": {
     "messageformat": "Cториске реакция қалдырды"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "Reacted to the story"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
+    "messageformat": "Reacted to the story"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
     "messageformat": "You can’t reply to this story because you’re no longer a member of this group."
@@ -5413,7 +5425,10 @@
     "messageformat": "Қоңырауды көру немесе бастау үшін басыңыз"
   },
   "icu:CallsTab__EmptyStateText--with-icon": {
-    "messageformat": "Click <newCallIcon>New Call</newCallIcon> to start a new voice or video call."
+    "messageformat": "Жаңа дауыстық немесе бейне қоңырауды бастау үшін <newCallIcon>Жаңа қоңырау</newCallIcon> түймесін басыңыз."
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call."
   },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Іздеу"
@@ -5428,16 +5443,16 @@
     "messageformat": "Соңғы қоңыраулар жоқ. Досыңызға қоңырау шалудан бастаңыз."
   },
   "icu:CallsList__EmptyState--noQuery__title": {
-    "messageformat": "No calls"
+    "messageformat": "Қоңыраулар жоқ"
   },
   "icu:CallsList__EmptyState--noQuery__subtitle": {
-    "messageformat": "Recent calls will appear here."
+    "messageformat": "Соңғы қоңыраулар осында көрінеді."
   },
   "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "No missed calls"
+    "messageformat": "Өткізіп алған қоңыраулар жоқ"
   },
   "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Missed calls will appear here."
+    "messageformat": "Өткізіп алған қоңыраулар осында көрінеді."
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "\"{query}\" бойынша нәтижелер жоқ"
@@ -5456,9 +5471,6 @@
   },
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "Қабылданбады"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "Топтық қоңырау"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "Қоңырау сілтемесі"
@@ -5617,22 +5629,13 @@
     "messageformat": "Кішігірім түзетпелер жасалды, ақаулар жөнделді және жұмысы жақсартылды. Signal-ды қолданғаныңыз үшін рақмет!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "Бұл шығарылымда үлкен хаттар тізбегін жою процесінің жылдамдығы артты."
+  "icu:WhatsNew__v7.22--0": {
+    "messageformat": "Signal Desktop енді тіркемені жүктеп алу процесі қай жерден тоқтаса, жүктеп алу процесін сол жерден бастап автоматты түрде жалғастыра алады. Сондықтан енді досыңыз сізге жіберген мем аяқталғанға дейін ноутбуктың бетін жаба салғанның өзінде, күлкіден жарылып үлгересіз."
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "Егер басқа біреу қоңырау шалып жатса, қазіргі қоңыраудан шығып, жаңа қоңырауға қосылуға мүмкіндік беретін түймелер тіркесімін қостық. Шықпас бұрын алдымен растау сұралады, бірақ қоңыраудан шығу-шықпау өз еркіңізде."
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "Chats now open faster than ever thanks to another round of performance improvements, so you can click on your cliques and see what they're saying real quick."
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "Бұл жаңа нұсқада тілі \"POSIX\" деп орнатылған пайдаланушылар үшін Linux жүйесі іске қосылғандағы қателер түзетілді."
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "Субтитрлері ұзақ стористер енді біркелгі күңгірттенетін фонда көрсетіледі, ол контрасты жақсартып, мәтіннің оңайырақ оқылуына мүмкіндік береді. Енді адамдар сіздің не айтып жатқаныңызды оқи алады, «lol» деп қана жаза салмай, сіздің қатты күлуіңізге не себеп болғаны туралы бір-екі жол жазуыңызға болады."
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "Бұл шығарылымда сілтеме мазмұнының нобайын жасау жақсартылған және «Параметрлер» терезесінің (бірден жабылып қалмай) жауып жатқанда аз уақыт жарқылдайтын ақауы түзетілді."
-  },
-  "icu:WhatsNew__v7.21--0": {
-    "messageformat": "Everyone loves a good story, and we could tell you the tale of a bug that sometimes caused the progress bar to freeze right in the middle of watching a good story — but that bug's adventure already has a happy ending because we fixed it in this release."
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "We also fixed a handful of bugs, including one that sometimes caused \"Unknown contact started a video call\" to appear in the chat list summary after you started the call. Even if you're still on a journey of self-discovery, you are never completely unknown to yourself."
   }
 }

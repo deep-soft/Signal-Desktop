@@ -821,14 +821,8 @@
   "icu:mute": {
     "messageformat": "Tysta"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "Det gick inte att uppdatera Signal. {retry} eller besök {url} för att installera det manuellt. Därefter, {support} om detta problem"
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "Signal kunde inte uppdateras. <retryUpdateButton>Försök uppdatera igen</retryUpdateButton> eller besök {url} för att installera manuellt. <contactSupportLink>Kontakta sedan supporten</contactSupportLink> om detta problem"
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "Signal kunde inte uppdateras. Besök {url} för att installera det manuellt. Sedan, {support} om det här problemet"
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "Signal kunde inte uppdateras. Besök {url} för att installera manuellt. <contactSupportLink>Kontakta sedan supporten</contactSupportLink> om detta problem"
@@ -1834,9 +1828,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "Försök att uppdatera igen"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "kontakta supporten"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "Klicka för att starta om Signal"
@@ -3353,6 +3344,9 @@
   "icu:GroupV2--admin-approval-bounce": {
     "messageformat": "{joinerName} begärt och avbröt {numberOfRequests,number} förfrågningar om att gå med via grupplänken"
   },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{numberOfRequests, plural, one {{joinerName} begärde och avbröt sin begäran att gå med via grupplänken} other {{joinerName} begärde och avbröt {numberOfRequests,number} begäran att gå med via grupplänken}}"
+  },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "Du aktiverade grupplänken med administratörsgodkännande inaktiverat."
   },
@@ -3526,6 +3520,15 @@
   },
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "Tryck på \"Donera till Signal\" och prenumerera"
+  },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "Syncing messages"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "Downloading {currentSize} of {totalSize} ({fractionComplete,number,percent})..."
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "This may take a few minutes depending on the size of your backup"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Fäll ut"
@@ -3954,10 +3957,10 @@
     "messageformat": "skriv-knappen"
   },
   "icu:emptyInbox__title": {
-    "messageformat": "No chats"
+    "messageformat": "Inga chattar"
   },
   "icu:emptyInbox__subtitle": {
-    "messageformat": "Recent chats will appear here."
+    "messageformat": "De senaste chattarna kommer att visas här."
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "Vidarebefordra till"
@@ -4848,10 +4851,10 @@
     "messageformat": "Inga nya stories att visa just nu"
   },
   "icu:Stories__list__empty--title": {
-    "messageformat": "No stories"
+    "messageformat": "Inga stories"
   },
   "icu:Stories__list__empty--subtitle": {
-    "messageformat": "New updates will appear here."
+    "messageformat": "Nya uppdateringar kommer att visas här."
   },
   "icu:Stories__list--sending": {
     "messageformat": "Skickar …"
@@ -4869,7 +4872,10 @@
     "messageformat": "Klicka för att visa en story"
   },
   "icu:Stories__placeholder-with-icon--text": {
-    "messageformat": "Click <newStoryIcon>Add a story</newStoryIcon> to add an update."
+    "messageformat": "Klicka på <newStoryIcon>Lägg till en story</newStoryIcon> för att lägga till en uppdatering."
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "Click <newStoryButtonIcon></newStoryButtonIcon> to add an update."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} till {group}"
@@ -5113,6 +5119,12 @@
   },
   "icu:StoryViewsNRepliesModal__reacted": {
     "messageformat": "Reagerade på storyn"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "Reacted to the story"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
+    "messageformat": "Reacted to the story"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
     "messageformat": "Du kan inte svara på den här storyn eftersom du inte längre är medlem i den här gruppen."
@@ -5413,7 +5425,10 @@
     "messageformat": "Klicka för att visa eller starta ett samtal"
   },
   "icu:CallsTab__EmptyStateText--with-icon": {
-    "messageformat": "Click <newCallIcon>New Call</newCallIcon> to start a new voice or video call."
+    "messageformat": "Klicka på <newCallIcon>Nytt samtal</newCallIcon> för att starta ett nytt röst- eller videosamtal."
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call."
   },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Sök"
@@ -5428,16 +5443,16 @@
     "messageformat": "Inga nyliga samtal. Kom igång genom att ringa en vän."
   },
   "icu:CallsList__EmptyState--noQuery__title": {
-    "messageformat": "No calls"
+    "messageformat": "Inga samtal"
   },
   "icu:CallsList__EmptyState--noQuery__subtitle": {
-    "messageformat": "Recent calls will appear here."
+    "messageformat": "De senaste samtalen kommer att visas här."
   },
   "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "No missed calls"
+    "messageformat": "Inga missade samtal"
   },
   "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Missed calls will appear here."
+    "messageformat": "Missade samtal kommer att visas här."
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "Inga resultat för ”{query}”"
@@ -5456,9 +5471,6 @@
   },
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "Avfärdat"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "Gruppsamtal"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "Samtalslänk"
@@ -5617,22 +5629,13 @@
     "messageformat": "Små justeringer, buggfixar och prestandaförbättringar. Tack för att du använder Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "Denna version snabbar upp processen med att ta bort långa meddelandetrådar."
+  "icu:WhatsNew__v7.22--0": {
+    "messageformat": "Signal Desktop kan nu automatiskt återuppta avbrutna nedladdningar av bilagor."
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "Vi har lagt till en genväg för att lägga på och ansluta till ett nytt samtal medan ett annat samtal redan pågår."
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "Chats now open faster than ever thanks to another round of performance improvements, so you can click on your cliques and see what they're saying real quick."
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "Denna uppdatering åtgärdar också en uppstartskrasch på Linux för användare vars språkzon är inställt på POSIX."
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "Stories med långa bildtexter visas nu med förbättrad kontrast som gör texten lättare att läsa."
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "Denna version förbättrar också prestandan för generering av länkförhandsvisning och åtgärdar en mindre visningsbugg när du stänger fönstret Inställningar."
-  },
-  "icu:WhatsNew__v7.21--0": {
-    "messageformat": "Everyone loves a good story, and we could tell you the tale of a bug that sometimes caused the progress bar to freeze right in the middle of watching a good story — but that bug's adventure already has a happy ending because we fixed it in this release."
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "We also fixed a handful of bugs, including one that sometimes caused \"Unknown contact started a video call\" to appear in the chat list summary after you started the call. Even if you're still on a journey of self-discovery, you are never completely unknown to yourself."
   }
 }

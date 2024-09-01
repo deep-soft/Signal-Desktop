@@ -821,14 +821,8 @@
   "icu:mute": {
     "messageformat": "Izslēgt"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "Signal nevarēja atjaunināt. {retry} vai apmeklējiet{url}, lai instalētu atjauninājumu manuāli. Pēc tam {support} par šo problēmu"
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "Signal nevarēja atjaunināt. <retryUpdateButton>Mēģiniet atjaunināt vēlreiz</retryUpdateButton> vai apmeklējiet {url}, lai instalētu atjauninājumu manuāli. Pēc tam informējiet <contactSupportLink>atbalsta dienestu</contactSupportLink> par problēmu, sazinoties ar to"
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "Signal nevarēja atjaunināt. Apmeklējiet {url}, lai instalētu atjauninājumu manuāli. Pēc tam {support} informējiet par šo problēmu"
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "Signal nevarēja atjaunināt. Apmeklējiet {url}, lai instalētu atjauninājumu manuāli. Pēc tam informējiet <contactSupportLink>atbalsta dienestu</contactSupportLink> par problēmu, sazinoties ar to."
@@ -1834,9 +1828,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "Vēlreiz mēģināt atjaunināt"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "sazināties ar atbalsta dienestu"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "Noklikšķiniet, lai restartētu Signal"
@@ -3353,6 +3344,9 @@
   "icu:GroupV2--admin-approval-bounce": {
     "messageformat": "{joinerName} pieprasīja un atcēla {numberOfRequests,number} pieprasījumus pievienoties grupai ar saiti"
   },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{numberOfRequests, plural, zero {{joinerName} pieprasīja un atcēla {numberOfRequests,number} pieprasījumus pievienoties, izmantojot grupas saiti} one {{joinerName} pieprasīja un atcēla pieprasījumu pievienoties, izmantojot grupas saiti} other {{joinerName} nosūtīja un atcēla {numberOfRequests,number} pieprasījumus pievienoties, izmantojot grupas saiti}}"
+  },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "Jūs ieslēdzāt grupas saiti ar atspējotu administratora apstiprinājumu."
   },
@@ -3526,6 +3520,15 @@
   },
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "Pieskarieties \"Ziedot Signal\" un abonējiet"
+  },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "Syncing messages"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "Downloading {currentSize} of {totalSize} ({fractionComplete,number,percent})..."
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "This may take a few minutes depending on the size of your backup"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Izvērst"
@@ -3954,10 +3957,10 @@
     "messageformat": "izveidošanas poga"
   },
   "icu:emptyInbox__title": {
-    "messageformat": "No chats"
+    "messageformat": "Nav sarunu"
   },
   "icu:emptyInbox__subtitle": {
-    "messageformat": "Recent chats will appear here."
+    "messageformat": "Šeit būs redzamas nesenākās sarunas."
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "Pārsūtīt"
@@ -4848,10 +4851,10 @@
     "messageformat": "Nav nesenu stāstu"
   },
   "icu:Stories__list__empty--title": {
-    "messageformat": "No stories"
+    "messageformat": "Nav stāstu"
   },
   "icu:Stories__list__empty--subtitle": {
-    "messageformat": "New updates will appear here."
+    "messageformat": "Šeit būs redzami jaunumi."
   },
   "icu:Stories__list--sending": {
     "messageformat": "Sūta…"
@@ -4869,7 +4872,10 @@
     "messageformat": "Noklikšķiniet, lai skatītu stāstu"
   },
   "icu:Stories__placeholder-with-icon--text": {
-    "messageformat": "Click <newStoryIcon>Add a story</newStoryIcon> to add an update."
+    "messageformat": "Piespiediet <newStoryIcon>Pievienot stāstu</newStoryIcon>, lai dalītos ar jaunumiem."
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "Click <newStoryButtonIcon></newStoryButtonIcon> to add an update."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} grupā {group}"
@@ -5113,6 +5119,12 @@
   },
   "icu:StoryViewsNRepliesModal__reacted": {
     "messageformat": "Reaģēja uz stāstu"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "Reacted to the story"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
+    "messageformat": "Reacted to the story"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
     "messageformat": "Jūs uz šo stāstu nevarat atbildēt, jo vairs neesat šīs grupas dalībnieks."
@@ -5413,7 +5425,10 @@
     "messageformat": "Noklikšķiniet, lai skatītu vai sāktu zvanu"
   },
   "icu:CallsTab__EmptyStateText--with-icon": {
-    "messageformat": "Click <newCallIcon>New Call</newCallIcon> to start a new voice or video call."
+    "messageformat": "Piespiediet <newCallIcon>Jauns zvans</newCallIcon>, lai sāktu jaunu balss vai video zvanu."
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call."
   },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Meklēt"
@@ -5428,16 +5443,16 @@
     "messageformat": "Nav neseno zvanu. Sāciet ar zvanu draugam."
   },
   "icu:CallsList__EmptyState--noQuery__title": {
-    "messageformat": "No calls"
+    "messageformat": "Nav zvanu"
   },
   "icu:CallsList__EmptyState--noQuery__subtitle": {
-    "messageformat": "Recent calls will appear here."
+    "messageformat": "Šeit būs redzami nesenākie zvani."
   },
   "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "No missed calls"
+    "messageformat": "Nav neatbildētu zvanu"
   },
   "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Missed calls will appear here."
+    "messageformat": "Šeit būs redzami neatbildētie zvani."
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "Vaicājumam “{query}” nav rezultātu"
@@ -5456,9 +5471,6 @@
   },
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "Noraidīts"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "Grupas zvans"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "Zvana saite"
@@ -5617,22 +5629,13 @@
     "messageformat": "Nelielas izmaiņas, kļūdu labojumi un darbības uzlabojumi. Paldies, ka lietojat Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "Reizēm ātri pateikt \"atā\" ir vieglāk nekā ilgi atvadīties, tāpēc paātrinājām dzēšanas procesu apjomīgām sarakstēm."
+  "icu:WhatsNew__v7.22--0": {
+    "messageformat": "Tagad Signal Desktop var automātiski atsākt pielikumu lejupielādēšanu no vietas, kur tā tika pārtraukta, tāpēc par drauga sūtīto jautro bildi varēsiet pasmieties ātrāk pat tad, ja pārsūtīšanas laikā aizvērsiet klēpjdatoru."
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "Mēs pievienojām saīsni, kas ļauj pārtraukt notiekošu zvanu, lai pievienotos jaunam zvanam. Jums būs jāapstiprina tas, ka pametat zvanu."
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "Chats now open faster than ever thanks to another round of performance improvements, so you can click on your cliques and see what they're saying real quick."
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "Tāpat šajā atjauninājumā novērsām avarēšanu palaišanas brīdī Linux lietotājiem, kuru iestatītā valoda ir \"POSIX\"."
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "Stāsti ar gariem aprakstiem tiek rādīti uz neuzkrītoša fona ar krāsu pāreju, lai uzlabotu kontrastu un teksts būtu vieglāk lasāms. Tagad visi var izlasīt to, kas jums sakāms, tāpēc tā vietā, lai rakstītu tikai \"LOL\", droši pievienojiet garāku apcerējumu par to, kas jūs šodien sasmīdināja."
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "Šajā versijā tika uzlabota arī saišu priekšskatījuma ģenerēšanas veiktspēja un izlabota kļūda, kuras dēļ Iestatījumu logs uzreiz neaizvērās, bet gan īsu brīdi mirgoja patīkamā ultramarīna tonī."
-  },
-  "icu:WhatsNew__v7.21--0": {
-    "messageformat": "Everyone loves a good story, and we could tell you the tale of a bug that sometimes caused the progress bar to freeze right in the middle of watching a good story — but that bug's adventure already has a happy ending because we fixed it in this release."
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "We also fixed a handful of bugs, including one that sometimes caused \"Unknown contact started a video call\" to appear in the chat list summary after you started the call. Even if you're still on a journey of self-discovery, you are never completely unknown to yourself."
   }
 }

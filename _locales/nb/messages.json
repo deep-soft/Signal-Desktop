@@ -821,14 +821,8 @@
   "icu:mute": {
     "messageformat": "Demp"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "Signal kunne ikke oppdateres. {retry}, eller gå inn på {url} for å installere oppdateringen manuelt. Deretter kan du {support} om problemet."
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "Signal kunne ikke oppdateres. <retryUpdateButton>Prøv på nytt</retryUpdateButton>, eller gå til {url} for å installere oppdateringen manuelt. Etterpå kan du <contactSupportLink>gi Signals brukerstøtte beskjed</contactSupportLink> om problemet."
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "Signal kunne ikke oppdateres. Gå inn på {url} for å installere oppdateringen manuelt. Deretter kan du {support} om problemet."
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "Signal kunne ikke oppdateres. Gå til {url} for å installere oppdateringen manuelt. Etterpå kan du <contactSupportLink>gi Signals brukerstøtte beskjed</contactSupportLink> om problemet."
@@ -1834,9 +1828,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "Prøv å oppdatere på nytt"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "ta kontakt med kundestøtte"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "Klikk for å starte Signal på nytt"
@@ -3353,6 +3344,9 @@
   "icu:GroupV2--admin-approval-bounce": {
     "messageformat": "{joinerName} ba om å bli medlem og kansellerte så {numberOfRequests,number} forespørsler via gruppelenken."
   },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{numberOfRequests, plural, one {{joinerName} ba om å bli medlem av gruppen, men trakk så tilbake forespørselen via gruppelenken.} other {{joinerName} ba om å bli medlem av gruppen, men trakk så tilbake {numberOfRequests,number} forespørsler via gruppelenken.}}"
+  },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "Du slo på gruppelenken med administrativ godkjenning avslått."
   },
@@ -3526,6 +3520,15 @@
   },
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "Trykk på «Gi penger til Signal» for å abonnere"
+  },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "Syncing messages"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "Downloading {currentSize} of {totalSize} ({fractionComplete,number,percent})..."
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "This may take a few minutes depending on the size of your backup"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Ekspander"
@@ -3954,10 +3957,10 @@
     "messageformat": "opprett-knapp"
   },
   "icu:emptyInbox__title": {
-    "messageformat": "No chats"
+    "messageformat": "Ingen samtaler"
   },
   "icu:emptyInbox__subtitle": {
-    "messageformat": "Recent chats will appear here."
+    "messageformat": "Nylige samtaler dukker opp her."
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "Videresend til"
@@ -4848,10 +4851,10 @@
     "messageformat": "Ingen nylige storyer å vise"
   },
   "icu:Stories__list__empty--title": {
-    "messageformat": "No stories"
+    "messageformat": "Ingen storyer"
   },
   "icu:Stories__list__empty--subtitle": {
-    "messageformat": "New updates will appear here."
+    "messageformat": "Nye oppdateringer dukker opp her."
   },
   "icu:Stories__list--sending": {
     "messageformat": "Sender …"
@@ -4869,7 +4872,10 @@
     "messageformat": "Klikk for å se en story"
   },
   "icu:Stories__placeholder-with-icon--text": {
-    "messageformat": "Click <newStoryIcon>Add a story</newStoryIcon> to add an update."
+    "messageformat": "Trykk på <newStoryIcon>Legg til en story</newStoryIcon> for å legge ut en oppdatering."
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "Click <newStoryButtonIcon></newStoryButtonIcon> to add an update."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} til {group}"
@@ -5113,6 +5119,12 @@
   },
   "icu:StoryViewsNRepliesModal__reacted": {
     "messageformat": "Reagerte på storyen"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "Reacted to the story"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
+    "messageformat": "Reacted to the story"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
     "messageformat": "Du kan ikke svare på denne storyen fordi du ikke er medlem av denne gruppen lenger."
@@ -5413,7 +5425,10 @@
     "messageformat": "Trykk for å se eller foreta et anrop"
   },
   "icu:CallsTab__EmptyStateText--with-icon": {
-    "messageformat": "Click <newCallIcon>New Call</newCallIcon> to start a new voice or video call."
+    "messageformat": "Trykk på <newCallIcon>Nytt anrop</newCallIcon> for å starte en ny lyd- eller videosamtale."
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call."
   },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Søk"
@@ -5428,16 +5443,16 @@
     "messageformat": "Ingen nylige samtaler. Kom i gang ved å ringe en venn."
   },
   "icu:CallsList__EmptyState--noQuery__title": {
-    "messageformat": "No calls"
+    "messageformat": "Ingen anrop"
   },
   "icu:CallsList__EmptyState--noQuery__subtitle": {
-    "messageformat": "Recent calls will appear here."
+    "messageformat": "Nylige samtaler dukker opp her."
   },
   "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "No missed calls"
+    "messageformat": "Ingen ubesvarte anrop"
   },
   "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Missed calls will appear here."
+    "messageformat": "Tapte anrop dukker opp her."
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "«{query}» ga ingen resultater"
@@ -5456,9 +5471,6 @@
   },
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "Avvist"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "Gruppesamtale"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "Samtalelenke"
@@ -5617,22 +5629,13 @@
     "messageformat": "Noen små justeringer, feilrettinger og ytelsesforbedringer. Takk for at du bruker Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "I denne oppdateringen har det blitt lettere å slette lange meldingstråder."
+  "icu:WhatsNew__v7.22--0": {
+    "messageformat": "Nå blir avbrutte nedlastinger av vedlegg automatisk gjenopptatt i Signal Desktop."
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "Vi har lagt til en knapp som lar deg forlate samtalen du er i og bli med i en annen, på en kjapp og enkel måte."
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "Chats now open faster than ever thanks to another round of performance improvements, so you can click on your cliques and see what they're saying real quick."
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "Oppdateringen fikser også et oppstartsproblem for Linux-brukere med lokaliteten satt til «POSIX»."
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "Storyer med lange undertekster vises nå med mer kontrast slik at teksten blir lettere å lese."
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "I denne oppdateringen har også forhåndsvisninger av lenker blitt bedre, og en liten feil ved lukking av innstillingsvinduet er fikset."
-  },
-  "icu:WhatsNew__v7.21--0": {
-    "messageformat": "Everyone loves a good story, and we could tell you the tale of a bug that sometimes caused the progress bar to freeze right in the middle of watching a good story — but that bug's adventure already has a happy ending because we fixed it in this release."
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "We also fixed a handful of bugs, including one that sometimes caused \"Unknown contact started a video call\" to appear in the chat list summary after you started the call. Even if you're still on a journey of self-discovery, you are never completely unknown to yourself."
   }
 }

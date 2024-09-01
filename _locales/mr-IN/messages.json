@@ -821,14 +821,8 @@
   "icu:mute": {
     "messageformat": "मूक करा"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "Signal अद्यतनित होऊ शकत नाही. हस्तचलित पद्धतीने त्याला स्थापित करण्यासाठी {retry} किंवा t {url} ला भेट द्या. नंतर,  या समस्येबद्दल {support} भेट द्या"
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "Signal अद्यतनित होऊ शकत नाही. <retryUpdateButton>अद्यतनित करण्याचा पुन्हा प्रयत्न करा</retryUpdateButton> किंवा हस्तचलित पद्धतीने त्याला इन्स्टॉल करण्यासाठी {url} ला भेट द्या. नंतर, या समस्येसाठी <contactSupportLink>सपोर्टशी संपर्क</contactSupportLink> साधा"
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "Signal अद्यतनित होऊ शकत नाही. त्याला हस्तचलित पद्धतीने स्थापित करण्यास  {url}ला भेट द्या. नंतर या समस्येबद्दल, {support} ला"
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "Signal अद्यतनित होऊ शकत नाही. हस्तचलित पद्धतीने इन्स्टॉल करण्यासाठी {url} ला भेट द्या. नंतर, या समस्येसाठी <contactSupportLink>सपोर्ट शी संपर्क</contactSupportLink> साधा"
@@ -1834,9 +1828,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "अद्यतनाचा पुन्हा प्रयत्न करा"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "सहाय्यता शी संपर्क साधा"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "Signal पुन्हा सुरू करण्यासाठी क्लिक करा"
@@ -3353,6 +3344,9 @@
   "icu:GroupV2--admin-approval-bounce": {
     "messageformat": "{joinerName} नी गट दुवा मार्गे सामील होण्याची विनंती केली आणि {numberOfRequests,number} विनंत्या रद्द केल्या"
   },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{numberOfRequests, plural, one {{joinerName} ने विनंती केली आणि ग्रुप लिंकद्वारे सामील होण्यासाठी त्यांची विनंती रद्द केली} other {{joinerName} ने विनंती केली आणि ग्रुप लिंकद्वारे सामील होण्याच्या {numberOfRequests,number} विनंत्या रद्द केल्या}}"
+  },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "आपण प्रशासक मान्यता अक्षम असलेली गट लिंक चालू केली आहे."
   },
@@ -3526,6 +3520,15 @@
   },
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "\"Signal ला देणगी द्या\" वर टॅप करा आणि सदस्यत्व घ्या"
+  },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "Syncing messages"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "Downloading {currentSize} of {totalSize} ({fractionComplete,number,percent})..."
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "This may take a few minutes depending on the size of your backup"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "विस्तारित करा"
@@ -3954,10 +3957,10 @@
     "messageformat": "लिहा बटण"
   },
   "icu:emptyInbox__title": {
-    "messageformat": "No chats"
+    "messageformat": "कोणतेही चॅट्स नाहीत"
   },
   "icu:emptyInbox__subtitle": {
-    "messageformat": "Recent chats will appear here."
+    "messageformat": "अलीकडील चॅट्स येथे दिसून येतील."
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "ला अग्रेषित केला"
@@ -4848,10 +4851,10 @@
     "messageformat": "आता दाखवण्यासाठी अलिकडील स्टोरीज नाहीत"
   },
   "icu:Stories__list__empty--title": {
-    "messageformat": "No stories"
+    "messageformat": "कोणत्याही स्टोरीज नाहीत"
   },
   "icu:Stories__list__empty--subtitle": {
-    "messageformat": "New updates will appear here."
+    "messageformat": "नवीन अद्यतन येथे दृश्यमान होतील."
   },
   "icu:Stories__list--sending": {
     "messageformat": "पाठवत आहे(...)"
@@ -4869,7 +4872,10 @@
     "messageformat": "स्टोरी पाहण्यास क्लिक करा"
   },
   "icu:Stories__placeholder-with-icon--text": {
-    "messageformat": "Click <newStoryIcon>Add a story</newStoryIcon> to add an update."
+    "messageformat": "एक अद्यतन जोडण्यासाठी <newStoryIcon>स्टोरीज जोडा</newStoryIcon> वर क्लिक करा."
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "Click <newStoryButtonIcon></newStoryButtonIcon> to add an update."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} कडून {group}ला"
@@ -5113,6 +5119,12 @@
   },
   "icu:StoryViewsNRepliesModal__reacted": {
     "messageformat": "स्टोरीला प्रतिक्रिया दिली"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "Reacted to the story"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
+    "messageformat": "Reacted to the story"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
     "messageformat": "आपण या स्टोरीज ला उत्तर देऊ शकणार नाही कारण आपण यापुढे या ग्रुपचे सदस्य नाही."
@@ -5413,7 +5425,10 @@
     "messageformat": "पाहण्यासाठी किंवा कॉल सुरू करण्यास क्लिक करा"
   },
   "icu:CallsTab__EmptyStateText--with-icon": {
-    "messageformat": "Click <newCallIcon>New Call</newCallIcon> to start a new voice or video call."
+    "messageformat": "नवीन व्हॉइस किंवा व्हिडिओ कॉल सुरू करण्यासाठी <newCallIcon>नवीन कॉल</newCallIcon> वर क्लिक करा."
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call."
   },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "शोध"
@@ -5428,16 +5443,16 @@
     "messageformat": "कोणतेही अलिकडील कॉल नाहीत. मित्राला कॉल करुन सुरुवात करा."
   },
   "icu:CallsList__EmptyState--noQuery__title": {
-    "messageformat": "No calls"
+    "messageformat": "कोणतेही कॉल नाहीत"
   },
   "icu:CallsList__EmptyState--noQuery__subtitle": {
-    "messageformat": "Recent calls will appear here."
+    "messageformat": "अलीकडील कॉल येथे दिसून येतील."
   },
   "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "No missed calls"
+    "messageformat": "कोणतेही मिस्ड कॉल नाहीत"
   },
   "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Missed calls will appear here."
+    "messageformat": "मिस्ड कॉल येथे दिसून येतील."
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "“{query}” साठी कोणतेही परिणाम नाहीत"
@@ -5456,9 +5471,6 @@
   },
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "नाकारलेले"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "गट कॉल"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "कॉल लिंक"
@@ -5617,22 +5629,13 @@
     "messageformat": "लहान ट्विक्स, दोष निवारण, आणि कामगिरी सुधारणा. Signal वापरल्याबद्दल आभारी आहोत!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "जलद निरोप घेणे कधीकधी हळू हळू सोडून जाण्यापेक्षा सोपे असते. म्हणून आम्ही मोठे संदेश थ्रेड हटविण्याच्या प्रक्रियेला गती दिलेली आहे."
+  "icu:WhatsNew__v7.22--0": {
+    "messageformat": "Signal डेक्सटॉप आता स्वयंचलितपणे व्यत्यय आलेली अटॅचमेंट डाउनलोड तेथून पुन्हा सुरू करू शकतो, त्यामुळे आपल्या मित्राने पाठवलेला मिम ट्रान्सफर होण्यापूर्वी आपण आपल्या लॅटटॉपला बंद केले तरी आपणाला त्यावर हसण्यासाठी फार वेळ वाट पाहावी लागणार नाही."
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "दुसरा कॉल आपल्या नावावर कॉल करत असल्यास, आम्ही सध्याचा कॉल सोडण्यासाठी आणि नवीन कॉलमध्ये सामील होण्यासाठी शॉर्टकट जोडला आहे. आपणाला आपल्या प्रस्थानाची पुष्टी करण्यासाठी सूचित केले जाईल, परंतु आपण आधी निरोप घ्यावा की नाही हे आपल्यावर अवलंबून आहे."
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "Chats now open faster than ever thanks to another round of performance improvements, so you can click on your cliques and see what they're saying real quick."
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "हे अपडेट ज्या वापरकर्त्याचे 'POSIX' वर सेट केले आहे त्यांच्यासाठी Linux वर स्टार्टअप क्रॅशचे निराकरण देखील करते."
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "लांब मथळे असलेल्या स्टोरीज सूक्ष्म ग्रेडियंट पार्श्वभूमीवर प्रदर्शित केल्या जातात ज्यामुळे कॉन्ट्रास्ट सुधारतो आणि मजकूर वाचणे सोपे होते. आता लोक आपण काय म्हणत आहात ते लोक पाहू शकतील, फक्त \"lol\" असे म्हणण्याऐवजी एखाद्या गोष्टीने आपणाला खरोखर का हसवले याबद्दल काही परिच्छेद लिहिण्यास संकोच करू नका."
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "हे प्रकाशन लिंक पूर्वावलोकनाची कामगिरी देखील सुधारते आणि ज्यामुळे सेटिंग्ज विंडो जेव्हाही बंद होते (फक्त लगेचच बंद होण्याऐवजी) अल्ट्रामरिनची सुंदर शेड हलकेच फ्लॅश होण्याच्या दोषाचे निराकरण करते."
-  },
-  "icu:WhatsNew__v7.21--0": {
-    "messageformat": "Everyone loves a good story, and we could tell you the tale of a bug that sometimes caused the progress bar to freeze right in the middle of watching a good story — but that bug's adventure already has a happy ending because we fixed it in this release."
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "We also fixed a handful of bugs, including one that sometimes caused \"Unknown contact started a video call\" to appear in the chat list summary after you started the call. Even if you're still on a journey of self-discovery, you are never completely unknown to yourself."
   }
 }

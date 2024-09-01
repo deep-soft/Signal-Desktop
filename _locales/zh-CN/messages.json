@@ -821,14 +821,8 @@
   "icu:mute": {
     "messageformat": "静音"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "Signal 无法更新。请{retry}或访问{url}手动安装应用，然后{support}此问题"
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "Signal 无法更新。请<retryUpdateButton>重试更新</retryUpdateButton>或访问 {url} 以进行手动安装，然后<contactSupportLink>联系支持团队</contactSupportLink>反映此问题"
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "Signal 无法更新。请访问{url}手动安装应用，然后{support}此问题"
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "Signal 无法更新。请访问 {url} 以进行手动安装，然后<contactSupportLink>联系支持团队</contactSupportLink>反映此问题"
@@ -1834,9 +1828,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "重试更新"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "联系支持团队"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "点击重启 Signal"
@@ -3353,6 +3344,9 @@
   "icu:GroupV2--admin-approval-bounce": {
     "messageformat": "{joinerName}发起和取消了通过群组链接加入群组的{numberOfRequests,number}个请求"
   },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{numberOfRequests, plural, other {{joinerName}发起和取消了通过群组链接加入群组的 {numberOfRequests,number} 个请求}}"
+  },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "您已开启群组链接，并禁用管理员批准。"
   },
@@ -3526,6 +3520,15 @@
   },
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "点击“给 Signal 捐款”并设置定期捐款"
+  },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "Syncing messages"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "Downloading {currentSize} of {totalSize} ({fractionComplete,number,percent})..."
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "This may take a few minutes depending on the size of your backup"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "扩展"
@@ -3954,10 +3957,10 @@
     "messageformat": "撰写按钮"
   },
   "icu:emptyInbox__title": {
-    "messageformat": "No chats"
+    "messageformat": "无聊天"
   },
   "icu:emptyInbox__subtitle": {
-    "messageformat": "Recent chats will appear here."
+    "messageformat": "最近的聊天将会在这里显示。"
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "转发给"
@@ -4848,10 +4851,10 @@
     "messageformat": "当前没有可以显示的近期动态"
   },
   "icu:Stories__list__empty--title": {
-    "messageformat": "No stories"
+    "messageformat": "无动态"
   },
   "icu:Stories__list__empty--subtitle": {
-    "messageformat": "New updates will appear here."
+    "messageformat": "新的更新将会在这里显示。"
   },
   "icu:Stories__list--sending": {
     "messageformat": "正在发送……"
@@ -4869,7 +4872,10 @@
     "messageformat": "点击查看动态"
   },
   "icu:Stories__placeholder-with-icon--text": {
-    "messageformat": "Click <newStoryIcon>Add a story</newStoryIcon> to add an update."
+    "messageformat": "点击<newStoryIcon>添加动态</newStoryIcon>来添加更新。"
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "Click <newStoryButtonIcon></newStoryButtonIcon> to add an update."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name}发送给{group}"
@@ -5113,6 +5119,12 @@
   },
   "icu:StoryViewsNRepliesModal__reacted": {
     "messageformat": "回应了此动态"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "Reacted to the story"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
+    "messageformat": "Reacted to the story"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
     "messageformat": "您已不是此群组的成员，因此不能回复此动态。"
@@ -5413,7 +5425,10 @@
     "messageformat": "点击查看或发起通话"
   },
   "icu:CallsTab__EmptyStateText--with-icon": {
-    "messageformat": "Click <newCallIcon>New Call</newCallIcon> to start a new voice or video call."
+    "messageformat": "点击<newCallIcon>新通话</newCallIcon>来发起一个新的语音或视频通话。"
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call."
   },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "搜索"
@@ -5428,16 +5443,16 @@
     "messageformat": "没有最近呼叫。 呼叫朋友开始互动吧。"
   },
   "icu:CallsList__EmptyState--noQuery__title": {
-    "messageformat": "No calls"
+    "messageformat": "没有通话"
   },
   "icu:CallsList__EmptyState--noQuery__subtitle": {
-    "messageformat": "Recent calls will appear here."
+    "messageformat": "最近的通话将会在这里显示。"
   },
   "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "No missed calls"
+    "messageformat": "无未接来电"
   },
   "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Missed calls will appear here."
+    "messageformat": "未接通话将会在这里显示。"
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "没有找到“{query}”的相关结果"
@@ -5456,9 +5471,6 @@
   },
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "已拒接"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "群组通话"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "通话链接"
@@ -5617,22 +5629,13 @@
     "messageformat": "我们进行了功能微调、漏洞修复和性能强化。感谢使用 Signal！",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "此版本加快了删除大消息线程的过程。"
+  "icu:WhatsNew__v7.22--0": {
+    "messageformat": "Signal Desktop 现在可以自动恢复中断的附件下载。"
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "我们添加了一个快捷方式，方便用户挂断当前通话并加入到新通话。"
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "Chats now open faster than ever thanks to another round of performance improvements, so you can click on your cliques and see what they're saying real quick."
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "对于语言环境设置为“POSIX”的用户，此次更新还修复了 Linux 上的启动崩溃问题。"
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "长字幕动态的显示对比度得到了优化，使文字更易于阅读。"
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "此版本还改进了链接预览生成的性能，并修复了关闭设置窗口时会出现的显示小错误。"
-  },
-  "icu:WhatsNew__v7.21--0": {
-    "messageformat": "Everyone loves a good story, and we could tell you the tale of a bug that sometimes caused the progress bar to freeze right in the middle of watching a good story — but that bug's adventure already has a happy ending because we fixed it in this release."
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "We also fixed a handful of bugs, including one that sometimes caused \"Unknown contact started a video call\" to appear in the chat list summary after you started the call. Even if you're still on a journey of self-discovery, you are never completely unknown to yourself."
   }
 }

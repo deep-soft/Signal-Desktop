@@ -48,11 +48,6 @@ import {
   update as updateExpiringMessagesService,
 } from './services/expiringMessagesDeletion';
 import { tapToViewMessagesDeletionService } from './services/tapToViewMessagesDeletionService';
-import { getStoriesForRedux, loadStories } from './services/storyLoader';
-import {
-  getDistributionListsForRedux,
-  loadDistributionLists,
-} from './services/distributionListLoader';
 import { senderCertificateService } from './services/senderCertificate';
 import { GROUP_CREDENTIALS_KEY } from './services/groupCredentialFetcher';
 import * as KeyboardLayout from './services/keyboardLayout';
@@ -112,7 +107,6 @@ import { UpdateKeysListener } from './textsecure/UpdateKeysListener';
 import { isDirectConversation } from './util/whatTypeOfConversation';
 import { BackOff, FIBONACCI_TIMEOUTS } from './util/BackOff';
 import { AppViewType } from './state/ducks/app';
-import type { BadgesStateType } from './state/ducks/badges';
 import { areAnyCallsActiveOrRinging } from './state/selectors/calling';
 import { badgeImageFileDownloader } from './badges/badgeImageFileDownloader';
 import * as Deletes from './messageModifiers/Deletes';
@@ -148,10 +142,8 @@ import {
 import { isAciString } from './util/isAciString';
 import { normalizeAci } from './util/normalizeAci';
 import * as log from './logging/log';
-import { loadRecentEmojis } from './util/loadRecentEmojis';
 import { deleteAllLogs } from './util/deleteAllLogs';
 import { startInteractionMode } from './services/InteractionMode';
-import type { MainWindowStatsType } from './windows/context';
 import { ReactionSource } from './reactions/ReactionSource';
 import { singleProtoJobQueue } from './jobs/singleProtoJobQueue';
 import {
@@ -178,26 +170,15 @@ import {
 import { RetryPlaceholders } from './util/retryPlaceholders';
 import { setBatchingStrategy } from './util/messageBatcher';
 import { parseRemoteClientExpiration } from './util/parseRemoteClientExpiration';
-import { makeLookup } from './util/makeLookup';
 import { addGlobalKeyboardShortcuts } from './services/addGlobalKeyboardShortcuts';
 import { createEventHandler } from './quill/signal-clipboard/util';
 import { onCallLogEventSync } from './util/onCallLogEventSync';
-import {
-  getCallsHistoryForRedux,
-  getCallsHistoryUnreadCountForRedux,
-  loadCallsHistory,
-} from './services/callHistoryLoader';
-import {
-  getCallLinksForRedux,
-  loadCallLinks,
-} from './services/callLinksLoader';
 import { backupsService } from './services/backups';
 import {
   getCallIdFromEra,
   updateLocalGroupCallHistoryTimestamp,
 } from './util/callDisposition';
 import { deriveStorageServiceKey } from './Crypto';
-import { getThemeType } from './util/getThemeType';
 import { AttachmentDownloadManager } from './jobs/AttachmentDownloadManager';
 import { onCallLinkUpdateSync } from './util/onCallLinkUpdateSync';
 import { CallMode } from './types/CallDisposition';
@@ -211,6 +192,7 @@ import { getConversationIdForLogging } from './util/idForLogging';
 import { encryptConversationAttachments } from './util/encryptConversationAttachments';
 import { DataReader, DataWriter } from './sql/Client';
 import { restoreRemoteConfigFromStorage } from './RemoteConfig';
+import { getParametersForRedux, loadAll } from './services/allLoaders';
 
 export function isOverHourIntoPast(timestamp: number): boolean {
   return isNumber(timestamp) && isOlderThan(timestamp, HOUR);
@@ -254,13 +236,6 @@ export async function startApp(): Promise<void> {
   });
 
   await initializeMessageCounter();
-
-  let initialBadgesState: BadgesStateType = { byId: {} };
-  async function loadInitialBadgesState(): Promise<void> {
-    initialBadgesState = {
-      byId: makeLookup(await DataReader.getAllBadges(), 'id'),
-    };
-  }
 
   // Initialize WebAPI as early as possible
   let server: WebAPIType | undefined;
@@ -1011,6 +986,8 @@ export async function startApp(): Promise<void> {
             upgradeMessageSchema,
             getMessagesNeedingUpgrade: DataReader.getMessagesNeedingUpgrade,
             saveMessages: DataWriter.saveMessages,
+            incrementMessagesMigrationAttempts:
+              DataWriter.incrementMessagesMigrationAttempts,
           });
           log.info('idleDetector/idle: Upgraded messages:', batchWithIndex);
           isMigrationWithIndexComplete = batchWithIndex.done;
@@ -1104,20 +1081,9 @@ export async function startApp(): Promise<void> {
       reportLongRunningTasks();
     }, FIVE_MINUTES);
 
-    let mainWindowStats = {
-      isMaximized: false,
-      isFullScreen: false,
-    };
-
-    let menuOptions = {
-      development: false,
-      devTools: false,
-      includeSetup: false,
-      isProduction: true,
-      platform: 'unknown',
-    };
-
-    let theme: ThemeType = window.systemTheme;
+    setInterval(() => {
+      drop(window.Events.cleanupDownloads());
+    }, DAY);
 
     try {
       // This needs to load before we prime the data because we expect
@@ -1126,23 +1092,8 @@ export async function startApp(): Promise<void> {
 
       await Promise.all([
         window.ConversationController.getOrCreateSignalConversation(),
-        Stickers.load(),
-        loadRecentEmojis(),
-        loadInitialBadgesState(),
-        loadStories(),
-        loadDistributionLists(),
-        loadCallsHistory(),
-        loadCallLinks(),
         window.textsecure.storage.protocol.hydrateCaches(),
-        (async () => {
-          mainWindowStats = await window.SignalContext.getMainWindowStats();
-        })(),
-        (async () => {
-          menuOptions = await window.SignalContext.getMenuOptions();
-        })(),
-        (async () => {
-          theme = await getThemeType();
-        })(),
+        loadAll(),
       ]);
       await window.ConversationController.checkForConflicts();
     } catch (error) {
@@ -1151,7 +1102,7 @@ export async function startApp(): Promise<void> {
         Errors.toLogFormat(error)
       );
     } finally {
-      setupAppState({ mainWindowStats, menuOptions, theme });
+      setupAppState();
       drop(start());
       window.Signal.Services.initializeNetworkObserver(
         window.reduxActions.network
@@ -1183,26 +1134,8 @@ export async function startApp(): Promise<void> {
   log.info('Storage fetch');
   drop(window.storage.fetch());
 
-  function setupAppState({
-    mainWindowStats,
-    menuOptions,
-    theme,
-  }: {
-    mainWindowStats: MainWindowStatsType;
-    menuOptions: MenuOptionsType;
-    theme: ThemeType;
-  }) {
-    initializeRedux({
-      callLinks: getCallLinksForRedux(),
-      callsHistory: getCallsHistoryForRedux(),
-      callsHistoryUnreadCount: getCallsHistoryUnreadCountForRedux(),
-      initialBadgesState,
-      mainWindowStats,
-      menuOptions,
-      stories: getStoriesForRedux(),
-      storyDistributionLists: getDistributionListsForRedux(),
-      theme,
-    });
+  function setupAppState() {
+    initializeRedux(getParametersForRedux());
 
     // Here we set up a full redux store with initial state for our LeftPane Root
     const convoCollection = window.getConversations();
@@ -1377,6 +1310,12 @@ export async function startApp(): Promise<void> {
   });
 
   async function runStorageService() {
+    if (window.storage.get('backupDownloadPath')) {
+      log.info(
+        'background: not running storage service while downloading backup'
+      );
+      return;
+    }
     StorageService.enableStorageService();
     StorageService.runStorageServiceSyncJob();
   }
@@ -1481,12 +1420,6 @@ export async function startApp(): Promise<void> {
         )
       );
 
-      // Now that we authenticated - time to download the backup!
-      if (isBackupEnabled()) {
-        backupsService.start();
-        drop(backupsService.download());
-      }
-
       // Cancel throttled calls to refreshRemoteConfig since our auth changed.
       window.Signal.RemoteConfig.maybeRefreshRemoteConfig.cancel();
       drop(window.Signal.RemoteConfig.maybeRefreshRemoteConfig(server));
@@ -1527,7 +1460,11 @@ export async function startApp(): Promise<void> {
 
     if (isCoreDataValid && Registration.everDone()) {
       drop(connect());
-      window.reduxActions.app.openInbox();
+      if (window.storage.get('backupDownloadPath')) {
+        window.reduxActions.app.openBackupImport();
+      } else {
+        window.reduxActions.app.openInbox();
+      }
     } else {
       window.IPC.readyForUpdates();
       window.reduxActions.app.openInstaller();
@@ -1643,7 +1580,46 @@ export async function startApp(): Promise<void> {
       onOffline();
     }
 
+    if (window.storage.get('backupDownloadPath')) {
+      log.info(
+        'background: not running storage service while downloading backup'
+      );
+      drop(downloadBackup());
+      return;
+    }
+
     server.registerRequestHandler(messageReceiver);
+  }
+
+  async function downloadBackup() {
+    const backupDownloadPath = window.storage.get('backupDownloadPath');
+    if (!backupDownloadPath) {
+      log.warn('No backup download path, cannot download backup');
+      return;
+    }
+
+    const absoluteDownloadPath =
+      window.Signal.Migrations.getAbsoluteDownloadsPath(backupDownloadPath);
+    log.info('downloadBackup: downloading to', absoluteDownloadPath);
+    await backupsService.download(absoluteDownloadPath, {
+      onProgress: (currentBytes, totalBytes) => {
+        window.reduxActions.app.updateBackupImportProgress({
+          currentBytes,
+          totalBytes,
+        });
+      },
+    });
+    await window.storage.remove('backupDownloadPath');
+    window.reduxActions.app.openInbox();
+
+    log.info('downloadBackup: processing websocket messages, storage service');
+    strictAssert(server != null, 'server must be initialized');
+    strictAssert(
+      messageReceiver != null,
+      'MessageReceiver must be initialized'
+    );
+    server.registerRequestHandler(messageReceiver);
+    drop(runStorageService());
   }
 
   window.getSyncRequest = (timeoutMillis?: number) => {
@@ -1852,6 +1828,7 @@ export async function startApp(): Promise<void> {
           //   after connect on every startup
           await server.registerCapabilities({
             deleteSync: true,
+            versionedExpirationTimer: true,
           });
         } catch (error) {
           log.error(

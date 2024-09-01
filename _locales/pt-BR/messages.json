@@ -821,14 +821,8 @@
   "icu:mute": {
     "messageformat": "Silenciar"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "Signal não foi atualizado. {retry} ou visite {url} para você instalar a atualização. Em seguida, {support} sobre esse problema"
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "Não foi possível atualizar o Signal. <retryUpdateButton>Tente atualizar novamente</retryUpdateButton> ou acesse {url} para instalar manualmente. Depois, <contactSupportLink>fale com o suporte</contactSupportLink> sobre este problema"
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "Signal não foi atualizado. Visite {url} para instalá-lo manualmente. Em seguida, {support} sobre esse problema"
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "Não foi possível atualizar o Signal. Acesse {url} para instalar manualmente. Depois, <contactSupportLink>fale com o suporte</contactSupportLink> sobre este problema"
@@ -1834,9 +1828,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "Tente atualizar novamente"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "entre em contato com o suporte"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "Clique para reiniciar o Signal"
@@ -3353,6 +3344,9 @@
   "icu:GroupV2--admin-approval-bounce": {
     "messageformat": "{joinerName} solicitou e cancelou {numberOfRequests,number} pedidos de participação via o link do grupo"
   },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{numberOfRequests, plural, one {{joinerName} solicitou e cancelou a própria solicitação para participar pelo link do grupo} other {{joinerName} solicitou e cancelou {numberOfRequests,number} solicitações para participar pelo link do grupo}}"
+  },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "Você ativou o link do grupo com a aprovação do admin desativada."
   },
@@ -3526,6 +3520,15 @@
   },
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "Toque em \"Doar para o Signal\" e assine"
+  },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "Syncing messages"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "Downloading {currentSize} of {totalSize} ({fractionComplete,number,percent})..."
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "This may take a few minutes depending on the size of your backup"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Expandir"
@@ -3954,10 +3957,10 @@
     "messageformat": "botão Escrever"
   },
   "icu:emptyInbox__title": {
-    "messageformat": "No chats"
+    "messageformat": "Sem conversas "
   },
   "icu:emptyInbox__subtitle": {
-    "messageformat": "Recent chats will appear here."
+    "messageformat": "As conversas recentes aparecerão aqui."
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "Encaminhar para"
@@ -4848,10 +4851,10 @@
     "messageformat": "Nenhum story em exibição no momento"
   },
   "icu:Stories__list__empty--title": {
-    "messageformat": "No stories"
+    "messageformat": "Sem stories"
   },
   "icu:Stories__list__empty--subtitle": {
-    "messageformat": "New updates will appear here."
+    "messageformat": "Novas atualizações aparecerão aqui."
   },
   "icu:Stories__list--sending": {
     "messageformat": "Enviando…"
@@ -4869,7 +4872,10 @@
     "messageformat": "Clique para ver um story"
   },
   "icu:Stories__placeholder-with-icon--text": {
-    "messageformat": "Click <newStoryIcon>Add a story</newStoryIcon> to add an update."
+    "messageformat": "Clique em <newStoryIcon>Adicionar um story</newStoryIcon> para postar uma atualização."
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "Click <newStoryButtonIcon></newStoryButtonIcon> to add an update."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} em {group}"
@@ -5113,6 +5119,12 @@
   },
   "icu:StoryViewsNRepliesModal__reacted": {
     "messageformat": "Reagiu ao story"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "Reacted to the story"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
+    "messageformat": "Reacted to the story"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
     "messageformat": "Você não pode responder a este story porque não faz mais parte do grupo."
@@ -5413,7 +5425,10 @@
     "messageformat": "Clique para ver ou iniciar uma chamada"
   },
   "icu:CallsTab__EmptyStateText--with-icon": {
-    "messageformat": "Click <newCallIcon>New Call</newCallIcon> to start a new voice or video call."
+    "messageformat": "Clique em <newCallIcon>Nova chamada</newCallIcon> para iniciar uma nova chamada de voz ou vídeo."
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call."
   },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Pesquisar"
@@ -5428,16 +5443,16 @@
     "messageformat": "Sem chamadas recentes. Comece ligando para um amigo."
   },
   "icu:CallsList__EmptyState--noQuery__title": {
-    "messageformat": "No calls"
+    "messageformat": "Nenhuma chamada"
   },
   "icu:CallsList__EmptyState--noQuery__subtitle": {
-    "messageformat": "Recent calls will appear here."
+    "messageformat": "As chamadas recentes aparecerão aqui."
   },
   "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "No missed calls"
+    "messageformat": "Nenhuma chamada perdida"
   },
   "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Missed calls will appear here."
+    "messageformat": "As chamadas perdidas aparecerão aqui."
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "Nenhum resultado encontrado para “{query}”"
@@ -5456,9 +5471,6 @@
   },
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "Chamada recusada"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "Chamada em grupo"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "Link da chamada"
@@ -5617,22 +5629,13 @@
     "messageformat": "Pequenas alterações adicionais, correções de bugs e melhorias de desempenho. Agradecemos por usar o Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "Esta atualização acelera o processo de exclusão de conversas longas ou com muitas mensagens e arquivos de mídia."
+  "icu:WhatsNew__v7.22--0": {
+    "messageformat": "Precisa fechar o computador no meio de um download? Sem problemas! O Signal Desktop retoma o download automaticamente de onde parou, então você pode fechar o notebook sem a preocupação de perder o arquivo."
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "Adicionamos um atalho para você sair da chamada atual e entrar em uma nova, caso alguém te chame. Você verá uma solicitação para confirmar sua saída, mas pode decidir se sai ou não da chamada em que está."
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "Chats now open faster than ever thanks to another round of performance improvements, so you can click on your cliques and see what they're saying real quick."
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "Essa atualização também corrige uma falha de inicialização no Linux para usuários cuja localidade está definida como `POSIX`."
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "Agora, stories com textos mais longos terão um fundo degradê sutil para melhorar o contraste e facilitar a leitura. Com o texto mais legível, você pode se sentir à vontade para escrever alguns parágrafos sobre o que realmente te fez rir, em vez de apenas mandar um 'Kkkk' básico.\""
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "Nesta atualização, também melhoramos a performance das prévias de links e corrigimos um bug que fazia a janela de configurações dar uma piscada em um tom de azul ultramarino ao ser fechada, em vez de simplesmente fechar imediatamente."
-  },
-  "icu:WhatsNew__v7.21--0": {
-    "messageformat": "Everyone loves a good story, and we could tell you the tale of a bug that sometimes caused the progress bar to freeze right in the middle of watching a good story — but that bug's adventure already has a happy ending because we fixed it in this release."
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "We also fixed a handful of bugs, including one that sometimes caused \"Unknown contact started a video call\" to appear in the chat list summary after you started the call. Even if you're still on a journey of self-discovery, you are never completely unknown to yourself."
   }
 }

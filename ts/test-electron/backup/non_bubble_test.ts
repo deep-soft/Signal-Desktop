@@ -10,6 +10,7 @@ import { getRandomBytes } from '../../Crypto';
 import * as Bytes from '../../Bytes';
 import { SignalService as Proto, Backups } from '../../protobuf';
 import { DataWriter } from '../../sql/Client';
+import { APPLICATION_OCTET_STREAM } from '../../types/MIME';
 import { generateAci } from '../../types/ServiceId';
 import { PaymentEventKind } from '../../types/Payment';
 import { ContactFormType } from '../../types/EmbeddedContact';
@@ -17,13 +18,13 @@ import { MessageRequestResponseEvent } from '../../types/MessageRequestResponseE
 import { DurationInSeconds } from '../../util/durations';
 import { ReadStatus } from '../../messages/MessageReadStatus';
 import { SeenStatus } from '../../MessageSeenStatus';
-import { loadCallsHistory } from '../../services/callHistoryLoader';
 import {
   setupBasics,
   asymmetricRoundtripHarness,
   symmetricRoundtripHarness,
   OUR_ACI,
 } from './helpers';
+import { loadAll } from '../../services/allLoaders';
 
 const CONTACT_A = generateAci();
 const GROUP_ID = Bytes.toBase64(getRandomBytes(32));
@@ -55,7 +56,7 @@ describe('backup/non-bubble messages', () => {
       }
     );
 
-    await loadCallsHistory();
+    await loadAll();
   });
 
   it('roundtrips END_SESSION simple update', async () => {
@@ -372,6 +373,11 @@ describe('backup/non-bubble messages', () => {
           packId: Bytes.toHex(getRandomBytes(16)),
           stickerId: 1,
           packKey: Bytes.toBase64(getRandomBytes(32)),
+          data: {
+            contentType: APPLICATION_OCTET_STREAM,
+            error: true,
+            size: 0,
+          },
         },
         reactions: [
           {

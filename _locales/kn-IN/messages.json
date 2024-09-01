@@ -821,14 +821,8 @@
   "icu:mute": {
     "messageformat": "ಮ್ಯೂಟ್ ಮಾಡಿ"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "Signal ಅಪ್‌ಡೇಟ್ ಆಗಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಅದನ್ನು ಮ್ಯಾನುವಲ್ ಆಗಿ ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಲು {retry} ಅಥವಾ {url} ಗೆ ಭೇಟಿ ನೀಡಿ. ಬಳಿಕ, ಈ ಸಮಸ್ಯೆಯ ಬಗ್ಗೆ {support}"
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "Signal ಅನ್ನು ಅಪ್‌ಡೇಟ್ ಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. <retryUpdateButton>ಅಪ್‌ಡೇಟ್ ಅನ್ನು ಮರುಪ್ರಯತ್ನಿಸಿ</retryUpdateButton> ಅಥವಾ ಅದನ್ನು ಹಸ್ತಚಾಲಿತವಾಗಿ ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಲು {url}ಗೆ ಭೇಟಿ ನೀಡಿ. ನಂತರ, ಈ ಸಮಸ್ಯೆಯ ಬಗ್ಗೆ <contactSupportLink>ಬೆಂಬಲವನ್ನು ಸಂಪರ್ಕಿಸಿ</contactSupportLink>"
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "Signal ಅಪ್‌ಡೇಟ್ ಆಗಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಅದನ್ನು ಮ್ಯಾನುವಲ್ ಆಗಿ ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಲು {url} ಗೆ ಭೇಟಿ ನೀಡಿ. ಬಳಿಕ, ಈ ಸಮಸ್ಯೆಯ ಬಗ್ಗೆ {support}"
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "Signal ಅನ್ನು ಅಪ್‌ಡೇಟ್ ಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಇದನ್ನು ಹಸ್ತಚಾಲಿತವಾಗಿ ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಲು {url}ಗೆ ಭೇಟಿ ನೀಡಿ. ನಂತರ, ಈ ಸಮಸ್ಯೆಯ ಬಗ್ಗೆ <contactSupportLink>ಬೆಂಬಲವನ್ನು ಸಂಪರ್ಕಿಸಿ</contactSupportLink>"
@@ -1834,9 +1828,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "ಅಪ್‌ಡೇಟ್‌ಗೆ ಮರುಪ್ರಯತ್ನಿಸಿ"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "ಬೆಂಬಲವನ್ನು ಸಂಪರ್ಕಿಸಿ"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "Signal ಮರುಪ್ರಾರಂಭಿಸಲು ಕ್ಲಿಕ್ ಮಾಡಿ"
@@ -3353,6 +3344,9 @@
   "icu:GroupV2--admin-approval-bounce": {
     "messageformat": "{joinerName} ಅವರು ಗ್ರೂಪ್ ಲಿಂಕ್ ಮೂಲಕ {numberOfRequests,number} ವಿನಂತಿಗಳನ್ನು ಮಾಡಿದ್ದಾರೆ ಮತ್ತು ಅವುಗಳನ್ನು ರದ್ದುಗೊಳಿಸಿದ್ದಾರೆ"
   },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{numberOfRequests, plural, one {{joinerName} ಅವರು ಗ್ರೂಪ್ ಲಿಂಕ್ ಮೂಲಕ ಸೇರಲು ವಿನಂತಿಸಿದ್ದಾರೆ ಮತ್ತು ತಮ್ಮ ವಿನಂತಿಯನ್ನು ರದ್ದುಗೊಳಿಸಿದ್ದಾರೆ.} other {{joinerName} ಅವರು ಗ್ರೂಪ್ ಲಿಂಕ್ ಮೂಲಕ ಸೇರಲು ವಿನಂತಿಸಿದ್ದಾರೆ ಮತ್ತು {numberOfRequests,number} ವಿನಂತಿಗಳನ್ನು ರದ್ದುಗೊಳಿಸಿದ್ದಾರೆ.}}"
+  },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "ಅಡ್ಮಿನ್ ಅನುಮೋದನೆ ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಿ ಗ್ರೂಪ್ ಲಿಂಕ್‌ ಅನ್ನು ನೀವು ಆನ್ ಮಾಡಿದ್ದೀರಿ."
   },
@@ -3526,6 +3520,15 @@
   },
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "\"Signal ಗೆ ದೇಣಿಗೆ ನೀಡಿ\" ಮೇಲೆ ಟ್ಯಾಪ್ ಮಾಡಿ ಮತ್ತು ಚಂದಾದಾರರಾಗಿ"
+  },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "Syncing messages"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "Downloading {currentSize} of {totalSize} ({fractionComplete,number,percent})..."
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "This may take a few minutes depending on the size of your backup"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "ವಿಸ್ತರಿಸಿ"
@@ -3954,10 +3957,10 @@
     "messageformat": "ಕಂಪೋಸ್ ಬಟನ್"
   },
   "icu:emptyInbox__title": {
-    "messageformat": "No chats"
+    "messageformat": "ಯಾವುದೇ ಚಾಟ್‌ಗಳಿಲ್ಲ"
   },
   "icu:emptyInbox__subtitle": {
-    "messageformat": "Recent chats will appear here."
+    "messageformat": "ಇತ್ತೀಚಿನ ಚಾಟ್‌ಗಳು ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ."
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "ಇವರಿಗೆ ಫಾರ್ವರ್ಡ್ ಮಾಡಿ"
@@ -4848,10 +4851,10 @@
     "messageformat": "ಪ್ರಸ್ತುತ ತೋರಿಸಲು ಯಾವುದೇ ಸ್ಟೋರೀಸ್ ಇಲ್ಲ"
   },
   "icu:Stories__list__empty--title": {
-    "messageformat": "No stories"
+    "messageformat": "ಯಾವುದೇ ಸ್ಟೋರಿಗಳಿಲ್ಲ"
   },
   "icu:Stories__list__empty--subtitle": {
-    "messageformat": "New updates will appear here."
+    "messageformat": "ಹೊಸ ಅಪ್‌ಡೇಟ್‌ಗಳು ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ."
   },
   "icu:Stories__list--sending": {
     "messageformat": "ಕಳುಹಿಸಲಾಗುತ್ತಿದೆ…"
@@ -4869,7 +4872,10 @@
     "messageformat": "ಸ್ಟೋರಿ ವೀಕ್ಷಿಸಲು ಕ್ಲಿಕ್ ಮಾಡಿ"
   },
   "icu:Stories__placeholder-with-icon--text": {
-    "messageformat": "Click <newStoryIcon>Add a story</newStoryIcon> to add an update."
+    "messageformat": "ಅಪ್‌ಡೇಟ್ ಅನ್ನು ಸೇರಿಸಲು <newStoryIcon>ಸ್ಟೋರಿಯನ್ನು ಸೇರಿಸಿ</newStoryIcon> ಅನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿ."
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "Click <newStoryButtonIcon></newStoryButtonIcon> to add an update."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} ನಿಂದ {group} ಗೆ"
@@ -5113,6 +5119,12 @@
   },
   "icu:StoryViewsNRepliesModal__reacted": {
     "messageformat": "ಸ್ಟೋರಿಗೆ ಪ್ರತಿಕ್ರಿಯಿಸಲಾಗಿದೆ"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "Reacted to the story"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
+    "messageformat": "Reacted to the story"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
     "messageformat": "You can’t reply to this story because you’re no longer a member of this group."
@@ -5413,7 +5425,10 @@
     "messageformat": "ಕರೆಯನ್ನು ವೀಕ್ಷಿಸಲು ಅಥವಾ ಪ್ರಾಂಭಿಸಲು ಕ್ಲಿಕ್ ಮಾಡಿ"
   },
   "icu:CallsTab__EmptyStateText--with-icon": {
-    "messageformat": "Click <newCallIcon>New Call</newCallIcon> to start a new voice or video call."
+    "messageformat": "ಹೊಸ ಧ್ವನಿ ಅಥವಾ ವೀಡಿಯೊ ಕರೆಯನ್ನು ಪ್ರಾರಂಭಿಸಲು <newCallIcon>ಹೊಸ ಕರೆ</newCallIcon> ಕ್ಲಿಕ್ ಮಾಡಿ."
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call."
   },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "ಹುಡುಕಿ"
@@ -5428,16 +5443,16 @@
     "messageformat": "ಇತ್ತೀಚಿನ ಯಾವುದೇ ಕರೆಗಳಿಲ್ಲ. ಸ್ನೇಹಿತರಿಗೆ ಕರೆ ಮಾಡುವ ಮೂಲಕ ಪ್ರಾರಂಭಿಸಿ."
   },
   "icu:CallsList__EmptyState--noQuery__title": {
-    "messageformat": "No calls"
+    "messageformat": "ಯಾವುದೇ ಕರೆಗಳಿಲ್ಲ"
   },
   "icu:CallsList__EmptyState--noQuery__subtitle": {
-    "messageformat": "Recent calls will appear here."
+    "messageformat": "ಇತ್ತೀಚಿನ ಕರೆಗಳು ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ."
   },
   "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "No missed calls"
+    "messageformat": "ಯಾವುದೇ ಮಿಸ್ಡ್ ಕಾಲ್‌ಗಳಿಲ್ಲ"
   },
   "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Missed calls will appear here."
+    "messageformat": "ಮಿಸ್ಡ್ ಕಾಲ್‌ಗಳು ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ."
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "{query} ಗೆ ಫಲಿತಾಂಶಗಳು ಲಭ್ಯವಿಲ್ಲ"
@@ -5456,9 +5471,6 @@
   },
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "ನಿರಾಕರಿಸಲಾಗಿದೆ"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "ಗ್ರೂಪ್ ಕಾಲ್"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "ಕರೆ ಲಿಂಕ್"
@@ -5617,22 +5629,13 @@
     "messageformat": "ಸಣ್ಣ ಟ್ವೀಕ್‌ಗಳು, ಬಗ್ ಫಿಕ್ಸ್‌ಗಳು ಮತ್ತು ಕಾರ್ಯಕ್ಷಮತೆ ವರ್ಧನೆಗಳು. Signal ಬಳಸುತ್ತಿರುವುದಕ್ಕಾಗಿ ಧನ್ಯವಾದಗಳು!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "ನಿಧಾನವಾದ ವಿದಾಯಕ್ಕಿಂತ ತ್ವರಿತ ಗುಡ್‌ಬೈ ಕೆಲವೊಮ್ಮೆ ಸುಲಭವಾಗಿರುತ್ತದೆ, ಆದ್ದರಿಂದ ನಾವು ದೊಡ್ಡ ಮೆಸೇಜ್ ಥ್ರೆಡ್‌ಗಳನ್ನು ಅಳಿಸುವ ಪ್ರಕ್ರಿಯೆಯನ್ನು ವೇಗಗೊಳಿಸಿದ್ದೇವೆ."
+  "icu:WhatsNew__v7.22--0": {
+    "messageformat": "ಸಿಗ್ನಲ್ ಡೆಸ್ಕ್‌ಟಾಪ್ ಈಗ ಅಡಚಣೆಗೊಂಡ ಅಟ್ಯಾಚ್‌ಮೆಂಟ್ ಡೌನ್‌ಲೋಡ್‌ಗಳನ್ನು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಪುನರಾರಂಭಿಸಬಹುದು, ಹಾಗಾಗಿ ನಿಮ್ಮ ಸ್ನೇಹಿತರು ಕಳುಹಿಸಿದ ಮೀಮ್ ಅನ್ನು ವರ್ಗಾವಣೆ ಮುಗಿಯುವ ಮೊದಲು ನಿಮ್ಮ ಲ್ಯಾಪ್‌ಟಾಪ್ ಲಿಡ್ ಅನ್ನು ಮುಚ್ಚಿದರೂ ನೀವು ನಗಲು ನೀವು ಹೆಚ್ಚು ಸಮಯ ಕಾಯಬೇಕಾಗಿಲ್ಲ."
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "ಮತ್ತೊಂದು ಕರೆಯು ನಿಮ್ಮ ಹೆಸರನ್ನು ಕರೆಯುತ್ತಿದ್ದರೆ, ಪ್ರಸ್ತುತ ಕರೆಯನ್ನು ತೊರೆಯಲು ಮತ್ತು ಹೊಸದಕ್ಕೆ ಸೇರಲು ನಾವು ಶಾರ್ಟ್‌ಕಟ್ ಅನ್ನು ಸೇರಿಸಿದ್ದೇವೆ. ನಿಮ್ಮ ನಿರ್ಗಮನವನ್ನು ಖಚಿತಪಡಿಸಲು ನಿಮ್ಮನ್ನು ಕೇಳಲಾಗುತ್ತದೆ, ಆದರೆ ನೀವು ಮೊದಲು ವಿದಾಯ ಹೇಳಬೇಕೆ ಅಥವಾ ಬೇಡವೇ ಎಂಬುದು ನಿಮಗೆ ಬಿಟ್ಟದ್ದು."
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "Chats now open faster than ever thanks to another round of performance improvements, so you can click on your cliques and see what they're saying real quick."
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "ಲೊಕೇಲ್ ಅನ್ನು `POSIX` ಗೆ ಸೆಟ್ ಮಾಡಿರುವ ಬಳಕೆದಾರರಿಗಾಗಿ Linux ನಲ್ಲಿ ಪ್ರಾರಂಭಿಸುವಾಗಿನ ಕುಸಿತವನ್ನು ಸಹ ಈ ಅಪ್‌ಡೇಟ್ ಸರಿಪಡಿಸುತ್ತದೆ."
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "ದೀರ್ಘ ಶೀರ್ಷಿಕೆಗಳೊಂದಿಗೆ ಸ್ಟೋರಿಗಳನ್ನು ಸೂಕ್ಷ್ಮವಾದ ಗ್ರೇಡಿಯಂಟ್ ಹಿನ್ನೆಲೆಯಲ್ಲಿ ಪ್ರದರ್ಶಿಸಲಾಗುತ್ತದೆ, ಅದು ಕಾಂಟ್ರಾಸ್ಟ್ ಅನ್ನು ಸುಧಾರಿಸುತ್ತದೆ ಮತ್ತು ಪಠ್ಯವನ್ನು ಓದಲು ಸುಲಭಗೊಳಿಸುತ್ತದೆ. ಈಗ ನೀವು ಏನು ಹೇಳುತ್ತಿದ್ದೀರಿ ಎಂಬುದನ್ನು ಜನರು ನೋಡಬಹುದು, ಬರೀ \"ಲೋಲ್\" ಎಂದು ಹೇಳುವ ಬದಲು ಏನಾದರೂ ನಿಮ್ಮನ್ನು ನಿಜವಾಗಿಯೂ ಏಕೆ ನಗಿಸಿತು ಎಂಬುದರ ಕುರಿತು ಒಂದೆರಡು ಪ್ಯಾರಾಗಳನ್ನು ಬರೆಯಲು ಹಿಂಜರಿಯಬೇಡಿ."
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "ಈ ಆವೃತ್ತಿಯು ಲಿಂಕ್ ಪ್ರಿವ್ಯೂ ಜನರೇಷನ್ ನ ಕಾರ್ಯಕ್ಷಮತೆಯನ್ನು ಸುಧಾರಿಸುತ್ತದೆ ಮತ್ತು ಸೆಟ್ಟಿಂಗ್‌ಗಳ ವಿಂಡೋವನ್ನು ಮುಚ್ಚಿದಾಗಲೆಲ್ಲಾ ಅಲ್ಟ್ರಾಮರೀನ್‌ನ ಸುಂದರವಾದ ಛಾಯೆಯನ್ನು ಸಂಕ್ಷಿಪ್ತವಾಗಿ ಫ್ಲ್ಯಾಷ್ ಮಾಡಲು ಕಾರಣವಾದ ದೋಷವನ್ನು ಸರಿಪಡಿಸುತ್ತದೆ (ಆ ಕ್ಷಣದಲ್ಲೇ ಮುಚ್ಚುವ ಬದಲು)."
-  },
-  "icu:WhatsNew__v7.21--0": {
-    "messageformat": "Everyone loves a good story, and we could tell you the tale of a bug that sometimes caused the progress bar to freeze right in the middle of watching a good story — but that bug's adventure already has a happy ending because we fixed it in this release."
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "We also fixed a handful of bugs, including one that sometimes caused \"Unknown contact started a video call\" to appear in the chat list summary after you started the call. Even if you're still on a journey of self-discovery, you are never completely unknown to yourself."
   }
 }

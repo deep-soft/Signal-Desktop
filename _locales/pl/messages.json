@@ -821,14 +821,8 @@
   "icu:mute": {
     "messageformat": "Wycisz"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "Aktualizacja Signal nie powiodła się. {retry} lub odwiedź {url}, aby zainstalować ręcznie. Następnie, {support} w sprawie tego problemu"
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "Aktualizacja Signal nie powiodła się. <retryUpdateButton>Ponów próbę</retryUpdateButton> lub odwiedź {url}, aby zainstalować aktualizację ręcznie. Następnie <contactSupportLink>skontaktuj się z pomocą techniczną</contactSupportLink> w sprawie tego problemu"
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "Aktualizacja Signal nie powiodła się. Odwiedź {url}, aby zainstalować aplikację ręcznie. Następnie, {support} w sprawie tego problemu"
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "Aktualizacja Signal nie powiodła się. Odwiedź {url}, aby zainstalować aktualizację ręcznie. Następnie <contactSupportLink>skontaktuj się z pomocą techniczną</contactSupportLink> w sprawie tego problemu"
@@ -1834,9 +1828,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "Ponów aktualizację"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "skontaktuj się z pomocą techniczną"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "Kliknij, aby ponownie uruchomić Signal"
@@ -3353,6 +3344,9 @@
   "icu:GroupV2--admin-approval-bounce": {
     "messageformat": "{joinerName} poprosił(a) i anulowała prośbę o przyjęcie do grupy przez link {numberOfRequests,number} razy"
   },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{numberOfRequests, plural, one {{joinerName} wysłał(a) i anulował(a) prośbę o przyjęcie do grupy przez link.} few {{joinerName} wysłał(a) i anulował(a) {numberOfRequests,number} prośby o przyjęcie do grupy przez link.} many {{joinerName} wysłał(a) i anulował(a) {numberOfRequests,number} próśb o przyjęcie do grupy przez link.} other {{joinerName} wysłał(a) i anulował(a) {numberOfRequests,number} próśb o przyjęcie do grupy przez link.}}"
+  },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "Włączyłeś(aś) link do grupy, niewymagający zatwierdzenia przez administratora."
   },
@@ -3526,6 +3520,15 @@
   },
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "Stuknij w opcję „Przekaż darowiznę na rzecz Signal” i zasubskrybuj"
+  },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "Syncing messages"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "Downloading {currentSize} of {totalSize} ({fractionComplete,number,percent})..."
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "This may take a few minutes depending on the size of your backup"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Powiększ"
@@ -3954,10 +3957,10 @@
     "messageformat": "przycisk nowej wiadomości"
   },
   "icu:emptyInbox__title": {
-    "messageformat": "No chats"
+    "messageformat": "Brak czatów"
   },
   "icu:emptyInbox__subtitle": {
-    "messageformat": "Recent chats will appear here."
+    "messageformat": "Tutaj będą wyświetlane ostatnie czaty."
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "Przekaż do"
@@ -4848,10 +4851,10 @@
     "messageformat": "W tej chwili nie ma nowych relacji do pokazania"
   },
   "icu:Stories__list__empty--title": {
-    "messageformat": "No stories"
+    "messageformat": "Brak relacji"
   },
   "icu:Stories__list__empty--subtitle": {
-    "messageformat": "New updates will appear here."
+    "messageformat": "Tutaj pojawią się nowe relacje."
   },
   "icu:Stories__list--sending": {
     "messageformat": "Trwa wysyłanie…"
@@ -4869,7 +4872,10 @@
     "messageformat": "Kliknij, aby zobaczyć relację"
   },
   "icu:Stories__placeholder-with-icon--text": {
-    "messageformat": "Click <newStoryIcon>Add a story</newStoryIcon> to add an update."
+    "messageformat": "Jeśli chcesz coś opublikować, kliknij opcję <newStoryIcon>Dodaj relację</newStoryIcon>."
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "Click <newStoryButtonIcon></newStoryButtonIcon> to add an update."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} do {group}"
@@ -5113,6 +5119,12 @@
   },
   "icu:StoryViewsNRepliesModal__reacted": {
     "messageformat": "Zareagowano na relację"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "Reacted to the story"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
+    "messageformat": "Reacted to the story"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
     "messageformat": "Nie możesz wysyłać wiadomości w odpowiedzi na tę relację, ponieważ nie jesteś już członkiem tej grupy."
@@ -5413,7 +5425,10 @@
     "messageformat": "Kliknij, aby wyświetlić lub rozpocząć połączenie"
   },
   "icu:CallsTab__EmptyStateText--with-icon": {
-    "messageformat": "Click <newCallIcon>New Call</newCallIcon> to start a new voice or video call."
+    "messageformat": "Kliknij opcję <newCallIcon>Nowe połączenie</newCallIcon>, aby rozpocząć nowe połączenie głosowe lub wideo."
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call."
   },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Szukaj"
@@ -5428,16 +5443,16 @@
     "messageformat": "Brak ostatnich połączeń. Zadzwoń do kogoś."
   },
   "icu:CallsList__EmptyState--noQuery__title": {
-    "messageformat": "No calls"
+    "messageformat": "Brak połączeń"
   },
   "icu:CallsList__EmptyState--noQuery__subtitle": {
-    "messageformat": "Recent calls will appear here."
+    "messageformat": "Tutaj będą wyświetlane ostatnie połączenia."
   },
   "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "No missed calls"
+    "messageformat": "Brak nieodebranych połączeń"
   },
   "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Missed calls will appear here."
+    "messageformat": "Tutaj będą wyświetlane nieodebrane połączenia."
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "Brak wyników dla „{query}”"
@@ -5456,9 +5471,6 @@
   },
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "Odrzucono"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "Połączenie grupowe"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "Link do połączenia"
@@ -5617,22 +5629,13 @@
     "messageformat": "Małe ulepszenia, poprawki błędów i zwiększona funkcjonalność. Dzięki za korzystanie z Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "Dobrze jest czasem oddzielić przeszłość grubą krechą, dlatego przyspieszyliśmy proces usuwania dużych wątków wiadomości."
+  "icu:WhatsNew__v7.22--0": {
+    "messageformat": "Signal Desktop od teraz automatycznie wznawia pobieranie załączników od miejsca, w którym zostało ono przerwane. Koniec z długim czekaniem na otwarcie memów od znajomych — możesz śmiało zamknąć laptopa, a one i tak pobiorą się po otwarciu."
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "Masz drugie połączenie? Od teraz możesz skorzystać ze skrótu, który umożliwia opuszczenie bieżącej rozmowy i dołączenie do innej. Poprosimy Cię o potwierdzenie wyboru, ale to już od Ciebie zależy, czy zechcesz się ładnie pożegnać."
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "Chats now open faster than ever thanks to another round of performance improvements, so you can click on your cliques and see what they're saying real quick."
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "W tej aktualizacji naprawiliśmy również błąd uruchamiania systemu Linux dla użytkowników z ustawieniami regionalnymi „POSIX”."
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "Relacje z długimi napisami od teraz wyświetlać się będą na subtelnym gradientowym tle, które poprawi kontrast i sprawi, że tekst będzie bardziej czytelny. Zapomnij o zdawkowym „lol”. Teraz możesz śmiało się rozpisywać."
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "W tej wersji poprawiliśmy również wydajność generowania podglądu linków i naprawiliśmy błąd, który powodował, że okno ustawień nie znikało się od razu po zamknięciu, ale przez sekundę migało pięknym odcieniem ultramaryny."
-  },
-  "icu:WhatsNew__v7.21--0": {
-    "messageformat": "Everyone loves a good story, and we could tell you the tale of a bug that sometimes caused the progress bar to freeze right in the middle of watching a good story — but that bug's adventure already has a happy ending because we fixed it in this release."
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "We also fixed a handful of bugs, including one that sometimes caused \"Unknown contact started a video call\" to appear in the chat list summary after you started the call. Even if you're still on a journey of self-discovery, you are never completely unknown to yourself."
   }
 }

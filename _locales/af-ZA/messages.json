@@ -821,14 +821,8 @@
   "icu:mute": {
     "messageformat": "Demp"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "Signal kon nie bywerking doen nie. {retry} of besoek {url} om dit met die hand te installeer. {support} dan oor hierdie probleem."
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "Signal kon nie opdateer nie. <retryUpdateButton>Probeer weer opdateer</retryUpdateButton> of besoek {url} om dit handmatig te installeer. <contactSupportLink>Kontak ons steundiens</contactSupportLink> daarna oor hierdie probleem"
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "Signal kon nie bywerking doen nie. Besoek {url} om dit met die hand te installeer. {support} dan oor hierdie probleem."
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "Signal kon nie opdateer nie. Besoek {url} om dit handmatig te installeer. <contactSupportLink>Kontak ons steundiens</contactSupportLink> daarna oor hierdie probleem"
@@ -1834,9 +1828,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "Probeer weer bywerking"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "kontak steundiens"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "Klik om Signal te herlaai"
@@ -3353,6 +3344,9 @@
   "icu:GroupV2--admin-approval-bounce": {
     "messageformat": "{joinerName} het d.m.v. die groepskakel {numberOfRequests,number} versoeke gerig om aan te sluit en dit gekanselleer."
   },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{numberOfRequests, plural, one {{joinerName} het d.m.v. die groepskakel versoek om aan te sluit en het dit gekanselleer} other {{joinerName} het d.m.v. die groepskakel {numberOfRequests,number} versoeke gerig om aan te sluit en het dit gekanselleer}}"
+  },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "Jy het die groepskakel geaktiveer met admingoedkeuring gedeaktiveer."
   },
@@ -3526,6 +3520,15 @@
   },
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "Tik op \"Dra by tot Signal\" en teken in"
+  },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "Syncing messages"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "Downloading {currentSize} of {totalSize} ({fractionComplete,number,percent})..."
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "This may take a few minutes depending on the size of your backup"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Vou uit"
@@ -3954,10 +3957,10 @@
     "messageformat": "saamstelknop"
   },
   "icu:emptyInbox__title": {
-    "messageformat": "No chats"
+    "messageformat": "Geen kletse nie"
   },
   "icu:emptyInbox__subtitle": {
-    "messageformat": "Recent chats will appear here."
+    "messageformat": "Onlangse kletse sal hier verskyn."
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "Stuur aan na"
@@ -4848,10 +4851,10 @@
     "messageformat": "Tans geen onlangse stories om te wys nie."
   },
   "icu:Stories__list__empty--title": {
-    "messageformat": "No stories"
+    "messageformat": "Geen stories nie"
   },
   "icu:Stories__list__empty--subtitle": {
-    "messageformat": "New updates will appear here."
+    "messageformat": "Nuwe opdaterings sal hier verskyn."
   },
   "icu:Stories__list--sending": {
     "messageformat": "Besig om te stuur…"
@@ -4869,7 +4872,10 @@
     "messageformat": "Klik om 'n storie te kyk."
   },
   "icu:Stories__placeholder-with-icon--text": {
-    "messageformat": "Click <newStoryIcon>Add a story</newStoryIcon> to add an update."
+    "messageformat": "Klik op <newStoryIcon>Voeg 'n storie by</newStoryIcon> om 'n opdatering by te voeg."
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "Click <newStoryButtonIcon></newStoryButtonIcon> to add an update."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} aan {group}"
@@ -5113,6 +5119,12 @@
   },
   "icu:StoryViewsNRepliesModal__reacted": {
     "messageformat": "Het op die storie gereageer"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "Reacted to the story"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
+    "messageformat": "Reacted to the story"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
     "messageformat": "You can’t reply to this story because you’re no longer a member of this group."
@@ -5413,7 +5425,10 @@
     "messageformat": "Klik om 'n oproep te sien of te begin"
   },
   "icu:CallsTab__EmptyStateText--with-icon": {
-    "messageformat": "Click <newCallIcon>New Call</newCallIcon> to start a new voice or video call."
+    "messageformat": "Klik op <newCallIcon>Nuwe oproep</newCallIcon> om 'n nuwe stem- of video-oproep te begin."
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call."
   },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Soek"
@@ -5428,16 +5443,16 @@
     "messageformat": "Geen onlangse oproepe nie. Begin deur 'n vriend te bel."
   },
   "icu:CallsList__EmptyState--noQuery__title": {
-    "messageformat": "No calls"
+    "messageformat": "Geen oproepe nie"
   },
   "icu:CallsList__EmptyState--noQuery__subtitle": {
-    "messageformat": "Recent calls will appear here."
+    "messageformat": "Onlangse oproepe sal hier verskyn."
   },
   "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "No missed calls"
+    "messageformat": "Geen gemiste oproepe nie"
   },
   "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Missed calls will appear here."
+    "messageformat": "Gemiste oproepe sal hier verskyn."
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "Geen resultate vir \"{query}\" nie"
@@ -5456,9 +5471,6 @@
   },
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "Geweier"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "Groepoproep"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "Oproepskakel"
@@ -5617,22 +5629,13 @@
     "messageformat": "Klein veranderings, foutregstellings en prestasieverbeterings. Dankie dat jy Signal gebruik!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "Hierdie vrystelling versnel die proses om lang boodskapstringe te skrap."
+  "icu:WhatsNew__v7.22--0": {
+    "messageformat": "Signal Desktop kan nou outomaties onderbroke aflaai van aanhegsels hervat."
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "Indien 'n ander oproep jou naam bel, het ons 'n kortpad bygevoeg om die huidige oproep te verlaat en by die nuwe een aan te sluit."
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "Chats now open faster than ever thanks to another round of performance improvements, so you can click on your cliques and see what they're saying real quick."
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "Hierdie opdatering stel ook 'n oopmaak-uitbom in Linux reg vir gebruikers wie se lokaliteit op 'POSIX' gestel is."
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "Stories met lang byskrifte word nou met beter kontras vertoon wat die teks makliker maak om te lees."
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "Hierdie vrystelling verbeter ook die werkverrigting van skakelvoorskou-generering en stel 'n geringe vertoonfout reg wanneer die Instellingsvenster gesluit word."
-  },
-  "icu:WhatsNew__v7.21--0": {
-    "messageformat": "Everyone loves a good story, and we could tell you the tale of a bug that sometimes caused the progress bar to freeze right in the middle of watching a good story — but that bug's adventure already has a happy ending because we fixed it in this release."
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "We also fixed a handful of bugs, including one that sometimes caused \"Unknown contact started a video call\" to appear in the chat list summary after you started the call. Even if you're still on a journey of self-discovery, you are never completely unknown to yourself."
   }
 }
