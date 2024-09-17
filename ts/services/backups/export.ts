@@ -20,6 +20,7 @@ import {
 import type { PageMessagesCursorType } from '../../sql/Interface';
 import * as log from '../../logging/log';
 import { GiftBadgeStates } from '../../components/conversation/Message';
+import { type CustomColorType } from '../../types/Colors';
 import { StorySendMode, MY_STORY_ID } from '../../types/Stories';
 import {
   isPniString,
@@ -37,6 +38,7 @@ import type {
   QuotedMessageType,
 } from '../../model-types.d';
 import { drop } from '../../util/drop';
+import { isNotNil } from '../../util/isNotNil';
 import { explodePromise } from '../../util/explodePromise';
 import {
   isDirectConversation,
@@ -278,6 +280,14 @@ export class BackupExportStream extends Readable {
       stats.conversations += 1;
     }
 
+    this.pushFrame({
+      recipient: {
+        id: Long.fromNumber(this.getNextRecipientId()),
+        releaseNotes: {},
+      },
+    });
+    await this.flush();
+
     const distributionLists =
       await DataReader.getAllStoryDistributionsWithMembers();
 
@@ -414,6 +424,7 @@ export class BackupExportStream extends Readable {
                   DurationInSeconds.toMillis(attributes.expireTimer)
                 )
               : null,
+          expireTimerVersion: attributes.expireTimerVersion,
           muteUntilMs: getSafeLongFromTimestamp(attributes.muteExpiresAt),
           markedUnread: attributes.markedUnread === true,
           dontNotifyForMentionsIfMuted:
@@ -2396,12 +2407,37 @@ export class BackupExportStream extends Readable {
       return [];
     }
 
-    const result = new Array<Backups.ChatStyle.ICustomChatColor>();
+    const { order = [] } = customColors;
+    const map = new Map(
+      order
+        .map((id: string): [string, CustomColorType] | undefined => {
+          const color = customColors.colors[id];
+          if (color == null) {
+            return undefined;
+          }
+          return [id, color];
+        })
+        .filter(isNotNil)
+    );
+
+    // Add colors not present in the order list
     for (const [uuid, color] of Object.entries(customColors.colors)) {
+      if (map.has(uuid)) {
+        continue;
+      }
+      map.set(uuid, color);
+    }
+
+    const result = new Array<Backups.ChatStyle.ICustomChatColor>();
+    for (const [uuid, color] of map.entries()) {
       const id = Long.fromNumber(result.length);
       this.customColorIdByUuid.set(uuid, id);
 
-      const start = hslToRGBInt(color.start.hue, color.start.saturation);
+      const start = hslToRGBInt(
+        color.start.hue,
+        color.start.saturation,
+        color.start.luminance
+      );
 
       if (color.end == null) {
         result.push({
@@ -2409,7 +2445,11 @@ export class BackupExportStream extends Readable {
           solid: start,
         });
       } else {
-        const end = hslToRGBInt(color.end.hue, color.end.saturation);
+        const end = hslToRGBInt(
+          color.end.hue,
+          color.end.saturation,
+          color.end.luminance
+        );
 
         result.push({
           id,
@@ -2562,8 +2602,8 @@ function checkServiceIdEquivalence(
   return leftConvo && rightConvo && leftConvo === rightConvo;
 }
 
-function hslToRGBInt(hue: number, saturation: number): number {
-  const { r, g, b } = hslToRGB(hue, saturation, 1);
+function hslToRGBInt(hue: number, saturation: number, luminance = 1): number {
+  const { r, g, b } = hslToRGB(hue, saturation, luminance);
   // eslint-disable-next-line no-bitwise
   return ((0xff << 24) | (r << 16) | (g << 8) | b) >>> 0;
 }

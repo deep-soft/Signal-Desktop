@@ -941,6 +941,9 @@
   "icu:viewRecentMedia": {
     "messageformat": "ఇటీవలి మీడియాను చూడండి"
   },
+  "icu:allMediaMenuItem": {
+    "messageformat": "All media"
+  },
   "icu:back": {
     "messageformat": "తిరిగి"
   },
@@ -1210,9 +1213,6 @@
   },
   "icu:calling__cant-join": {
     "messageformat": "కాల్‌లో చేరలేరు"
-  },
-  "icu:calling__dialog-already-in-call": {
-    "messageformat": "మీరు ఇప్పటికే కాల్‌లో ఉన్నారు."
   },
   "icu:calling__call-link-connection-issues": {
     "messageformat": "కాల్ లింక్ సమాచారాన్ని పొందడం సాధ్యం కాలేదు. దయచేసి మీ నెట్‌వర్క్ కనెక్షన్ చెక్ చేసి, మళ్ళీ ప్రయత్నించండి."
@@ -2705,6 +2705,9 @@
   "icu:CallControls__InfoDisplay--adhoc-call": {
     "messageformat": "కాల్ లింక్"
   },
+  "icu:CallControls__InfoDisplay--group-call": {
+    "messageformat": "Group call"
+  },
   "icu:CallControls__InfoDisplay--adhoc-join-request-pending": {
     "messageformat": "లోపలికి అనుమతించబడేందుకు వేచి ఉన్నారు"
   },
@@ -3522,13 +3525,37 @@
     "messageformat": "‘‘Signalకు విరాళం ఇవ్వండి’’ మీద తట్టి, సబ్‌స్క్రైబ్ అవ్వండి"
   },
   "icu:BackupImportScreen__title": {
-    "messageformat": "Syncing messages"
+    "messageformat": "సందేశాలను సమకాలీకరిస్తోంది"
   },
   "icu:BackupImportScreen__progressbar-hint": {
-    "messageformat": "Downloading {currentSize} of {totalSize} ({fractionComplete,number,percent})..."
+    "messageformat": "{totalSize} లో {currentSize} ({fractionComplete,number,percent}) డౌన్‌లోడ్ అవుతోంది..."
+  },
+  "icu:BackupImportScreen__progressbar-hint--preparing": {
+    "messageformat": "Preparing to download..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "This may take a few minutes depending on the size of your backup"
+    "messageformat": "మీ బ్యాకప్ పరిమాణాన్ని బట్టి దీనికి ఇంకాస్త సమయం పట్టవచ్చు"
+  },
+  "icu:BackupImportScreen__cancel": {
+    "messageformat": "Cancel transfer"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__title": {
+    "messageformat": "Cancel transfer?"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__body": {
+    "messageformat": "Your messages and media have not completed restoring. If you choose to cancel, you can transfer again from Settings."
+  },
+  "icu:BackupImportScreen__cancel-confirmation__cancel": {
+    "messageformat": "Continue transfer"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__confirm": {
+    "messageformat": "Cancel transfer"
+  },
+  "icu:BackupMediaDownloadProgress__title": {
+    "messageformat": "మీడియాను పునరుద్ధరిస్తోంది"
+  },
+  "icu:BackupMediaDownloadProgress__progressbar-hint": {
+    "messageformat": "{totalSize} ({fractionComplete,number,percent})లో {currentSize}"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "విస్తరించండి"
@@ -3580,6 +3607,9 @@
   },
   "icu:ContactModal--already-in-call": {
     "messageformat": "మీరు ఇప్పటికే కాల్‌లో ఉన్నారు"
+  },
+  "icu:ContactModal--voice": {
+    "messageformat": "Voice"
   },
   "icu:showChatColorEditor": {
     "messageformat": "చాట్ రంగు"
@@ -3762,7 +3792,7 @@
     "messageformat": "లింక్‌ను రీసెట్ చేయండి"
   },
   "icu:GroupLinkManagement--approve-label": {
-    "messageformat": "కొత్త సభ్యులను ఆమోదించండి"
+    "messageformat": "Require admin approval"
   },
   "icu:GroupLinkManagement--approve-info": {
     "messageformat": "సమూహ లింక్ ద్వారా చేరిన కొత్త సభ్యులను ఆమోదించడానికి నిర్వాహకుడు అవసరం"
@@ -3949,12 +3979,6 @@
   },
   "icu:MessageAudio--playbackRatep5": {
     "messageformat": ".5"
-  },
-  "icu:emptyInboxMessage": {
-    "messageformat": "పై {composeIcon} పై క్లిక్ చేసి, సందేశానికి మీ పరిచయాలు లేదా సమూహాల కోసం శోధించండి."
-  },
-  "icu:composeIcon": {
-    "messageformat": "కంపోజ్ బటన్"
   },
   "icu:emptyInbox__title": {
     "messageformat": "చాట్స్ లేవు"
@@ -4875,7 +4899,7 @@
     "messageformat": "అప్‌డేట్‌ను జోడించడానికి <newStoryIcon>కథను జోడించండి</newStoryIcon>ని క్లిక్ చేయండి."
   },
   "icu:Stories__placeholder-with-icon--text-2": {
-    "messageformat": "Click <newStoryButtonIcon></newStoryButtonIcon> to add an update."
+    "messageformat": "అప్‌డేట్ జోడించడానికి <newStoryButtonIcon></newStoryButtonIcon> క్లిక్ చేయండి."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} నుంచి {group}కు"
@@ -5121,10 +5145,10 @@
     "messageformat": "కథకు ప్రతిస్పందించారు"
   },
   "icu:StoryViewsNRepliesModal__reacted--you": {
-    "messageformat": "Reacted to the story"
+    "messageformat": "కథకు ప్రతిస్పందించారు"
   },
   "icu:StoryViewsNRepliesModal__reacted--someone-else": {
-    "messageformat": "Reacted to the story"
+    "messageformat": "కథకు ప్రతిస్పందించారు"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
     "messageformat": "You can’t reply to this story because you’re no longer a member of this group."
@@ -5421,14 +5445,11 @@
   "icu:CallsTab__ToastCallHistoryCleared": {
     "messageformat": "కాల్ చరిత్ర తొలగించబడింది"
   },
-  "icu:CallsTab__EmptyStateText": {
-    "messageformat": "ఒక కాల్‌ను వీక్షించడానికి లేదా ప్రారంభించడానికి క్లిక్ చేయండి"
-  },
   "icu:CallsTab__EmptyStateText--with-icon": {
     "messageformat": "కొత్త స్వర లేదా వీడియో కాల్ ప్రారంభించడానికి <newCallIcon>కొత్త కాల్</newCallIcon> ను క్లిక్ చేయండి."
   },
   "icu:CallsTab__EmptyStateText--with-icon-2": {
-    "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call."
+    "messageformat": "కొత్త స్వర లేదా వీడియో కాల్ ప్రారంభించడానికి <newCallButtonIcon></newCallButtonIcon> క్లిక్ చేయండి."
   },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "వెతకండి"
@@ -5438,9 +5459,6 @@
   },
   "icu:CallsList__ToggleFilterByMissed__RoleDescription": {
     "messageformat": "టోగుల్ చేయండి"
-  },
-  "icu:CallsList__EmptyState--noQuery": {
-    "messageformat": "ఇటీవలి కాల్స్  లేవు స్నేహితుడికి కాల్ చేయడం ద్వారా ప్రారంభించండి."
   },
   "icu:CallsList__EmptyState--noQuery__title": {
     "messageformat": "కాల్‌లు లేవు"
@@ -5496,21 +5514,6 @@
   "icu:CallsNewCallButton--return": {
     "messageformat": "తిరిగి వెళ్ళండి"
   },
-  "icu:CallsNewCallButtonTooltip--in-another-call": {
-    "messageformat": "కొత్త కాల్‌లో చేరడానికి ముందు మీరు తప్పనిసరిగా ప్రస్తుత కాల్ నుండి నిష్క్రమించాలి"
-  },
-  "icu:CallHistory__Description--Default": {
-    "messageformat": "{type, select, Audio {{direction, select, Outgoing {అవుట్‌గోయింగ్ వాయిస్ కాల్} other {ఇన్‌కమింగ్ వాయిస్ కాల్}}} Video {{direction, select, Outgoing {అవుట్గోయింగ్ వీడియో కాల్} other {కొత్తగా వచ్చిన వీడియో కాల్}}} Group {{direction, select, Outgoing {అవుట్‌గోయింగ్ గ్రూప్ కాల్} other {ఇన్‌కమింగ్ గ్రూప్ కాల్}}} other {{direction, select, Outgoing {అవుట్గోయింగ్ కాల్} other {క్రొత్తగా వచ్చిన కాల్}}}}"
-  },
-  "icu:CallHistory__Description--Missed": {
-    "messageformat": "{type, select, Audio {మిస్డ్ వాయిస్ కాల్} Video {తప్పిన వీడియో కాల్} Group {మిస్ అయిన గ్రూప్ కాల్} other {తప్పిన కాల్}}"
-  },
-  "icu:CallHistory__Description--Unanswered": {
-    "messageformat": "{type, select, Audio {సమాధానం ఇవ్వని వాయిస్ కాల్} Video {సమాధానం లేని వీడియో కాల్} Group {సమాధానం ఇవ్వబడని గ్రూప్ కాల్} other {సమాధానం ఇవ్వబడని  కాల్}}"
-  },
-  "icu:CallHistory__Description--Declined": {
-    "messageformat": "{type, select, Audio {స్వర కాల్ తిరస్కరించబడింది} Video {వీడియో కాల్ తిరస్కరించబడింది} Group {గ్రూప్ కాల్ తిరస్కరించబడింది} other {కాల్  తిరస్కరించబడింది}}"
-  },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "కాల్ లింక్"
   },
@@ -5536,7 +5539,10 @@
     "messageformat": "కాల్ పేరును సవరించండి"
   },
   "icu:CallLinkDetails__ApproveAllMembersLabel": {
-    "messageformat": "సభ్యులందరినీ ఆమోదించండి"
+    "messageformat": "Require admin approval"
+  },
+  "icu:CallLinkDetails__SettingTooltip--disabled-for-active-call": {
+    "messageformat": "This setting can't be changed while the call is active"
   },
   "icu:CallLinkDetails__CopyLink": {
     "messageformat": "లింక్‌ను కాపీ చేయండి"
@@ -5559,6 +5565,9 @@
   "icu:CallLinkDetails__DeleteLinkModal__Delete": {
     "messageformat": "తొలగించండి"
   },
+  "icu:CallLinkDetails__DeleteLinkTooltip--disabled-for-active-call": {
+    "messageformat": "This link can't be deleted while the call is active"
+  },
   "icu:CallLinkEditModal__Title": {
     "messageformat": "కాల్ లింక్ వివరాలు"
   },
@@ -5572,7 +5581,13 @@
     "messageformat": "కాల్ పేరును సవరించండి"
   },
   "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
-    "messageformat": "సభ్యులందరినీ ఆమోదించండి"
+    "messageformat": "Require admin approval"
+  },
+  "icu:CallLinkPendingParticipantModal__ApproveButtonLabel": {
+    "messageformat": "Approve entry"
+  },
+  "icu:CallLinkPendingParticipantModal__DenyButtonLabel": {
+    "messageformat": "Deny entry"
   },
   "icu:CallLinkRestrictionsSelect__Option--Off": {
     "messageformat": "ఆఫ్"
@@ -5629,13 +5644,16 @@
     "messageformat": "చిన్న ట్వీక్‌లు, బగ్ ఫిక్స్‌లు, మరియు పనితీరు మెరుగుదలలు. Signal ఉపయోగించినందుకు మీకు ధన్యవాదాలు!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.22--0": {
-    "messageformat": "అంతరాయం కలిగించిన అటాచ్‌మెంట్ డౌన్‌లోడ్‌లను Signal డెస్క్‌టాప్ ఇప్పుడు స్వయంచాలకంగా పునఃప్రారంభించవచ్చు."
-  },
   "icu:WhatsNew__v7.23--0": {
-    "messageformat": "Chats now open faster than ever thanks to another round of performance improvements, so you can click on your cliques and see what they're saying real quick."
+    "messageformat": "చాట్లు ఇప్పుడు మునుపటి కంటే వేగంగా తెరుచుకున్నాయి, మరొక రౌండ్ పనితీరు మెరుగుదలలకు ధన్యవాదాలు."
   },
   "icu:WhatsNew__v7.23--1": {
-    "messageformat": "We also fixed a handful of bugs, including one that sometimes caused \"Unknown contact started a video call\" to appear in the chat list summary after you started the call. Even if you're still on a journey of self-discovery, you are never completely unknown to yourself."
+    "messageformat": "మీరు కాల్‌ని ప్రారంభించిన తర్వాత చాట్ జాబితా సారాంశంలో కొన్నిసార్లు \"తెలియని పరిచయం వీడియో కాల్‌ను ప్రారంభించింది\" అని కనిపించడానికి కారణం అయిన దానితో సహా మేము మరి కొన్ని బగ్‌లను కూడా పరిష్కరించాము. ఇంకా మీరు మిమ్మల్ని కనుగొనే పయనంలో ఉన్నప్పటికీ, మీకు మీరేమి పూర్తిగా అపరిచితులు కాదు."
+  },
+  "icu:WhatsNew__v7.24--0": {
+    "messageformat": "ఈ అప్‌డేట్, మీరు మిస్డ్ కాల్ వివరాలు ఒక పరికరంలో చూసినప్పుడు, మీ ఇతర పరికరాలలో ఆ మిస్డ్ కాల్ కోసం దాని ఇండికేటర్ ఆటోమేటిక్‌గా క్లియర్ అవ్వడానికి కారణం అయిన బగ్‌ను పరిష్కరిస్తుంది."
+  },
+  "icu:WhatsNew__v7.25--0": {
+    "messageformat": "Take a trip down memory lane with the new and improved \"All Media\" view. Now when you click on a chat header and select \"See all\" in the shared media section, older photos and videos will automatically appear as you scroll instead of being limited to the most recent entries."
   }
 }

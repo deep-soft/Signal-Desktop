@@ -941,6 +941,9 @@
   "icu:viewRecentMedia": {
     "messageformat": "Mostra el contingut recent"
   },
+  "icu:allMediaMenuItem": {
+    "messageformat": "All media"
+  },
   "icu:back": {
     "messageformat": "Enrere"
   },
@@ -1210,9 +1213,6 @@
   },
   "icu:calling__cant-join": {
     "messageformat": "No pots unir-te a la trucada"
-  },
-  "icu:calling__dialog-already-in-call": {
-    "messageformat": "Ja estàs en una trucada."
   },
   "icu:calling__call-link-connection-issues": {
     "messageformat": "No s'ha pogut obtenir la informació de l'enllaç de trucada. Comprova la connexió de xarxa i torna-ho a provar."
@@ -2705,6 +2705,9 @@
   "icu:CallControls__InfoDisplay--adhoc-call": {
     "messageformat": "Enllaç de trucada"
   },
+  "icu:CallControls__InfoDisplay--group-call": {
+    "messageformat": "Group call"
+  },
   "icu:CallControls__InfoDisplay--adhoc-join-request-pending": {
     "messageformat": "Esperant per a entrar"
   },
@@ -3522,13 +3525,37 @@
     "messageformat": "Toca sobre \"Fer donació a Signal\" per a subscriure't"
   },
   "icu:BackupImportScreen__title": {
-    "messageformat": "Syncing messages"
+    "messageformat": "Sincronitzant missatges"
   },
   "icu:BackupImportScreen__progressbar-hint": {
-    "messageformat": "Downloading {currentSize} of {totalSize} ({fractionComplete,number,percent})..."
+    "messageformat": "Descarregant {currentSize} de {totalSize} ({fractionComplete,number,percent})…"
+  },
+  "icu:BackupImportScreen__progressbar-hint--preparing": {
+    "messageformat": "Preparing to download..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "This may take a few minutes depending on the size of your backup"
+    "messageformat": "En funció de la mida de la teva còpia de seguretat, això pot trigar uns quants minuts."
+  },
+  "icu:BackupImportScreen__cancel": {
+    "messageformat": "Cancel transfer"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__title": {
+    "messageformat": "Cancel transfer?"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__body": {
+    "messageformat": "Your messages and media have not completed restoring. If you choose to cancel, you can transfer again from Settings."
+  },
+  "icu:BackupImportScreen__cancel-confirmation__cancel": {
+    "messageformat": "Continue transfer"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__confirm": {
+    "messageformat": "Cancel transfer"
+  },
+  "icu:BackupMediaDownloadProgress__title": {
+    "messageformat": "Restaurant els arxius"
+  },
+  "icu:BackupMediaDownloadProgress__progressbar-hint": {
+    "messageformat": "{currentSize} de {totalSize} ({fractionComplete,number,percent})"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Expandeix"
@@ -3580,6 +3607,9 @@
   },
   "icu:ContactModal--already-in-call": {
     "messageformat": "Ja ets a una trucada."
+  },
+  "icu:ContactModal--voice": {
+    "messageformat": "Voice"
   },
   "icu:showChatColorEditor": {
     "messageformat": "Color del xat"
@@ -3762,7 +3792,7 @@
     "messageformat": "Restableix l'enllaç"
   },
   "icu:GroupLinkManagement--approve-label": {
-    "messageformat": "Aproveu membres nous"
+    "messageformat": "Require admin approval"
   },
   "icu:GroupLinkManagement--approve-info": {
     "messageformat": "Requereix que un administrador aprovi els membres nous que s’afegeixin per l’enllaç del grup."
@@ -3949,12 +3979,6 @@
   },
   "icu:MessageAudio--playbackRatep5": {
     "messageformat": "0,5"
-  },
-  "icu:emptyInboxMessage": {
-    "messageformat": "Cliqueu el {composeIcon} i cerqueu contactes i grups a qui enviar missatges."
-  },
-  "icu:composeIcon": {
-    "messageformat": "botó per a escriure"
   },
   "icu:emptyInbox__title": {
     "messageformat": "No hi ha xats"
@@ -4875,7 +4899,7 @@
     "messageformat": "Fes clic a <newStoryIcon>Afegir una història</newStoryIcon> per afegir una actualització."
   },
   "icu:Stories__placeholder-with-icon--text-2": {
-    "messageformat": "Click <newStoryButtonIcon></newStoryButtonIcon> to add an update."
+    "messageformat": "Fes clic a <newStoryButtonIcon> </newStoryButtonIcon>per afegir una actualització."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} a {group}"
@@ -5121,10 +5145,10 @@
     "messageformat": "Ha reaccionat a la història"
   },
   "icu:StoryViewsNRepliesModal__reacted--you": {
-    "messageformat": "Reacted to the story"
+    "messageformat": "Ha reaccionat a la història"
   },
   "icu:StoryViewsNRepliesModal__reacted--someone-else": {
-    "messageformat": "Reacted to the story"
+    "messageformat": "Ha reaccionat a la història"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
     "messageformat": "No pots respondre a aquesta història perquè ja no pertanys a aquest grup."
@@ -5421,14 +5445,11 @@
   "icu:CallsTab__ToastCallHistoryCleared": {
     "messageformat": "S'ha buidat l'històric de trucades"
   },
-  "icu:CallsTab__EmptyStateText": {
-    "messageformat": "Fes clic per veure o iniciar una trucada"
-  },
   "icu:CallsTab__EmptyStateText--with-icon": {
     "messageformat": "Fes clic a <newCallIcon>Nova trucada</newCallIcon> per iniciar una nova trucada de veu o vídeo."
   },
   "icu:CallsTab__EmptyStateText--with-icon-2": {
-    "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call."
+    "messageformat": "Fes clic a <newCallButtonIcon></newCallButtonIcon> per iniciar una nova trucada de veu o vídeo."
   },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Cerca"
@@ -5438,9 +5459,6 @@
   },
   "icu:CallsList__ToggleFilterByMissed__RoleDescription": {
     "messageformat": "Commuta"
-  },
-  "icu:CallsList__EmptyState--noQuery": {
-    "messageformat": "No hi ha cap trucada recent. Comença trucant a algú."
   },
   "icu:CallsList__EmptyState--noQuery__title": {
     "messageformat": "Cap trucada"
@@ -5496,21 +5514,6 @@
   "icu:CallsNewCallButton--return": {
     "messageformat": "Torna"
   },
-  "icu:CallsNewCallButtonTooltip--in-another-call": {
-    "messageformat": "Has de sortir de la trucada actual abans d'unir-te a una nova trucada"
-  },
-  "icu:CallHistory__Description--Default": {
-    "messageformat": "{type, select, Audio {{direction, select, Outgoing {Trucada sortint} other {Trucada entrant}}} Video {{direction, select, Outgoing {Trucada de vídeo sortint} other {Trucada de vídeo entrant}}} Group {{direction, select, Outgoing {Trucada grupal sortint} other {Trucada grupal entrant}}} other {{direction, select, Outgoing {Telefonada feta} other {Telefonada rebuda}}}}"
-  },
-  "icu:CallHistory__Description--Missed": {
-    "messageformat": "{type, select, Audio {Trucada perduda} Video {Trucada de vídeo perduda} Group {Trucada grupal perduda} other {Telefonada perduda}}"
-  },
-  "icu:CallHistory__Description--Unanswered": {
-    "messageformat": "{type, select, Audio {Trucada sense contestar} Video {Trucada de vídeo sense contestar} Group {Trucada de grup sense contestar} other {Trucada sense contestar}}"
-  },
-  "icu:CallHistory__Description--Declined": {
-    "messageformat": "{type, select, Audio {Trucada de veu rebutjada} Video {Videotrucada rebutjada} Group {Trucada de grup rebutjada} other {Trucada rebutjada}}"
-  },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Enllaç de trucada"
   },
@@ -5536,7 +5539,10 @@
     "messageformat": "Editar nom de trucada"
   },
   "icu:CallLinkDetails__ApproveAllMembersLabel": {
-    "messageformat": "Aprovar tots els membres"
+    "messageformat": "Require admin approval"
+  },
+  "icu:CallLinkDetails__SettingTooltip--disabled-for-active-call": {
+    "messageformat": "This setting can't be changed while the call is active"
   },
   "icu:CallLinkDetails__CopyLink": {
     "messageformat": "Copiar l'enllaç"
@@ -5559,6 +5565,9 @@
   "icu:CallLinkDetails__DeleteLinkModal__Delete": {
     "messageformat": "Suprimeix"
   },
+  "icu:CallLinkDetails__DeleteLinkTooltip--disabled-for-active-call": {
+    "messageformat": "This link can't be deleted while the call is active"
+  },
   "icu:CallLinkEditModal__Title": {
     "messageformat": "Detalls de l'enllaç de trucada"
   },
@@ -5572,7 +5581,13 @@
     "messageformat": "Editar nom de trucada"
   },
   "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
-    "messageformat": "Aprovar tots els membres"
+    "messageformat": "Require admin approval"
+  },
+  "icu:CallLinkPendingParticipantModal__ApproveButtonLabel": {
+    "messageformat": "Approve entry"
+  },
+  "icu:CallLinkPendingParticipantModal__DenyButtonLabel": {
+    "messageformat": "Deny entry"
   },
   "icu:CallLinkRestrictionsSelect__Option--Off": {
     "messageformat": "Inactiu"
@@ -5629,13 +5644,16 @@
     "messageformat": "Petits ajustos, correccions d'errors i tasques de millora de rendiment. Gràcies per utilitzar Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.22--0": {
-    "messageformat": "Ara, Signal Desktop pot reprendre automàticament les descàrregues interrompudes de fitxers adjunts des del punt on es van aturar."
-  },
   "icu:WhatsNew__v7.23--0": {
-    "messageformat": "Chats now open faster than ever thanks to another round of performance improvements, so you can click on your cliques and see what they're saying real quick."
+    "messageformat": "Ara, els xats s'obren més ràpidament que mai gràcies a noves millores del rendiment."
   },
   "icu:WhatsNew__v7.23--1": {
-    "messageformat": "We also fixed a handful of bugs, including one that sometimes caused \"Unknown contact started a video call\" to appear in the chat list summary after you started the call. Even if you're still on a journey of self-discovery, you are never completely unknown to yourself."
+    "messageformat": "També hem corregit una sèrie d'errors, inclòs un que de vegades provocava que, un cop iniciada una trucada, aparegués \"Contacte desconegut ha iniciat una videotrucada\" al llistat de xats."
+  },
+  "icu:WhatsNew__v7.24--0": {
+    "messageformat": "Aquesta actualització corregeix un error que feia que un cop s'obria en un dispositiu una notificació de trucada perduda, aquesta no s'esborrés automàticament de la resta de dispositius vinculats."
+  },
+  "icu:WhatsNew__v7.25--0": {
+    "messageformat": "Take a trip down memory lane with the new and improved \"All Media\" view. Now when you click on a chat header and select \"See all\" in the shared media section, older photos and videos will automatically appear as you scroll instead of being limited to the most recent entries."
   }
 }

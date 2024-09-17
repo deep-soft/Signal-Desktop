@@ -941,6 +941,9 @@
   "icu:viewRecentMedia": {
     "messageformat": "مشاهدهٔ رسانه‌های اخیر"
   },
+  "icu:allMediaMenuItem": {
+    "messageformat": "All media"
+  },
   "icu:back": {
     "messageformat": "بازگشت"
   },
@@ -1089,7 +1092,7 @@
     "messageformat": "تصویر ارسال‌شده در گفتگو"
   },
   "icu:imageCaptionIconAlt": {
-    "messageformat": "آیکون نشان می‌دهد که این تصویر دارای یک عنوان است"
+    "messageformat": "آیکون نشان می‌دهد که این تصویر دارای یک متن است"
   },
   "icu:save": {
     "messageformat": "ذخیره"
@@ -1210,9 +1213,6 @@
   },
   "icu:calling__cant-join": {
     "messageformat": "امکان پیوستن به تماس وجود ندارد"
-  },
-  "icu:calling__dialog-already-in-call": {
-    "messageformat": "شما در حال حاضر در یک تماس هستید."
   },
   "icu:calling__call-link-connection-issues": {
     "messageformat": "اطلاعات لینک تماس دریافت نشد. لطفاً اتصال شبکه خود را بررسی کنید و دوباره امتحان کنید."
@@ -2094,13 +2094,13 @@
     "messageformat": "خطا در باز کردن بسته‌ی استیکر. ارتباط اینترنت خود را بررسی کنید و دوباره تلاش کنید."
   },
   "icu:EmojiPicker--empty": {
-    "messageformat": "شکلکی پیدا نشد"
+    "messageformat": "ایموجی پیدا نشد"
   },
   "icu:EmojiPicker--search-close": {
     "messageformat": "بستن جستجوی ایموجی"
   },
   "icu:EmojiPicker--search-placeholder": {
-    "messageformat": "جستجوی شکلک"
+    "messageformat": "جستجوی ایموجی"
   },
   "icu:EmojiPicker--skin-tone": {
     "messageformat": "رنگ پوست {tone}"
@@ -2109,7 +2109,7 @@
     "messageformat": "موارد اخیر"
   },
   "icu:EmojiPicker__button--emoji": {
-    "messageformat": "شکلک"
+    "messageformat": "ایموجی"
   },
   "icu:EmojiPicker__button--animal": {
     "messageformat": "حیوان"
@@ -2705,6 +2705,9 @@
   "icu:CallControls__InfoDisplay--adhoc-call": {
     "messageformat": "پیوند تماس"
   },
+  "icu:CallControls__InfoDisplay--group-call": {
+    "messageformat": "Group call"
+  },
   "icu:CallControls__InfoDisplay--adhoc-join-request-pending": {
     "messageformat": "در انتظار اجازۀ ورود"
   },
@@ -2901,7 +2904,7 @@
     "messageformat": "بی‌صدا تا {duration}"
   },
   "icu:EmojiButton__label": {
-    "messageformat": "شکلک"
+    "messageformat": "ایموجی"
   },
   "icu:ErrorModal--title": {
     "messageformat": "خطایی رخ‌ داد!"
@@ -3522,13 +3525,37 @@
     "messageformat": "روی «کمک مالی به سیگنال» ضربه بزنید و مشترک شوید"
   },
   "icu:BackupImportScreen__title": {
-    "messageformat": "Syncing messages"
+    "messageformat": "در حال همگام‌سازی پیام‌ها"
   },
   "icu:BackupImportScreen__progressbar-hint": {
-    "messageformat": "Downloading {currentSize} of {totalSize} ({fractionComplete,number,percent})..."
+    "messageformat": "در حال دانلود {currentSize} از {totalSize} ({fractionComplete,number,percent})..."
+  },
+  "icu:BackupImportScreen__progressbar-hint--preparing": {
+    "messageformat": "Preparing to download..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "This may take a few minutes depending on the size of your backup"
+    "messageformat": "بسته به حجم نسخۀ پشتیبان شما، این پردازش ممکن است چند دقیقه طول بکشد"
+  },
+  "icu:BackupImportScreen__cancel": {
+    "messageformat": "Cancel transfer"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__title": {
+    "messageformat": "Cancel transfer?"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__body": {
+    "messageformat": "Your messages and media have not completed restoring. If you choose to cancel, you can transfer again from Settings."
+  },
+  "icu:BackupImportScreen__cancel-confirmation__cancel": {
+    "messageformat": "Continue transfer"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__confirm": {
+    "messageformat": "Cancel transfer"
+  },
+  "icu:BackupMediaDownloadProgress__title": {
+    "messageformat": "در حال بازیابی رسانه"
+  },
+  "icu:BackupMediaDownloadProgress__progressbar-hint": {
+    "messageformat": "‏{currentSize} از {totalSize} ({fractionComplete,number,percent})"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "گسترش"
@@ -3580,6 +3607,9 @@
   },
   "icu:ContactModal--already-in-call": {
     "messageformat": "شما در حال حاضر در یک تماس هستید"
+  },
+  "icu:ContactModal--voice": {
+    "messageformat": "Voice"
   },
   "icu:showChatColorEditor": {
     "messageformat": "رنگ گفتگو"
@@ -3762,7 +3792,7 @@
     "messageformat": "بازنشانی پیوند"
   },
   "icu:GroupLinkManagement--approve-label": {
-    "messageformat": "تأیید اعضای جدید"
+    "messageformat": "Require admin approval"
   },
   "icu:GroupLinkManagement--approve-info": {
     "messageformat": "نیاز به یک مدیر برای تأیید اعضای جدیدی که از طریق پیوند گروه می‌پیوندند"
@@ -3949,12 +3979,6 @@
   },
   "icu:MessageAudio--playbackRatep5": {
     "messageformat": ".۵"
-  },
-  "icu:emptyInboxMessage": {
-    "messageformat": "روی {composeIcon} در بالا کلیک کنید و برای مخاطبین یا گروه‌های خود برای ارسال پیام جستجو کنید."
-  },
-  "icu:composeIcon": {
-    "messageformat": "دکمهٔ نگارش"
   },
   "icu:emptyInbox__title": {
     "messageformat": "گفتگویی وجود ندارد"
@@ -4446,7 +4470,7 @@
     "messageformat": "برای تغییر این تنظیم، برنامهٔ سیگنال را روی دستگاه تلفن همراه باز کنید و به تنظیمات > گفتگوها بروید"
   },
   "icu:Preferences__auto-convert-emoji--title": {
-    "messageformat": "تبدیل شکلک‌های تایپی به ایموجی"
+    "messageformat": "تبدیل ایموجی‌های تایپی به ایموجی"
   },
   "icu:Preferences__auto-convert-emoji--description": {
     "messageformat": "مثلاً :-) به <emojify>🙂</emojify> تبدیل خواهد شد"
@@ -4875,7 +4899,7 @@
     "messageformat": "برای به‌روزرسانی، روی <newStoryIcon>افزودن استوری</newStoryIcon> کلیک کنید."
   },
   "icu:Stories__placeholder-with-icon--text-2": {
-    "messageformat": "Click <newStoryButtonIcon></newStoryButtonIcon> to add an update."
+    "messageformat": "برای به‌روزرسانی، روی <newStoryButtonIcon></newStoryButtonIcon> کلیک کنید."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} به {group}"
@@ -5121,10 +5145,10 @@
     "messageformat": "به استوری واکنش نشان داد"
   },
   "icu:StoryViewsNRepliesModal__reacted--you": {
-    "messageformat": "Reacted to the story"
+    "messageformat": "به استوری واکنش نشان داد"
   },
   "icu:StoryViewsNRepliesModal__reacted--someone-else": {
-    "messageformat": "Reacted to the story"
+    "messageformat": "به استوری واکنش نشان داد"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
     "messageformat": "شما نمی‌توانید به این استوری پاسخ دهید زیرا دیگر عضو این گروه نیستید."
@@ -5421,14 +5445,11 @@
   "icu:CallsTab__ToastCallHistoryCleared": {
     "messageformat": "سوابق تماس‌ها پاک شد."
   },
-  "icu:CallsTab__EmptyStateText": {
-    "messageformat": "برای مشاهده یا شروع تماس کلیک کنید"
-  },
   "icu:CallsTab__EmptyStateText--with-icon": {
     "messageformat": "برای شروع تماس صوتی یا تصویری جدید، روی <newCallIcon>تماس جدید</newCallIcon> کلیک کنید."
   },
   "icu:CallsTab__EmptyStateText--with-icon-2": {
-    "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call."
+    "messageformat": "برای شروع تماس صوتی یا تصویری جدید، روی <newCallButtonIcon></newCallButtonIcon> کلیک کنید."
   },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "جستجو"
@@ -5438,9 +5459,6 @@
   },
   "icu:CallsList__ToggleFilterByMissed__RoleDescription": {
     "messageformat": "تعویض"
-  },
-  "icu:CallsList__EmptyState--noQuery": {
-    "messageformat": "بدون تماس های جدید. با تماس با یک دوست شروع کنید."
   },
   "icu:CallsList__EmptyState--noQuery__title": {
     "messageformat": "هیچ تماسی وجود ندارد."
@@ -5496,21 +5514,6 @@
   "icu:CallsNewCallButton--return": {
     "messageformat": "بازگشت"
   },
-  "icu:CallsNewCallButtonTooltip--in-another-call": {
-    "messageformat": "قبل از پیوستن به تماس جدید باید تماس فعلی را ترک کنید"
-  },
-  "icu:CallHistory__Description--Default": {
-    "messageformat": "{type, select, Audio {{direction, select, Outgoing {تماس صوتی خروجی} other {تماس صوتی دریافتی}}} Video {{direction, select, Outgoing {تماس تصویری خروجی} other {تماس صوتی دریافتی}}} Group {{direction, select, Outgoing {تماس گروهی خروجی} other {تماس گروهی ورودی}}} other {{direction, select, Outgoing {تماس خروجی} other {تماس ورودی}}}}"
-  },
-  "icu:CallHistory__Description--Missed": {
-    "messageformat": "{type, select, Audio {تماس صوتی ازدست‌رفته} Video {تماس تصویری از دست رفته} Group {تماس گروهی ازدست‌رفته} other {تماس بی‌پاسخ}}"
-  },
-  "icu:CallHistory__Description--Unanswered": {
-    "messageformat": "{type, select, Audio {تماس صوتی بی‌پاسخ} Video {تماس تصویری بی‌پاسخ} Group {تماس گروهی بی‌پاسخ} other {تماس بی‌پاسخ}}"
-  },
-  "icu:CallHistory__Description--Declined": {
-    "messageformat": "{type, select, Audio {تماس صوتی رد شده} Video {تماس تصویری رد شده} Group {تماس گروهی رد شده} other {تماس رد شده}}"
-  },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "پیوند تماس"
   },
@@ -5536,7 +5539,10 @@
     "messageformat": "ویرایش نام تماس"
   },
   "icu:CallLinkDetails__ApproveAllMembersLabel": {
-    "messageformat": "تأیید همه اعضا"
+    "messageformat": "Require admin approval"
+  },
+  "icu:CallLinkDetails__SettingTooltip--disabled-for-active-call": {
+    "messageformat": "This setting can't be changed while the call is active"
   },
   "icu:CallLinkDetails__CopyLink": {
     "messageformat": "کپی کردن پیوند"
@@ -5559,6 +5565,9 @@
   "icu:CallLinkDetails__DeleteLinkModal__Delete": {
     "messageformat": "پاک کردن"
   },
+  "icu:CallLinkDetails__DeleteLinkTooltip--disabled-for-active-call": {
+    "messageformat": "This link can't be deleted while the call is active"
+  },
   "icu:CallLinkEditModal__Title": {
     "messageformat": "جزئیات پیوند تماس"
   },
@@ -5572,7 +5581,13 @@
     "messageformat": "ویرایش نام تماس"
   },
   "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
-    "messageformat": "تأیید همه اعضا"
+    "messageformat": "Require admin approval"
+  },
+  "icu:CallLinkPendingParticipantModal__ApproveButtonLabel": {
+    "messageformat": "Approve entry"
+  },
+  "icu:CallLinkPendingParticipantModal__DenyButtonLabel": {
+    "messageformat": "Deny entry"
   },
   "icu:CallLinkRestrictionsSelect__Option--Off": {
     "messageformat": "خاموش"
@@ -5629,13 +5644,16 @@
     "messageformat": "تغییرات کوچک، رفع اشکالات و بهبود عملکرد. بابت استفاده از سیگنال سپاسگزاریم!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.22--0": {
-    "messageformat": "سیگنال دسک‌تاپ اکنون می‌تواند دانلود‌های مختل‌شده پیوست‌ها را به‌طور خودکار از سر بگیرد."
-  },
   "icu:WhatsNew__v7.23--0": {
-    "messageformat": "Chats now open faster than ever thanks to another round of performance improvements, so you can click on your cliques and see what they're saying real quick."
+    "messageformat": "به لطف سری جدید بهبود عملکرد، اکنون گفتگوها سریع‌تر از همیشه باز می‌شوند."
   },
   "icu:WhatsNew__v7.23--1": {
-    "messageformat": "We also fixed a handful of bugs, including one that sometimes caused \"Unknown contact started a video call\" to appear in the chat list summary after you started the call. Even if you're still on a journey of self-discovery, you are never completely unknown to yourself."
+    "messageformat": "همچنین تعدادی از اشکالات را برطرف کردیم، از جمله اشکالی که گاهی باعث می‌شد پیام «مخاطب ناشناس یک تماس تصویری شروع کرد» پس از شروع تماس در خلاصه فهرست گفتگوها ظاهر شود."
+  },
+  "icu:WhatsNew__v7.24--0": {
+    "messageformat": "این به‌روزرسانی اشکالی را برطرف می‌کند که اجازه نمی‌داد هنگام مشاهده تماس بی‌پاسخ در یک دستگاه، نشانگر آن تماس از دست‌رفته به‌طور خودکار در دستگاه‌های دیگر شما پاک شود."
+  },
+  "icu:WhatsNew__v7.25--0": {
+    "messageformat": "Take a trip down memory lane with the new and improved \"All Media\" view. Now when you click on a chat header and select \"See all\" in the shared media section, older photos and videos will automatically appear as you scroll instead of being limited to the most recent entries."
   }
 }

@@ -941,6 +941,9 @@
   "icu:viewRecentMedia": {
     "messageformat": "Näytä äskeinen media"
   },
+  "icu:allMediaMenuItem": {
+    "messageformat": "All media"
+  },
   "icu:back": {
     "messageformat": "Takaisin"
   },
@@ -1210,9 +1213,6 @@
   },
   "icu:calling__cant-join": {
     "messageformat": "Puheluun liittyminen ei onnistu"
-  },
-  "icu:calling__dialog-already-in-call": {
-    "messageformat": "Olet jo puhelussa."
   },
   "icu:calling__call-link-connection-issues": {
     "messageformat": "Puhelulinkin tietoja ei voitu hakea. Tarkista verkkoyhteytesi ja yritä uudelleen."
@@ -2705,6 +2705,9 @@
   "icu:CallControls__InfoDisplay--adhoc-call": {
     "messageformat": "Puhelulinkki"
   },
+  "icu:CallControls__InfoDisplay--group-call": {
+    "messageformat": "Group call"
+  },
   "icu:CallControls__InfoDisplay--adhoc-join-request-pending": {
     "messageformat": "Odotetaan sisäänpääsyä"
   },
@@ -3522,13 +3525,37 @@
     "messageformat": "Napauta Lahjoita Signalille ja tilaa"
   },
   "icu:BackupImportScreen__title": {
-    "messageformat": "Syncing messages"
+    "messageformat": "Synkronoidaan viestejä"
   },
   "icu:BackupImportScreen__progressbar-hint": {
-    "messageformat": "Downloading {currentSize} of {totalSize} ({fractionComplete,number,percent})..."
+    "messageformat": "Ladataan {currentSize} / {totalSize} ({fractionComplete,number,percent})..."
+  },
+  "icu:BackupImportScreen__progressbar-hint--preparing": {
+    "messageformat": "Preparing to download..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "This may take a few minutes depending on the size of your backup"
+    "messageformat": "Tämä voi kestää muutamia minuutteja varmuuskopion koosta riippuen"
+  },
+  "icu:BackupImportScreen__cancel": {
+    "messageformat": "Cancel transfer"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__title": {
+    "messageformat": "Cancel transfer?"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__body": {
+    "messageformat": "Your messages and media have not completed restoring. If you choose to cancel, you can transfer again from Settings."
+  },
+  "icu:BackupImportScreen__cancel-confirmation__cancel": {
+    "messageformat": "Continue transfer"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__confirm": {
+    "messageformat": "Cancel transfer"
+  },
+  "icu:BackupMediaDownloadProgress__title": {
+    "messageformat": "Palautetaan mediaa"
+  },
+  "icu:BackupMediaDownloadProgress__progressbar-hint": {
+    "messageformat": "{currentSize}/{totalSize} ({fractionComplete,number,percent})"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Laajenna"
@@ -3580,6 +3607,9 @@
   },
   "icu:ContactModal--already-in-call": {
     "messageformat": "Olet jo puhelussa"
+  },
+  "icu:ContactModal--voice": {
+    "messageformat": "Voice"
   },
   "icu:showChatColorEditor": {
     "messageformat": "Keskustelun väri"
@@ -3762,7 +3792,7 @@
     "messageformat": "Uudelleenaseta linkki"
   },
   "icu:GroupLinkManagement--approve-label": {
-    "messageformat": "Hyväksy uusia jäseniä"
+    "messageformat": "Require admin approval"
   },
   "icu:GroupLinkManagement--approve-info": {
     "messageformat": "Ylläpitäjän on hyväksyttävä ryhmälinkin kautta liittyvät uudet jäsenet."
@@ -3949,12 +3979,6 @@
   },
   "icu:MessageAudio--playbackRatep5": {
     "messageformat": "0,5"
-  },
-  "icu:emptyInboxMessage": {
-    "messageformat": "Napauta {composeIcon} yllä ja etsi yhteystietojasi tai ryhmiäsi."
-  },
-  "icu:composeIcon": {
-    "messageformat": "kirjoituspainike"
   },
   "icu:emptyInbox__title": {
     "messageformat": "Ei keskusteluja"
@@ -4875,7 +4899,7 @@
     "messageformat": "Napsauta <newStoryIcon>Lisää tarina</newStoryIcon> lisätäksesi päivityksen."
   },
   "icu:Stories__placeholder-with-icon--text-2": {
-    "messageformat": "Click <newStoryButtonIcon></newStoryButtonIcon> to add an update."
+    "messageformat": "Napsauta <newStoryButtonIcon></newStoryButtonIcon> lisätäksesi päivityksen."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} ryhmälle {group}"
@@ -5121,10 +5145,10 @@
     "messageformat": "Reagoi tarinaan"
   },
   "icu:StoryViewsNRepliesModal__reacted--you": {
-    "messageformat": "Reacted to the story"
+    "messageformat": "Reagoit tarinaan"
   },
   "icu:StoryViewsNRepliesModal__reacted--someone-else": {
-    "messageformat": "Reacted to the story"
+    "messageformat": "Reagoi tarinaan"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
     "messageformat": "Et voi vastata tähän tarinaan, koska et ole enää tämän ryhmän jäsen."
@@ -5421,14 +5445,11 @@
   "icu:CallsTab__ToastCallHistoryCleared": {
     "messageformat": "Puheluhistoria tyhjennetty"
   },
-  "icu:CallsTab__EmptyStateText": {
-    "messageformat": "Näytä tai aloita puhelu napsauttamalla"
-  },
   "icu:CallsTab__EmptyStateText--with-icon": {
     "messageformat": "Napsauta <newCallIcon>Uusi puhelu</newCallIcon> aloittaaksesi uuden ääni- tai videopuhelun."
   },
   "icu:CallsTab__EmptyStateText--with-icon-2": {
-    "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call."
+    "messageformat": "Napsauta <newCallButtonIcon></newCallButtonIcon> aloittaaksesi uuden ääni- tai videopuhelun."
   },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Hae"
@@ -5438,9 +5459,6 @@
   },
   "icu:CallsList__ToggleFilterByMissed__RoleDescription": {
     "messageformat": "Ota käyttöön"
-  },
-  "icu:CallsList__EmptyState--noQuery": {
-    "messageformat": "Ei uusia soittoja. Aloita soittamalla kaverillesi."
   },
   "icu:CallsList__EmptyState--noQuery__title": {
     "messageformat": "Ei puheluita"
@@ -5496,21 +5514,6 @@
   "icu:CallsNewCallButton--return": {
     "messageformat": "Palaa"
   },
-  "icu:CallsNewCallButtonTooltip--in-another-call": {
-    "messageformat": "Sinun on poistuttava nykyisestä puhelusta ennen kuin voit liittyä uuteen puheluun"
-  },
-  "icu:CallHistory__Description--Default": {
-    "messageformat": "{type, select, Audio {{direction, select, Outgoing {Lähtevä äänipuhelu} other {Saapuva äänipuhelu}}} Video {{direction, select, Outgoing {Soitettu videopuhelu} other {Vastattu videopuhelu}}} Group {{direction, select, Outgoing {Lähtevä ryhmäpuhelu} other {Saapuva ryhmäpuhelu}}} other {{direction, select, Outgoing {Lähtevä puhelu} other {Saapuva puhelu}}}}"
-  },
-  "icu:CallHistory__Description--Missed": {
-    "messageformat": "{type, select, Audio {Vastaamaton äänipuhelu} Video {Vastaamaton videopuhelu} Group {Vastaamaton ryhmäpuhelu} other {Vastaamatta jäänyt puhelu}}"
-  },
-  "icu:CallHistory__Description--Unanswered": {
-    "messageformat": "{type, select, Audio {Vastaamaton äänipuhelu} Video {Vastaamaton videopuhelu} Group {Vastaamaton ryhmäpuhelu} other {Vastaamaton puhelu}}"
-  },
-  "icu:CallHistory__Description--Declined": {
-    "messageformat": "{type, select, Audio {Hylätty äänipuhelu} Video {Hylätty videopuhelu} Group {Hylätty ryhmäpuhelu} other {Hylätty puhelu}}"
-  },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Puhelulinkki"
   },
@@ -5536,7 +5539,10 @@
     "messageformat": "Muokkaa puhelun nimeä"
   },
   "icu:CallLinkDetails__ApproveAllMembersLabel": {
-    "messageformat": "Kaikkien jäsenten hyväksyntä"
+    "messageformat": "Require admin approval"
+  },
+  "icu:CallLinkDetails__SettingTooltip--disabled-for-active-call": {
+    "messageformat": "This setting can't be changed while the call is active"
   },
   "icu:CallLinkDetails__CopyLink": {
     "messageformat": "Kopioi linkki"
@@ -5559,6 +5565,9 @@
   "icu:CallLinkDetails__DeleteLinkModal__Delete": {
     "messageformat": "Poista"
   },
+  "icu:CallLinkDetails__DeleteLinkTooltip--disabled-for-active-call": {
+    "messageformat": "This link can't be deleted while the call is active"
+  },
   "icu:CallLinkEditModal__Title": {
     "messageformat": "Puhelulinkin tiedot"
   },
@@ -5572,7 +5581,13 @@
     "messageformat": "Muokkaa puhelun nimeä"
   },
   "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
-    "messageformat": "Kaikkien jäsenten hyväksyntä"
+    "messageformat": "Require admin approval"
+  },
+  "icu:CallLinkPendingParticipantModal__ApproveButtonLabel": {
+    "messageformat": "Approve entry"
+  },
+  "icu:CallLinkPendingParticipantModal__DenyButtonLabel": {
+    "messageformat": "Deny entry"
   },
   "icu:CallLinkRestrictionsSelect__Option--Off": {
     "messageformat": "Ei käytössä"
@@ -5629,13 +5644,16 @@
     "messageformat": "Pieniä säätöjä, virheenkorjauksia ja suorituskykyparannuksia. Kiitos, että käytät Signalia!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.22--0": {
-    "messageformat": "Signal Desktop voi nyt jatkaa liitteiden keskeytettyjä latauksia automaattisesti."
-  },
   "icu:WhatsNew__v7.23--0": {
-    "messageformat": "Chats now open faster than ever thanks to another round of performance improvements, so you can click on your cliques and see what they're saying real quick."
+    "messageformat": "Keskustelut avautuvat nyt nopeammin kuin koskaan uusien suorituskyvyn parannusten ansiosta."
   },
   "icu:WhatsNew__v7.23--1": {
-    "messageformat": "We also fixed a handful of bugs, including one that sometimes caused \"Unknown contact started a video call\" to appear in the chat list summary after you started the call. Even if you're still on a journey of self-discovery, you are never completely unknown to yourself."
+    "messageformat": "Korjasimme myös muutaman virheen, mukaan lukien sellaisen, joka saattoi aiheuttaa ilmoituksen ”Tuntematon yhteystieto aloitti videopuhelun” keskusteluluettelon yhteenvedossa puhelun aloittamisen jälkeen."
+  },
+  "icu:WhatsNew__v7.24--0": {
+    "messageformat": "Päivitys korjaa virheen, jossa vastaamatta jääneen puhelun tarkasteleminen yhdellä laitteella ei nollannut vastaamattoman puhelun ilmaisinta muissa laitteissasi automaattisesti."
+  },
+  "icu:WhatsNew__v7.25--0": {
+    "messageformat": "Take a trip down memory lane with the new and improved \"All Media\" view. Now when you click on a chat header and select \"See all\" in the shared media section, older photos and videos will automatically appear as you scroll instead of being limited to the most recent entries."
   }
 }

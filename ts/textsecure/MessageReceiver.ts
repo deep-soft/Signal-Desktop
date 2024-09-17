@@ -407,15 +407,15 @@ export default class MessageReceiver
     }
 
     const job = async () => {
-      if (!request.body) {
-        throw new Error(
-          'MessageReceiver.handleRequest: request.body was falsey!'
-        );
-      }
-
-      const plaintext = request.body;
-
       try {
+        if (!request.body) {
+          throw new Error(
+            'MessageReceiver.handleRequest: request.body was falsey!'
+          );
+        }
+
+        const plaintext = request.body;
+
         const decoded = Proto.Envelope.decode(plaintext);
         const serverTimestamp = decoded.serverTimestamp?.toNumber() ?? 0;
 
@@ -3557,10 +3557,6 @@ export default class MessageReceiver
       callLinkUpdate.type === Proto.SyncMessage.CallLinkUpdate.Type.UPDATE
     ) {
       callLinkUpdateSyncType = CallLinkUpdateSyncType.Update;
-    } else if (
-      callLinkUpdate.type === Proto.SyncMessage.CallLinkUpdate.Type.DELETE
-    ) {
-      callLinkUpdateSyncType = CallLinkUpdateSyncType.Delete;
     } else {
       throw new Error(
         `MessageReceiver.handleCallLinkUpdate: unknown type ${callLinkUpdate.type}`

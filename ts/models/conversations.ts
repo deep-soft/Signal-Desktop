@@ -34,6 +34,7 @@ import {
   getAvatar,
   getRawAvatarPath,
   getLocalAvatarUrl,
+  getLocalProfileAvatarUrl,
 } from '../util/avatarUtils';
 import { getDraftPreview } from '../util/getDraftPreview';
 import { hasDraft } from '../util/hasDraft';
@@ -1931,25 +1932,15 @@ export class ConversationModel extends window.Backbone
         `cleanAttributes: Eliminated ${eliminated} messages without an id`
       );
     }
-    const ourAci = window.textsecure.storage.user.getCheckedAci();
 
     let upgraded = 0;
     const hydrated = await Promise.all(
       present.map(async message => {
-        const { schemaVersion } = message;
-
-        const model = window.MessageCache.__DEPRECATED$register(
-          message.id,
+        const upgradedMessage = await window.MessageCache.upgradeSchema(
           message,
-          'cleanAttributes'
+          Message.VERSION_NEEDED_FOR_DISPLAY
         );
-
-        let upgradedMessage = message;
-        if ((schemaVersion || 0) < Message.VERSION_NEEDED_FOR_DISPLAY) {
-          // Yep, we really do want to wait for each of these
-          upgradedMessage = await upgradeMessageSchema(model.attributes);
-          model.set(upgradedMessage);
-          await DataWriter.saveMessage(upgradedMessage, { ourAci });
+        if (upgradedMessage !== message) {
           upgraded += 1;
         }
 
@@ -5270,7 +5261,7 @@ export class ConversationModel extends window.Backbone
   }
 
   unblurAvatar(): void {
-    const avatarUrl = getRawAvatarPath(this.attributes);
+    const avatarUrl = getLocalProfileAvatarUrl(this.attributes);
     if (avatarUrl) {
       this.set('unblurredAvatarUrl', avatarUrl);
     } else {

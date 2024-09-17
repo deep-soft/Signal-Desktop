@@ -1,7 +1,7 @@
 // Copyright 2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type { ElectronApplication, Locator, Page } from 'playwright';
+import type { ElectronApplication, Page } from 'playwright';
 import { _electron as electron } from 'playwright';
 import { EventEmitter } from 'events';
 import pTimeout from 'p-timeout';
@@ -89,19 +89,6 @@ export class App extends EventEmitter {
     this.privApp.on('close', () => this.emit('close'));
   }
 
-  public async waitForEnabledComposer(): Promise<Locator> {
-    const window = await this.getWindow();
-    const composeArea = window.locator(
-      '.composition-area-wrapper, .Inbox__conversation .ConversationView'
-    );
-    const composeContainer = composeArea.locator(
-      '[data-testid=CompositionInput][data-enabled=true]'
-    );
-    await composeContainer.waitFor();
-
-    return composeContainer.locator('.ql-editor');
-  }
-
   public async waitForProvisionURL(): Promise<string> {
     return this.waitForEvent('provisioning-url');
   }
@@ -179,6 +166,13 @@ export class App extends EventEmitter {
     );
   }
 
+  public async exportPlaintextBackupToDisk(path: string): Promise<Uint8Array> {
+    const window = await this.getWindow();
+    return window.evaluate(
+      `window.SignalCI.exportPlaintextBackupToDisk(${JSON.stringify(path)})`
+    );
+  }
+
   public async unlink(): Promise<void> {
     const window = await this.getWindow();
     return window.evaluate('window.SignalCI.unlink()');
@@ -209,6 +203,15 @@ export class App extends EventEmitter {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public override emit(type: string | symbol, ...args: Array<any>): boolean {
     return super.emit(type, ...args);
+  }
+
+  public async getPendingEventCount(event: string): Promise<number> {
+    const window = await this.getWindow();
+    const result = await window.evaluate(
+      `window.SignalCI.getPendingEventCount(${JSON.stringify(event)})`
+    );
+
+    return Number(result);
   }
 
   //

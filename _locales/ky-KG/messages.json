@@ -941,6 +941,9 @@
   "icu:viewRecentMedia": {
     "messageformat": "Акыркы медианы көрүү"
   },
+  "icu:allMediaMenuItem": {
+    "messageformat": "All media"
+  },
   "icu:back": {
     "messageformat": "Артка"
   },
@@ -1210,9 +1213,6 @@
   },
   "icu:calling__cant-join": {
     "messageformat": "Чалууга кошула албайсыз"
-  },
-  "icu:calling__dialog-already-in-call": {
-    "messageformat": "Сиз чалуудасыз."
   },
   "icu:calling__call-link-connection-issues": {
     "messageformat": "Чалуу шилтемеси тууралуу маалымат алынган жок. Тармак туташууңузду текшерип, кайра аракет кылыңыз."
@@ -2705,6 +2705,9 @@
   "icu:CallControls__InfoDisplay--adhoc-call": {
     "messageformat": "Чалуу шилтемеси"
   },
+  "icu:CallControls__InfoDisplay--group-call": {
+    "messageformat": "Group call"
+  },
   "icu:CallControls__InfoDisplay--adhoc-join-request-pending": {
     "messageformat": "Күтө туралы"
   },
@@ -3522,13 +3525,37 @@
     "messageformat": "\"Signal'га колдоо көрсөтүү\" дегенди басып туруп, жазылыңыз"
   },
   "icu:BackupImportScreen__title": {
-    "messageformat": "Syncing messages"
+    "messageformat": "Билдирүүлөр шайкештирилүүдө"
   },
   "icu:BackupImportScreen__progressbar-hint": {
-    "messageformat": "Downloading {currentSize} of {totalSize} ({fractionComplete,number,percent})..."
+    "messageformat": "{totalSize} ичинен {currentSize} жүктөлүп алынууда ({fractionComplete,number,percent})..."
+  },
+  "icu:BackupImportScreen__progressbar-hint--preparing": {
+    "messageformat": "Preparing to download..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "This may take a few minutes depending on the size of your backup"
+    "messageformat": "Камдык көчүрмөңүздүн көлөмүнө жараша бир нече мүнөт кетиши мүмкүн"
+  },
+  "icu:BackupImportScreen__cancel": {
+    "messageformat": "Cancel transfer"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__title": {
+    "messageformat": "Cancel transfer?"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__body": {
+    "messageformat": "Your messages and media have not completed restoring. If you choose to cancel, you can transfer again from Settings."
+  },
+  "icu:BackupImportScreen__cancel-confirmation__cancel": {
+    "messageformat": "Continue transfer"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__confirm": {
+    "messageformat": "Cancel transfer"
+  },
+  "icu:BackupMediaDownloadProgress__title": {
+    "messageformat": "Медиа файлдарыңыз калыбына келүүдө"
+  },
+  "icu:BackupMediaDownloadProgress__progressbar-hint": {
+    "messageformat": "{totalSize} ичинен {currentSize} ({fractionComplete,number,percent})"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Кеңейтүү"
@@ -3580,6 +3607,9 @@
   },
   "icu:ContactModal--already-in-call": {
     "messageformat": "Сиз чалуудасыз"
+  },
+  "icu:ContactModal--voice": {
+    "messageformat": "Voice"
   },
   "icu:showChatColorEditor": {
     "messageformat": "Маектин түсү"
@@ -3762,7 +3792,7 @@
     "messageformat": "Шилтемени кайра коюу"
   },
   "icu:GroupLinkManagement--approve-label": {
-    "messageformat": "Жаңы мүчөлөрдү ырастоо"
+    "messageformat": "Require admin approval"
   },
   "icu:GroupLinkManagement--approve-info": {
     "messageformat": "Администратор топко шилтеме аркылуу кошулуп жаткан жаңы мүчөлөрдү ырасташы керек"
@@ -3949,12 +3979,6 @@
   },
   "icu:MessageAudio--playbackRatep5": {
     "messageformat": ".5"
-  },
-  "icu:emptyInboxMessage": {
-    "messageformat": "Жогорудагы {composeIcon} дегенди басып, баарлаша турган байланышты же топту табыңыз."
-  },
-  "icu:composeIcon": {
-    "messageformat": "жазуу баскычы"
   },
   "icu:emptyInbox__title": {
     "messageformat": "Эч нерсе жок"
@@ -4875,7 +4899,7 @@
     "messageformat": "Жаңыртуу үчүн <newStoryIcon>окуя кошуу</newStoryIcon> дегенди басыңыз."
   },
   "icu:Stories__placeholder-with-icon--text-2": {
-    "messageformat": "Click <newStoryButtonIcon></newStoryButtonIcon> to add an update."
+    "messageformat": "Жаңыртууну кошуу үчүн <newStoryButtonIcon></newStoryButtonIcon> дегенди басыңыз."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} -> {group}"
@@ -5121,10 +5145,10 @@
     "messageformat": "Окуяга сезимин билдирди"
   },
   "icu:StoryViewsNRepliesModal__reacted--you": {
-    "messageformat": "Reacted to the story"
+    "messageformat": "Окуяга сезимиңизди билдирдиңиз"
   },
   "icu:StoryViewsNRepliesModal__reacted--someone-else": {
-    "messageformat": "Reacted to the story"
+    "messageformat": "Окуяга сезимин билдирди"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
     "messageformat": "Бул топтон чыгып кеткениңизден улам, бул окуяга жооп бере албайсыз."
@@ -5421,14 +5445,11 @@
   "icu:CallsTab__ToastCallHistoryCleared": {
     "messageformat": "Чалуу таржымалы тазаланды"
   },
-  "icu:CallsTab__EmptyStateText": {
-    "messageformat": "Көрүү же чалып баштоо үчүн басыңыз"
-  },
   "icu:CallsTab__EmptyStateText--with-icon": {
     "messageformat": "Аудио же видео режиминде чалып баштоо үчүн <newCallIcon>Жаңы чалуу</newCallIcon> дегенди басыңыз."
   },
   "icu:CallsTab__EmptyStateText--with-icon-2": {
-    "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call."
+    "messageformat": "Жаңы аудио же видео чалуу баштоо үчүн <newCallButtonIcon></newCallButtonIcon> дегенди басыңыз."
   },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Издөө"
@@ -5438,9 +5459,6 @@
   },
   "icu:CallsList__ToggleFilterByMissed__RoleDescription": {
     "messageformat": "Өтүү"
-  },
-  "icu:CallsList__EmptyState--noQuery": {
-    "messageformat": "Эч нерсе жок. Досуңузга чалып баштаңыз."
   },
   "icu:CallsList__EmptyState--noQuery__title": {
     "messageformat": "Эч нерсе жок"
@@ -5496,21 +5514,6 @@
   "icu:CallsNewCallButton--return": {
     "messageformat": "Кайтуу"
   },
-  "icu:CallsNewCallButtonTooltip--in-another-call": {
-    "messageformat": "Жаңы чалууга кошулуу үчүн учурдагы чалуудан чыгышыңыз керек"
-  },
-  "icu:CallHistory__Description--Default": {
-    "messageformat": "{type, select, Audio {{direction, select, Outgoing {Чыгуучу аудио чалуу} other {Келүүчү аудио чалуу}}} Video {{direction, select, Outgoing {Чыгуучу видео чалуу} other {Кирүүчү видео чалуу}}} Group {{direction, select, Outgoing {Чыгуучу топтук чалуу} other {Келүүчү топтук чалуу}}} other {{direction, select, Outgoing {Чыгуучу  чалуу} other {Кирүүчү  чалуу}}}}"
-  },
-  "icu:CallHistory__Description--Missed": {
-    "messageformat": "{type, select, Audio {Кабыл алынбаган аудио чалуу} Video {Жооп берилбеген видео чалуу} Group {Жооп берилбеген топтук чалуу} other {Жооп берилбеген  чалуу}}"
-  },
-  "icu:CallHistory__Description--Unanswered": {
-    "messageformat": "{type, select, Audio {Жооп берилбеген аудио чалуу} Video {Жоопсуз видео чалуу} Group {Жооп берилбеген топтук чалуу} other {Жооп берилбеген  чалуу}}"
-  },
-  "icu:CallHistory__Description--Declined": {
-    "messageformat": "{type, select, Audio {Четке кагылган аудио чалуу} Video {Четке кагылган видео чалуу} Group {Четке кагылган топтук чалуу} other {Четке кагылган  чалуу}}"
-  },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Чалуу шилтемеси"
   },
@@ -5536,7 +5539,10 @@
     "messageformat": "Чалуунун аталышын өзгөртүү"
   },
   "icu:CallLinkDetails__ApproveAllMembersLabel": {
-    "messageformat": "Бардык мүчөлөрдү жактыруу"
+    "messageformat": "Require admin approval"
+  },
+  "icu:CallLinkDetails__SettingTooltip--disabled-for-active-call": {
+    "messageformat": "This setting can't be changed while the call is active"
   },
   "icu:CallLinkDetails__CopyLink": {
     "messageformat": "Шилтемени көчүрүү"
@@ -5559,6 +5565,9 @@
   "icu:CallLinkDetails__DeleteLinkModal__Delete": {
     "messageformat": "Өчүрүү"
   },
+  "icu:CallLinkDetails__DeleteLinkTooltip--disabled-for-active-call": {
+    "messageformat": "This link can't be deleted while the call is active"
+  },
   "icu:CallLinkEditModal__Title": {
     "messageformat": "Чалуу шилтемесинин чоо-жайы"
   },
@@ -5572,7 +5581,13 @@
     "messageformat": "Чалуунун аталышын өзгөртүү"
   },
   "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
-    "messageformat": "Бардык мүчөлөрдү жактыруу"
+    "messageformat": "Require admin approval"
+  },
+  "icu:CallLinkPendingParticipantModal__ApproveButtonLabel": {
+    "messageformat": "Approve entry"
+  },
+  "icu:CallLinkPendingParticipantModal__DenyButtonLabel": {
+    "messageformat": "Deny entry"
   },
   "icu:CallLinkRestrictionsSelect__Option--Off": {
     "messageformat": "Өчүк"
@@ -5629,13 +5644,16 @@
     "messageformat": "Майда-барат өзгөрүүлөрдү киргизип, мүчүлүштүктөрдү оңдоп, колдонмонун иштешин жакшыртып жатабыз. Signal'ды колдонгонуңуз үчүн чоң рахмат!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.22--0": {
-    "messageformat": "Тиркеме жүктөлүп жатып үзгүлтүккө учураса, Signal Desktop токтогон жерден улантып кетет."
-  },
   "icu:WhatsNew__v7.23--0": {
-    "messageformat": "Chats now open faster than ever thanks to another round of performance improvements, so you can click on your cliques and see what they're saying real quick."
+    "messageformat": "Бир катар жакшыртуулардын аркасы менен эми маектер оңой ачылат. Жөн гана топту басып коюп, эмне жөнүндө сүйлөшүп жатканын көрө аласыз."
   },
   "icu:WhatsNew__v7.23--1": {
-    "messageformat": "We also fixed a handful of bugs, including one that sometimes caused \"Unknown contact started a video call\" to appear in the chat list summary after you started the call. Even if you're still on a journey of self-discovery, you are never completely unknown to yourself."
+    "messageformat": "Мындан тышкары, бир катар каталарды оңдоп койдук. Эми маектер тизмесинде \"Белгисиз байланыш видео режиминде чалып баштады\" деген нерсе көрүнбөйт. Өзүңүздү түшүнгөнгө канчалык аракет кылбаңыз, баары бир көп жагыңыз сыр бойдон кала берет."
+  },
+  "icu:WhatsNew__v7.24--0": {
+    "messageformat": "Бул жаңыртууда жооп бербей калган чалууну караганыңызда, башка түзмөктөрдөгү жооп берилбей калган чалуулар индикатору көрүнбөй калат."
+  },
+  "icu:WhatsNew__v7.25--0": {
+    "messageformat": "Take a trip down memory lane with the new and improved \"All Media\" view. Now when you click on a chat header and select \"See all\" in the shared media section, older photos and videos will automatically appear as you scroll instead of being limited to the most recent entries."
   }
 }

@@ -80,7 +80,7 @@ export type StorageAccessType = {
   hasSeenGroupStoryEducationSheet: boolean;
   hasViewedOnboardingStory: boolean;
   hasStoriesDisabled: boolean;
-  storyViewReceiptsEnabled: boolean;
+  storyViewReceiptsEnabled: boolean | undefined;
   identityKeyMap: IdentityKeyMap;
   lastAttemptedToRefreshProfilesAt: number;
   lastResortKeyUpdateTime: number;
@@ -141,6 +141,8 @@ export type StorageAccessType = {
   callLinkAuthCredentials: ReadonlyArray<GroupCredentialType>;
   backupCredentials: ReadonlyArray<BackupCredentialType>;
   backupCredentialsLastRequestTime: number;
+  backupAttachmentsSuccessfullyDownloadedSize: number;
+  backupAttachmentsTotalSizeToDownload: number;
   setBackupSignatureKey: boolean;
   lastReceivedAtCounter: number;
   preferredReactionEmoji: ReadonlyArray<string>;

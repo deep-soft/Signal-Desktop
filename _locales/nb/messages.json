@@ -941,6 +941,9 @@
   "icu:viewRecentMedia": {
     "messageformat": "Vis nyere media"
   },
+  "icu:allMediaMenuItem": {
+    "messageformat": "All media"
+  },
   "icu:back": {
     "messageformat": "Tilbake"
   },
@@ -1210,9 +1213,6 @@
   },
   "icu:calling__cant-join": {
     "messageformat": "Kunne ikke bli med i samtalen"
-  },
-  "icu:calling__dialog-already-in-call": {
-    "messageformat": "Du har allerede en samtale på gang."
   },
   "icu:calling__call-link-connection-issues": {
     "messageformat": "Kunne ikke hente samtalelenken. Sjekk internettilkoblingen, og prøv igjen."
@@ -2705,6 +2705,9 @@
   "icu:CallControls__InfoDisplay--adhoc-call": {
     "messageformat": "Samtalelenke"
   },
+  "icu:CallControls__InfoDisplay--group-call": {
+    "messageformat": "Group call"
+  },
   "icu:CallControls__InfoDisplay--adhoc-join-request-pending": {
     "messageformat": "Venter på tilgang"
   },
@@ -3522,13 +3525,37 @@
     "messageformat": "Trykk på «Gi penger til Signal» for å abonnere"
   },
   "icu:BackupImportScreen__title": {
-    "messageformat": "Syncing messages"
+    "messageformat": "Synkroniserer meldinger"
   },
   "icu:BackupImportScreen__progressbar-hint": {
-    "messageformat": "Downloading {currentSize} of {totalSize} ({fractionComplete,number,percent})..."
+    "messageformat": "Laster ned {currentSize} av {totalSize} ({fractionComplete,number,percent}) …"
+  },
+  "icu:BackupImportScreen__progressbar-hint--preparing": {
+    "messageformat": "Preparing to download..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "This may take a few minutes depending on the size of your backup"
+    "messageformat": "Dette kan ta et par minutter, avhengig av størrelsen på sikkerhetskopien"
+  },
+  "icu:BackupImportScreen__cancel": {
+    "messageformat": "Cancel transfer"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__title": {
+    "messageformat": "Cancel transfer?"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__body": {
+    "messageformat": "Your messages and media have not completed restoring. If you choose to cancel, you can transfer again from Settings."
+  },
+  "icu:BackupImportScreen__cancel-confirmation__cancel": {
+    "messageformat": "Continue transfer"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__confirm": {
+    "messageformat": "Cancel transfer"
+  },
+  "icu:BackupMediaDownloadProgress__title": {
+    "messageformat": "Gjenoppretter mediefiler"
+  },
+  "icu:BackupMediaDownloadProgress__progressbar-hint": {
+    "messageformat": "{currentSize} av {totalSize} ({fractionComplete,number,percent})"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Ekspander"
@@ -3580,6 +3607,9 @@
   },
   "icu:ContactModal--already-in-call": {
     "messageformat": "Du er allerede i en samtale"
+  },
+  "icu:ContactModal--voice": {
+    "messageformat": "Voice"
   },
   "icu:showChatColorEditor": {
     "messageformat": "Samtalefarge"
@@ -3762,7 +3792,7 @@
     "messageformat": "Reset link"
   },
   "icu:GroupLinkManagement--approve-label": {
-    "messageformat": "Godkjenn nye medlemmer"
+    "messageformat": "Require admin approval"
   },
   "icu:GroupLinkManagement--approve-info": {
     "messageformat": "Krev administratorgodkjenning for nye medlemmer som blir med via gruppelenken."
@@ -3949,12 +3979,6 @@
   },
   "icu:MessageAudio--playbackRatep5": {
     "messageformat": "0.5"
-  },
-  "icu:emptyInboxMessage": {
-    "messageformat": "Klikk på {composeIcon} ovenfor og søk etter kontakter eller grupper å melde til."
-  },
-  "icu:composeIcon": {
-    "messageformat": "opprett-knapp"
   },
   "icu:emptyInbox__title": {
     "messageformat": "Ingen samtaler"
@@ -4875,7 +4899,7 @@
     "messageformat": "Trykk på <newStoryIcon>Legg til en story</newStoryIcon> for å legge ut en oppdatering."
   },
   "icu:Stories__placeholder-with-icon--text-2": {
-    "messageformat": "Click <newStoryButtonIcon></newStoryButtonIcon> to add an update."
+    "messageformat": "Trykk på <newStoryButtonIcon></newStoryButtonIcon> for å legge ut en oppdatering."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} til {group}"
@@ -5121,10 +5145,10 @@
     "messageformat": "Reagerte på storyen"
   },
   "icu:StoryViewsNRepliesModal__reacted--you": {
-    "messageformat": "Reacted to the story"
+    "messageformat": "Reagerte på storyen"
   },
   "icu:StoryViewsNRepliesModal__reacted--someone-else": {
-    "messageformat": "Reacted to the story"
+    "messageformat": "Reagerte på storyen"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
     "messageformat": "Du kan ikke svare på denne storyen fordi du ikke er medlem av denne gruppen lenger."
@@ -5421,14 +5445,11 @@
   "icu:CallsTab__ToastCallHistoryCleared": {
     "messageformat": "Anropslogg slettet"
   },
-  "icu:CallsTab__EmptyStateText": {
-    "messageformat": "Trykk for å se eller foreta et anrop"
-  },
   "icu:CallsTab__EmptyStateText--with-icon": {
     "messageformat": "Trykk på <newCallIcon>Nytt anrop</newCallIcon> for å starte en ny lyd- eller videosamtale."
   },
   "icu:CallsTab__EmptyStateText--with-icon-2": {
-    "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call."
+    "messageformat": "Trykk på <newCallButtonIcon></newCallButtonIcon> for å starte en ny lyd- eller videosamtale."
   },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Søk"
@@ -5438,9 +5459,6 @@
   },
   "icu:CallsList__ToggleFilterByMissed__RoleDescription": {
     "messageformat": "Slå på/av"
-  },
-  "icu:CallsList__EmptyState--noQuery": {
-    "messageformat": "Ingen nylige samtaler. Kom i gang ved å ringe en venn."
   },
   "icu:CallsList__EmptyState--noQuery__title": {
     "messageformat": "Ingen anrop"
@@ -5496,21 +5514,6 @@
   "icu:CallsNewCallButton--return": {
     "messageformat": "Tilbake"
   },
-  "icu:CallsNewCallButtonTooltip--in-another-call": {
-    "messageformat": "Du må forlate denne samtalen før du kan bli med i en annen"
-  },
-  "icu:CallHistory__Description--Default": {
-    "messageformat": "{type, select, Audio {{direction, select, Outgoing {Utgående taleanrop} other {Innkommende taleanrop}}} Video {{direction, select, Outgoing {Utgående videosamtale} other {Innkommende videosamtale}}} Group {{direction, select, Outgoing {Utgående gruppeanrop} other {Innkommende gruppeanrop}}} other {{direction, select, Outgoing {Utgående anrop} other {Innkommende anrop}}}}"
-  },
-  "icu:CallHistory__Description--Missed": {
-    "messageformat": "{type, select, Audio {Tapt taleanrop} Video {Tapt videosamtale} Group {Ubesvart gruppeanrop} other {Tapt anrop}}"
-  },
-  "icu:CallHistory__Description--Unanswered": {
-    "messageformat": "{type, select, Audio {Ubesvart taleanrop} Video {Ubesvart videosamtale} Group {Ubesvart gruppeanrop} other {Ubesvart anrop}}"
-  },
-  "icu:CallHistory__Description--Declined": {
-    "messageformat": "{type, select, Audio {Avvist taleanrop} Video {Avvist videoanrop} Group {Avvist gruppeanrop} other {Avvist anrop}}"
-  },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Samtalelenke"
   },
@@ -5536,7 +5539,10 @@
     "messageformat": "Endre navnet på samtalen"
   },
   "icu:CallLinkDetails__ApproveAllMembersLabel": {
-    "messageformat": "Godkjenn alle medlemmene"
+    "messageformat": "Require admin approval"
+  },
+  "icu:CallLinkDetails__SettingTooltip--disabled-for-active-call": {
+    "messageformat": "This setting can't be changed while the call is active"
   },
   "icu:CallLinkDetails__CopyLink": {
     "messageformat": "Kopier lenken"
@@ -5559,6 +5565,9 @@
   "icu:CallLinkDetails__DeleteLinkModal__Delete": {
     "messageformat": "Slett"
   },
+  "icu:CallLinkDetails__DeleteLinkTooltip--disabled-for-active-call": {
+    "messageformat": "This link can't be deleted while the call is active"
+  },
   "icu:CallLinkEditModal__Title": {
     "messageformat": "Informasjon om anropslenke"
   },
@@ -5572,7 +5581,13 @@
     "messageformat": "Endre navnet på samtalen"
   },
   "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
-    "messageformat": "Godkjenn alle medlemmene"
+    "messageformat": "Require admin approval"
+  },
+  "icu:CallLinkPendingParticipantModal__ApproveButtonLabel": {
+    "messageformat": "Approve entry"
+  },
+  "icu:CallLinkPendingParticipantModal__DenyButtonLabel": {
+    "messageformat": "Deny entry"
   },
   "icu:CallLinkRestrictionsSelect__Option--Off": {
     "messageformat": "Av"
@@ -5629,13 +5644,16 @@
     "messageformat": "Noen små justeringer, feilrettinger og ytelsesforbedringer. Takk for at du bruker Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.22--0": {
-    "messageformat": "Nå blir avbrutte nedlastinger av vedlegg automatisk gjenopptatt i Signal Desktop."
-  },
   "icu:WhatsNew__v7.23--0": {
-    "messageformat": "Chats now open faster than ever thanks to another round of performance improvements, so you can click on your cliques and see what they're saying real quick."
+    "messageformat": "Takket være en rekke ytelsesforbedringer har det blitt enklere og kjappere å åpne samtalevinduer."
   },
   "icu:WhatsNew__v7.23--1": {
-    "messageformat": "We also fixed a handful of bugs, including one that sometimes caused \"Unknown contact started a video call\" to appear in the chat list summary after you started the call. Even if you're still on a journey of self-discovery, you are never completely unknown to yourself."
+    "messageformat": "Vi har også rettet opp i et par feil, blant annet et problem som fører til at meldingen «ukjent kontakt startet en videosamtale» dukker opp i videosamtaler — selv når det er du selv som starter dem."
+  },
+  "icu:WhatsNew__v7.24--0": {
+    "messageformat": "Fra nå av, hvis du åpner et varsel om et tapt anrop på en av enhetene dine, forsvinner varslene om det samme anropet automatisk fra alle de andre enhetene dine."
+  },
+  "icu:WhatsNew__v7.25--0": {
+    "messageformat": "Take a trip down memory lane with the new and improved \"All Media\" view. Now when you click on a chat header and select \"See all\" in the shared media section, older photos and videos will automatically appear as you scroll instead of being limited to the most recent entries."
   }
 }

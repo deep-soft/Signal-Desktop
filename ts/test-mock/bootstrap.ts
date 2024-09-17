@@ -260,6 +260,15 @@ export class Bootstrap {
     return path.join(this.storagePath, 'logs');
   }
 
+  public get ephemeralConfigPath(): string {
+    assert(
+      this.storagePath !== undefined,
+      'Bootstrap has to be initialized first, see: bootstrap.init()'
+    );
+
+    return path.join(this.storagePath, 'ephemeral.json');
+  }
+
   public getBackupPath(fileName: string): string {
     assert(
       this.backupPath !== undefined,
@@ -481,7 +490,10 @@ export class Bootstrap {
     const window = await app.getWindow();
     await callback(window, async (name: string) => {
       debug('creating screenshot');
-      snapshots.push({ name, data: await window.screenshot() });
+      snapshots.push({
+        name,
+        data: await window.screenshot(),
+      });
     });
 
     let index = 0;
@@ -512,7 +524,7 @@ export class Bootstrap {
           {}
         );
 
-        if (numPixels === 0) {
+        if (numPixels === 0 && !process.env.FORCE_ARTIFACT_SAVE) {
           debug('no screenshot difference');
           return;
         }

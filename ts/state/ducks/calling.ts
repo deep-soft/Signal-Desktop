@@ -6,7 +6,7 @@ import {
   hasScreenCapturePermission,
   openSystemPreferences,
 } from 'mac-screen-capture-permissions';
-import { omit, pick } from 'lodash';
+import { omit } from 'lodash';
 import type { ReadonlyDeep } from 'type-fest';
 import {
   CallLinkRootKey,
@@ -76,7 +76,11 @@ import { ToastType } from '../../types/Toast';
 import type { ShowToastActionType } from './toast';
 import type { BoundActionCreatorsMapObject } from '../../hooks/useBoundActions';
 import { useBoundActions } from '../../hooks/useBoundActions';
-import { isAnybodyElseInGroupCall } from './callingHelpers';
+import {
+  isAnybodyElseInGroupCall,
+  isAnybodyInGroupCall,
+  MAX_CALL_PARTICIPANTS_FOR_DEFAULT_MUTE,
+} from './callingHelpers';
 import { SafetyNumberChangeSource } from '../../components/SafetyNumberChangeDialog';
 import {
   isGroupOrAdhocCallMode,
@@ -98,6 +102,7 @@ import type { CallHistoryDetails } from '../../types/CallDisposition';
 import type { StartCallData } from '../../components/ConfirmLeaveCallModal';
 import { callLinksDeleteJobQueue } from '../../jobs/callLinksDeleteJobQueue';
 import { getCallLinksByRoomId } from '../selectors/calling';
+import { storageServiceUploadJob } from '../../services/storage';
 
 // State
 
@@ -1425,25 +1430,31 @@ function handleCallLinkUpdate(
     const logId = `handleCallLinkUpdate(${roomId})`;
 
     const freshCallLinkState = await calling.readCallLink(callLinkRootKey);
+    const existingCallLink = await DataReader.getCallLinkByRoomId(roomId);
 
     // Only give up when server confirms the call link is gone. If we fail to fetch
     // state due to unexpected errors, continue to save rootKey and adminKey.
     if (freshCallLinkState == null) {
-      log.info(`${logId}: Call link not found, ignoring`);
+      log.info(`${logId}: Call link not found on server`);
+      if (!existingCallLink) {
+        return;
+      }
+
+      // If the call link is gone remotely (for example if it expired on the server),
+      // then delete local call link.
+      log.info(`${logId}: Deleting existing call link`);
+      await DataWriter.beginDeleteCallLink(roomId, {
+        storageNeedsSync: true,
+      });
+      storageServiceUploadJob();
+      handleCallLinkDelete({ roomId });
       return;
     }
 
-    const existingCallLink = await DataReader.getCallLinkByRoomId(roomId);
-    const existingCallLinkState = pick(existingCallLink, [
-      'name',
-      'restrictions',
-      'expiration',
-      'revoked',
-    ]);
-
     const callLink: CallLinkType = {
       ...CALL_LINK_DEFAULT_STATE,
-      ...existingCallLinkState,
+      storageNeedsSync: false,
+      ...existingCallLink,
       ...freshCallLinkState,
       roomId,
       rootKey,
@@ -1479,6 +1490,17 @@ function handleCallLinkUpdate(
     if (callHistory != null) {
       dispatch(addCallHistory(callHistory));
     }
+  };
+}
+
+function handleCallLinkUpdateLocal(
+  callLink: CallLinkType
+): ThunkAction<void, RootStateType, unknown, HandleCallLinkUpdateActionType> {
+  return dispatch => {
+    dispatch({
+      type: HANDLE_CALL_LINK_UPDATE,
+      payload: { callLink },
+    });
   };
 }
 
@@ -1990,6 +2012,9 @@ function createCallLink(
       DataWriter.insertCallLink(callLink),
       DataWriter.saveCallHistory(callHistory),
     ]);
+
+    storageServiceUploadJob();
+
     dispatch({
       type: HANDLE_CALL_LINK_UPDATE,
       payload: { callLink },
@@ -2004,7 +2029,8 @@ function deleteCallLink(
   roomId: string
 ): ThunkAction<void, RootStateType, unknown, HandleCallLinkDeleteActionType> {
   return async dispatch => {
-    await DataWriter.beginDeleteCallLink(roomId);
+    await DataWriter.beginDeleteCallLink(roomId, { storageNeedsSync: true });
+    storageServiceUploadJob();
     await callLinksDeleteJobQueue.add({ source: 'deleteCallLink' });
     dispatch(handleCallLinkDelete({ roomId }));
   };
@@ -2171,6 +2197,7 @@ const _startCallLinkLobby = async ({
         restrictions,
         revoked,
         expiration,
+        storageNeedsSync: false,
       });
       log.info('startCallLinkLobby: Saved new call link', roomId);
     }
@@ -2192,7 +2219,8 @@ const _startCallLinkLobby = async ({
   const callLobbyData = await calling.startCallLinkLobby({
     callLinkRootKey,
     adminPasskey,
-    hasLocalAudio: groupCallDeviceCount < 8,
+    hasLocalAudio:
+      groupCallDeviceCount < MAX_CALL_PARTICIPANTS_FOR_DEFAULT_MUTE,
   });
   if (!callLobbyData) {
     return;
@@ -2291,7 +2319,8 @@ function startCallingLobby({
 
     const callLobbyData = await calling.startCallingLobby({
       conversation,
-      hasLocalAudio: groupCallDeviceCount < 8,
+      hasLocalAudio:
+        groupCallDeviceCount < MAX_CALL_PARTICIPANTS_FOR_DEFAULT_MUTE,
       hasLocalVideo: isVideoCall,
     });
     if (!callLobbyData) {
@@ -2446,6 +2475,7 @@ export const actions = {
   groupCallStateChange,
   hangUpActiveCall,
   handleCallLinkUpdate,
+  handleCallLinkUpdateLocal,
   handleCallLinkDelete,
   joinedAdhocCall,
   leaveCurrentCallAndStartCallingLobby,
@@ -2670,6 +2700,7 @@ export function reducer(
                   callLinks[conversationId]?.rootKey ??
                   action.payload.callLinkRootKey,
                 adminKey: callLinks[conversationId]?.adminKey,
+                storageNeedsSync: false,
               },
             }
           : callLinks,
@@ -3089,6 +3120,17 @@ export function reducer(
               hasLocalAudio,
               hasLocalVideo,
             };
+
+      // The first time we detect call participants in the lobby, check participant count
+      // and mute ourselves if over the threshold.
+      if (
+        joinState === GroupCallJoinState.NotJoined &&
+        !isAnybodyInGroupCall(existingCall?.peekInfo) &&
+        newPeekInfo.deviceCount >= MAX_CALL_PARTICIPANTS_FOR_DEFAULT_MUTE &&
+        newActiveCallState?.hasLocalAudio
+      ) {
+        newActiveCallState.hasLocalAudio = false;
+      }
     } else {
       newActiveCallState = state.activeCallState;
     }

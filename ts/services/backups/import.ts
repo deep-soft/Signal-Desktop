@@ -10,11 +10,14 @@ import { isNumber } from 'lodash';
 import { CallLinkRootKey } from '@signalapp/ringrtc';
 
 import { Backups, SignalService } from '../../protobuf';
-import { DataWriter } from '../../sql/Client';
-import type { StoryDistributionWithMembersType } from '../../sql/Interface';
+import { DataReader, DataWriter } from '../../sql/Client';
+import {
+  AttachmentDownloadSource,
+  type StoryDistributionWithMembersType,
+} from '../../sql/Interface';
 import * as log from '../../logging/log';
 import { GiftBadgeStates } from '../../components/conversation/Message';
-import { StorySendMode } from '../../types/Stories';
+import { StorySendMode, MY_STORY_ID } from '../../types/Stories';
 import type { ServiceIdString, AciString } from '../../types/ServiceId';
 import {
   fromAciObject,
@@ -51,6 +54,7 @@ import type {
 import { assertDev, strictAssert } from '../../util/assert';
 import { getTimestampFromLong } from '../../util/timestampLongUtils';
 import { DurationInSeconds, SECOND } from '../../util/durations';
+import { calculateExpirationTimestamp } from '../../util/expirationTimer';
 import { dropNull } from '../../util/dropNull';
 import {
   deriveGroupID,
@@ -75,16 +79,18 @@ import type { GroupV2ChangeDetailType } from '../../groups';
 import { queueAttachmentDownloads } from '../../util/queueAttachmentDownloads';
 import { drop } from '../../util/drop';
 import { isNotNil } from '../../util/isNotNil';
-import { isGroup, isGroupV2 } from '../../util/whatTypeOfConversation';
+import { isGroup } from '../../util/whatTypeOfConversation';
 import { rgbToHSL } from '../../util/rgbToHSL';
 import {
   convertBackupMessageAttachmentToAttachment,
   convertFilePointerToAttachment,
 } from './util/filePointers';
+import { CircularMessageCache } from './util/CircularMessageCache';
 import { filterAndClean } from '../../types/BodyRange';
 import { APPLICATION_OCTET_STREAM, stringToMIMEType } from '../../types/MIME';
 import { copyFromQuotedMessage } from '../../messages/copyQuote';
 import { groupAvatarJobQueue } from '../../jobs/groupAvatarJobQueue';
+import { AttachmentDownloadManager } from '../../jobs/AttachmentDownloadManager';
 import {
   AdhocCallStatus,
   CallDirection,
@@ -96,11 +102,15 @@ import {
 import type { CallHistoryDetails } from '../../types/CallDisposition';
 import { CallLinkRestrictions } from '../../types/CallLink';
 import type { CallLinkType } from '../../types/CallLink';
-
 import { fromAdminKeyBytes } from '../../util/callLinks';
 import { getRoomIdFromRootKey } from '../../util/callLinksRingrtc';
+import { reinitializeRedux } from '../../state/reinitializeRedux';
+import { getParametersForRedux, loadAll } from '../allLoaders';
 
 const MAX_CONCURRENCY = 10;
+
+// Keep 1000 recent messages in memory to speed up quote lookup.
+const RECENT_MESSAGES_CACHE_SIZE = 1000;
 
 type ConversationOpType = Readonly<{
   isUpdate: boolean;
@@ -148,8 +158,6 @@ async function processMessagesBatch(
       id: ids[index],
     };
 
-    window.MessageCache.__DEPRECATED$unregister(attributes.id);
-
     const { editHistory } = attributes;
 
     if (editHistory?.length) {
@@ -169,7 +177,11 @@ async function processMessagesBatch(
       );
     }
 
-    drop(queueAttachmentDownloads(attributes));
+    drop(
+      queueAttachmentDownloads(attributes, {
+        source: AttachmentDownloadSource.BACKUP_IMPORT,
+      })
+    );
   }
 }
 
@@ -238,6 +250,7 @@ function addressToContactAddressType(
 }
 
 export class BackupImportStream extends Writable {
+  private now = Date.now();
   private parsedBackupInfo = false;
   private logId = 'BackupImportStream(unknown)';
   private aboutMe: AboutMe | undefined;
@@ -276,9 +289,23 @@ export class BackupImportStream extends Writable {
   private customColorById = new Map<number, CustomColorDataType>();
   private releaseNotesRecipientId: Long | undefined;
   private releaseNotesChatId: Long | undefined;
+  private pendingGroupAvatars = new Map<string, string>();
+  private recentMessages = new CircularMessageCache({
+    size: RECENT_MESSAGES_CACHE_SIZE,
+    flush: () => this.saveMessageBatcher.flushAndWait(),
+  });
 
-  constructor() {
+  private constructor() {
     super({ objectMode: true });
+  }
+
+  public static async create(): Promise<BackupImportStream> {
+    await AttachmentDownloadManager.stop();
+    await DataWriter.removeAllBackupAttachmentDownloadJobs();
+    await window.storage.put('backupAttachmentsSuccessfullyDownloadedSize', 0);
+    await window.storage.put('backupAttachmentsTotalSizeToDownload', 0);
+
+    return new BackupImportStream();
   }
 
   override async _write(
@@ -352,11 +379,10 @@ export class BackupImportStream extends Writable {
 
       // Schedule group avatar download.
       await pMap(
-        allConversations.filter(({ attributes: convo }) => {
-          const { avatar } = convo;
-          return isGroupV2(convo) && avatar?.url && !avatar.path;
-        }),
-        convo => groupAvatarJobQueue.add({ conversationId: convo.id }),
+        [...this.pendingGroupAvatars.entries()],
+        ([conversationId, newAvatarUrl]) => {
+          return groupAvatarJobQueue.add({ conversationId, newAvatarUrl });
+        },
         { concurrency: MAX_CONCURRENCY }
       );
 
@@ -368,6 +394,16 @@ export class BackupImportStream extends Writable {
           })
           .map(([, id]) => id)
       );
+
+      await loadAll();
+      reinitializeRedux(getParametersForRedux());
+
+      await window.storage.put(
+        'backupAttachmentsTotalSizeToDownload',
+        await DataReader.getSizeOfPendingBackupAttachmentDownloadJobs()
+      );
+
+      await AttachmentDownloadManager.start();
 
       done();
     } catch (error) {
@@ -463,28 +499,15 @@ export class BackupImportStream extends Writable {
   }
 
   private saveConversation(attributes: ConversationAttributesType): void {
-    // add the conversation into memory without saving it to DB (that will happen in
-    // batcher); if we didn't do this, when we register messages to MessageCache, it would
-    // automatically create (and save to DB) a duplicate conversation which would have to
-    // be later merged
-    window.ConversationController.dangerouslyCreateAndAdd(attributes);
     this.conversationOpBatcher.add({ isUpdate: false, attributes });
   }
 
   private updateConversation(attributes: ConversationAttributesType): void {
-    const existing = window.ConversationController.get(attributes.id);
-    if (existing) {
-      existing.set(attributes);
-    }
     this.conversationOpBatcher.add({ isUpdate: true, attributes });
   }
 
   private saveMessage(attributes: MessageAttributesType): void {
-    window.MessageCache.__DEPRECATED$register(
-      attributes.id,
-      attributes,
-      'import.saveMessage'
-    );
+    this.recentMessages.push(attributes);
     this.saveMessageBatcher.add(attributes);
   }
 
@@ -617,10 +640,14 @@ export class BackupImportStream extends Writable {
       'hasStoriesDisabled',
       accountSettings?.storiesDisabled === true
     );
+
+    // an undefined value for storyViewReceiptsEnabled is semantically different from
+    // false: it causes us to fallback to `read-receipt-setting`
     await storage.put(
       'storyViewReceiptsEnabled',
-      accountSettings?.storyViewReceiptsEnabled === true
+      accountSettings?.storyViewReceiptsEnabled ?? undefined
     );
+
     await storage.put(
       'hasCompletedUsernameOnboarding',
       accountSettings?.hasCompletedUsernameOnboarding === true
@@ -752,7 +779,7 @@ export class BackupImportStream extends Writable {
 
     if (contact.notRegistered) {
       const timestamp =
-        contact.notRegistered.unregisteredTimestamp?.toNumber() ?? Date.now();
+        contact.notRegistered.unregisteredTimestamp?.toNumber() ?? this.now;
       attrs.discoveredUnregisteredAt = timestamp;
       attrs.firstUnregisteredAt = timestamp;
     } else {
@@ -832,12 +859,6 @@ export class BackupImportStream extends Writable {
       // Snapshot
       name: dropNull(title?.title),
       description: dropNull(description?.descriptionText),
-      avatar: avatarUrl
-        ? {
-            url: avatarUrl,
-            path: '',
-          }
-        : undefined,
       expireTimer: expirationTimerS
         ? DurationInSeconds.fromSeconds(expirationTimerS)
         : undefined,
@@ -926,6 +947,9 @@ export class BackupImportStream extends Writable {
         : undefined,
       announcementsOnly: dropNull(announcementsOnly),
     };
+    if (avatarUrl) {
+      this.pendingGroupAvatars.set(attrs.id, avatarUrl);
+    }
 
     return attrs;
   }
@@ -938,7 +962,7 @@ export class BackupImportStream extends Writable {
       'Missing distribution list id'
     );
 
-    const id = bytesToUuid(listItem.distributionId);
+    const id = bytesToUuid(listItem.distributionId) || MY_STORY_ID;
     strictAssert(isStoryDistributionId(id), 'Invalid distribution list id');
 
     const commonFields = {
@@ -1045,6 +1069,7 @@ export class BackupImportStream extends Writable {
       restrictions: fromCallLinkRestrictionsProto(restrictions),
       revoked: false,
       expiration: expirationMs?.toNumber() || null,
+      storageNeedsSync: false,
     };
 
     this.recipientIdToCallLink.set(recipientId, callLink);
@@ -1080,6 +1105,7 @@ export class BackupImportStream extends Writable {
       chat.expirationTimerMs && !chat.expirationTimerMs.isZero()
         ? DurationInSeconds.fromMillis(chat.expirationTimerMs.toNumber())
         : undefined;
+    conversation.expireTimerVersion = chat.expireTimerVersion || 1;
     conversation.muteExpiresAt =
       chat.muteUntilMs && !chat.muteUntilMs.isZero()
         ? getTimestampFromLong(chat.muteUntilMs)
@@ -1159,6 +1185,25 @@ export class BackupImportStream extends Writable {
       chatConvo.unreadCount = (chatConvo.unreadCount ?? 0) + 1;
     }
 
+    const expirationStartTimestamp =
+      item.expireStartDate && !item.expireStartDate.isZero()
+        ? getTimestampFromLong(item.expireStartDate)
+        : undefined;
+    const expireTimer =
+      item.expiresInMs && !item.expiresInMs.isZero()
+        ? DurationInSeconds.fromMillis(item.expiresInMs.toNumber())
+        : undefined;
+
+    const expirationTimestamp = calculateExpirationTimestamp({
+      expireTimer,
+      expirationStartTimestamp,
+    });
+
+    if (expirationTimestamp != null && expirationTimestamp < this.now) {
+      // Drop expired messages
+      return;
+    }
+
     let attributes: MessageAttributesType = {
       id: generateUuid(),
       conversationId: chatConvo.id,
@@ -1168,14 +1213,8 @@ export class BackupImportStream extends Writable {
       sourceServiceId: authorConvo?.serviceId,
       timestamp,
       type: item.outgoing != null ? 'outgoing' : 'incoming',
-      expirationStartTimestamp:
-        item.expireStartDate && !item.expireStartDate.isZero()
-          ? getTimestampFromLong(item.expireStartDate)
-          : undefined,
-      expireTimer:
-        item.expiresInMs && !item.expiresInMs.isZero()
-          ? DurationInSeconds.fromMillis(item.expiresInMs.toNumber())
-          : undefined,
+      expirationStartTimestamp,
+      expireTimer,
       sms: item.sms === true ? true : undefined,
       ...directionDetails,
     };
@@ -1377,7 +1416,7 @@ export class BackupImportStream extends Writable {
       };
     }
     if (incoming) {
-      const receivedAtMs = incoming.dateReceived?.toNumber() ?? Date.now();
+      const receivedAtMs = incoming.dateReceived?.toNumber() ?? this.now;
 
       const unidentifiedDeliveryReceived = incoming.sealedSender === true;
 
@@ -1563,7 +1602,10 @@ export class BackupImportStream extends Writable {
           }) ?? [],
         type: this.convertQuoteType(quote.type),
       },
-      conversationId
+      conversationId,
+      {
+        messageCache: this.recentMessages,
+      }
     );
   }
 
@@ -2811,14 +2853,18 @@ export class BackupImportStream extends Writable {
       return;
     }
 
+    const order = new Array<string>();
     const customColors: CustomColorsItemType = {
       version: 1,
       colors: {},
+      order,
     };
 
     for (const color of customChatColors) {
       const uuid = generateUuid();
       let value: CustomColorType;
+
+      order.push(uuid);
 
       if (color.solid) {
         value = {
@@ -2983,17 +3029,20 @@ export class BackupImportStream extends Writable {
   }
 }
 
-function rgbIntToHSL(intValue: number): { hue: number; saturation: number } {
-  const { h: hue, s: saturation } = rgbToHSL(
-    // eslint-disable-next-line no-bitwise
-    (intValue >>> 16) & 0xff,
-    // eslint-disable-next-line no-bitwise
-    (intValue >>> 8) & 0xff,
-    // eslint-disable-next-line no-bitwise
-    intValue & 0xff
-  );
+function rgbIntToHSL(intValue: number): {
+  hue: number;
+  saturation: number;
+  luminance: number;
+} {
+  // eslint-disable-next-line no-bitwise
+  const r = (intValue >>> 16) & 0xff;
+  // eslint-disable-next-line no-bitwise
+  const g = (intValue >>> 8) & 0xff;
+  // eslint-disable-next-line no-bitwise
+  const b = intValue & 0xff;
+  const { h: hue, s: saturation, l: luminance } = rgbToHSL(r, g, b);
 
-  return { hue, saturation };
+  return { hue, saturation, luminance };
 }
 
 function fromGroupCallStateProto(

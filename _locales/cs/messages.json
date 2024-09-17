@@ -941,6 +941,9 @@
   "icu:viewRecentMedia": {
     "messageformat": "Zobrazit nedávná média"
   },
+  "icu:allMediaMenuItem": {
+    "messageformat": "All media"
+  },
   "icu:back": {
     "messageformat": "Zpět"
   },
@@ -1210,9 +1213,6 @@
   },
   "icu:calling__cant-join": {
     "messageformat": "K hovoru se nelze připojit"
-  },
-  "icu:calling__dialog-already-in-call": {
-    "messageformat": "Již jste k hovoru připojeni."
   },
   "icu:calling__call-link-connection-issues": {
     "messageformat": "Nepodařilo se načíst informace o odkazu na hovor. Zkontrolujte připojení k internetu a zkuste to znovu."
@@ -2705,6 +2705,9 @@
   "icu:CallControls__InfoDisplay--adhoc-call": {
     "messageformat": "Odkaz na hovor"
   },
+  "icu:CallControls__InfoDisplay--group-call": {
+    "messageformat": "Group call"
+  },
   "icu:CallControls__InfoDisplay--adhoc-join-request-pending": {
     "messageformat": "Čeká se na vpuštění"
   },
@@ -3522,13 +3525,37 @@
     "messageformat": "Klepněte na „Podpořit Signal finančně“ a přihlaste se k odběru"
   },
   "icu:BackupImportScreen__title": {
-    "messageformat": "Syncing messages"
+    "messageformat": "Synchronizace zpráv"
   },
   "icu:BackupImportScreen__progressbar-hint": {
-    "messageformat": "Downloading {currentSize} of {totalSize} ({fractionComplete,number,percent})..."
+    "messageformat": "Stahování {currentSize} z {totalSize} ({fractionComplete,number,percent})…"
+  },
+  "icu:BackupImportScreen__progressbar-hint--preparing": {
+    "messageformat": "Preparing to download..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "This may take a few minutes depending on the size of your backup"
+    "messageformat": "Může trvat několik minut v závislosti na velikosti vaší zálohy"
+  },
+  "icu:BackupImportScreen__cancel": {
+    "messageformat": "Cancel transfer"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__title": {
+    "messageformat": "Cancel transfer?"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__body": {
+    "messageformat": "Your messages and media have not completed restoring. If you choose to cancel, you can transfer again from Settings."
+  },
+  "icu:BackupImportScreen__cancel-confirmation__cancel": {
+    "messageformat": "Continue transfer"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__confirm": {
+    "messageformat": "Cancel transfer"
+  },
+  "icu:BackupMediaDownloadProgress__title": {
+    "messageformat": "Obnovování médií"
+  },
+  "icu:BackupMediaDownloadProgress__progressbar-hint": {
+    "messageformat": "{currentSize} z {totalSize} ({fractionComplete,number,percent})"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Rozbalit"
@@ -3580,6 +3607,9 @@
   },
   "icu:ContactModal--already-in-call": {
     "messageformat": "Již jste v hovoru"
+  },
+  "icu:ContactModal--voice": {
+    "messageformat": "Voice"
   },
   "icu:showChatColorEditor": {
     "messageformat": "Barva chatu"
@@ -3762,7 +3792,7 @@
     "messageformat": "Obnovit odkaz"
   },
   "icu:GroupLinkManagement--approve-label": {
-    "messageformat": "Schválit nové členy"
+    "messageformat": "Require admin approval"
   },
   "icu:GroupLinkManagement--approve-info": {
     "messageformat": "Vyžadovat, aby správce schvaloval nové členy, kteří se připojí přes odkaz skupiny"
@@ -3949,12 +3979,6 @@
   },
   "icu:MessageAudio--playbackRatep5": {
     "messageformat": "0,5"
-  },
-  "icu:emptyInboxMessage": {
-    "messageformat": "Klikněte na {composeIcon} výše a vyhledejte kontakty nebo skupiny, kterým chcete poslat zprávu."
-  },
-  "icu:composeIcon": {
-    "messageformat": "tlačítko napsat"
   },
   "icu:emptyInbox__title": {
     "messageformat": "Žádné chaty"
@@ -4875,7 +4899,7 @@
     "messageformat": "Klikněte na <newStoryIcon>Přidat příběh</newStoryIcon> a přidejte příspěvek."
   },
   "icu:Stories__placeholder-with-icon--text-2": {
-    "messageformat": "Click <newStoryButtonIcon></newStoryButtonIcon> to add an update."
+    "messageformat": "Kliknutím na <newStoryButtonIcon></newStoryButtonIcon> přidáte aktualizaci."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} skupině {group}"
@@ -5121,10 +5145,10 @@
     "messageformat": "Reagoval/a na příběh"
   },
   "icu:StoryViewsNRepliesModal__reacted--you": {
-    "messageformat": "Reacted to the story"
+    "messageformat": "Reagoval/a jste na příběh"
   },
   "icu:StoryViewsNRepliesModal__reacted--someone-else": {
-    "messageformat": "Reacted to the story"
+    "messageformat": "Reagoval na příběh"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
     "messageformat": "Na tento příběh nemůžete reagovat, protože už nejste členem této skupiny."
@@ -5421,14 +5445,11 @@
   "icu:CallsTab__ToastCallHistoryCleared": {
     "messageformat": "Historie smazána"
   },
-  "icu:CallsTab__EmptyStateText": {
-    "messageformat": "Kliknutím zobrazíte nebo zahájíte hovor"
-  },
   "icu:CallsTab__EmptyStateText--with-icon": {
     "messageformat": "Klikněte na <newCallIcon>Nový hovor</newCallIcon> a zahajte nový hlasový nebo video hovor."
   },
   "icu:CallsTab__EmptyStateText--with-icon-2": {
-    "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call."
+    "messageformat": "Kliknutím na <newCallButtonIcon></newCallButtonIcon> začnete nový hovor nebo videohovor."
   },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Hledat"
@@ -5438,9 +5459,6 @@
   },
   "icu:CallsList__ToggleFilterByMissed__RoleDescription": {
     "messageformat": "Přepnout"
-  },
-  "icu:CallsList__EmptyState--noQuery": {
-    "messageformat": "Žádné nedávné hovory. Začněte tím, že zavoláte příteli."
   },
   "icu:CallsList__EmptyState--noQuery__title": {
     "messageformat": "Žádné hovory"
@@ -5496,21 +5514,6 @@
   "icu:CallsNewCallButton--return": {
     "messageformat": "Vrátit se"
   },
-  "icu:CallsNewCallButtonTooltip--in-another-call": {
-    "messageformat": "Před připojením k novému hovoru musíte ukončit stávající hovor"
-  },
-  "icu:CallHistory__Description--Default": {
-    "messageformat": "{type, select, Audio {{direction, select, Outgoing {Odchozí hlasový hovor} other {Příchozí hlasový hovor}}} Video {{direction, select, Outgoing {Odchozí videhovor} other {Příchozí videohovor}}} Group {{direction, select, Outgoing {Odchozí skupinový hovor} other {Příchozí skupinový hovor}}} other {{direction, select, Outgoing {Odchozí hovor} other {Příchozí hovor}}}}"
-  },
-  "icu:CallHistory__Description--Missed": {
-    "messageformat": "{type, select, Audio {Zmeškaný hlasový hovor} Video {Zmeškaný videohovor} Group {Zmeškaný skupinový hovor} other {Zmeškaný hovor}}"
-  },
-  "icu:CallHistory__Description--Unanswered": {
-    "messageformat": "{type, select, Audio {Nepřijatý hlasový hovor} Video {Nepřijatý videohovor} Group {Nepřijatý skupinový hovor} other {Nepřijatý hovor}}"
-  },
-  "icu:CallHistory__Description--Declined": {
-    "messageformat": "{type, select, Audio {Odmítnutý hlasový hovor} Video {Odmítnutý videohovor} Group {Odmítnutý skupinový hovor} other {Odmítnutý hovor}}"
-  },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Odkaz na hovor"
   },
@@ -5536,7 +5539,10 @@
     "messageformat": "Upravit název hovoru"
   },
   "icu:CallLinkDetails__ApproveAllMembersLabel": {
-    "messageformat": "Schválit všechny členy"
+    "messageformat": "Require admin approval"
+  },
+  "icu:CallLinkDetails__SettingTooltip--disabled-for-active-call": {
+    "messageformat": "This setting can't be changed while the call is active"
   },
   "icu:CallLinkDetails__CopyLink": {
     "messageformat": "Zkopírovat odkaz"
@@ -5559,6 +5565,9 @@
   "icu:CallLinkDetails__DeleteLinkModal__Delete": {
     "messageformat": "Odstranit"
   },
+  "icu:CallLinkDetails__DeleteLinkTooltip--disabled-for-active-call": {
+    "messageformat": "This link can't be deleted while the call is active"
+  },
   "icu:CallLinkEditModal__Title": {
     "messageformat": "Podrobnosti odkazu na hovor"
   },
@@ -5572,7 +5581,13 @@
     "messageformat": "Upravit název hovoru"
   },
   "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
-    "messageformat": "Schválit všechny členy"
+    "messageformat": "Require admin approval"
+  },
+  "icu:CallLinkPendingParticipantModal__ApproveButtonLabel": {
+    "messageformat": "Approve entry"
+  },
+  "icu:CallLinkPendingParticipantModal__DenyButtonLabel": {
+    "messageformat": "Deny entry"
   },
   "icu:CallLinkRestrictionsSelect__Option--Off": {
     "messageformat": "Vypnout"
@@ -5629,13 +5644,16 @@
     "messageformat": "Drobná vylepšení, opravy chyb a zvýšení výkonu. Děkujeme, že používáte Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.22--0": {
-    "messageformat": "Aplikace Signal Desktop nyní dokáže automaticky obnovit přerušené stahování příloh."
-  },
   "icu:WhatsNew__v7.23--0": {
-    "messageformat": "Chats now open faster than ever thanks to another round of performance improvements, so you can click on your cliques and see what they're saying real quick."
+    "messageformat": "Chaty se nyní otevírají rychleji než kdykoli předtím díky dalšímu vylepšení výkonu."
   },
   "icu:WhatsNew__v7.23--1": {
-    "messageformat": "We also fixed a handful of bugs, including one that sometimes caused \"Unknown contact started a video call\" to appear in the chat list summary after you started the call. Even if you're still on a journey of self-discovery, you are never completely unknown to yourself."
+    "messageformat": "Také jsme opravili několik chyb včetně té, která způsobovala, že se v přehledu chatu po zahájení hovoru objevilo sdělení „Videohovor zahájil neznámý kontakt“."
+  },
+  "icu:WhatsNew__v7.24--0": {
+    "messageformat": "Tato aktualizace opravuje chybu, kdy se při zobrazení zmeškaného hovoru na jednom zařízení automaticky neodstranilo upozornění na tento zmeškaný hovor na jiném zařízení."
+  },
+  "icu:WhatsNew__v7.25--0": {
+    "messageformat": "Take a trip down memory lane with the new and improved \"All Media\" view. Now when you click on a chat header and select \"See all\" in the shared media section, older photos and videos will automatically appear as you scroll instead of being limited to the most recent entries."
   }
 }

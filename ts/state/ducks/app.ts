@@ -7,6 +7,13 @@ import type { StateType as RootStateType } from '../reducer';
 import type { BoundActionCreatorsMapObject } from '../../hooks/useBoundActions';
 import { useBoundActions } from '../../hooks/useBoundActions';
 import * as log from '../../logging/log';
+import { getEnvironment, Environment } from '../../environment';
+import {
+  START_INSTALLER,
+  type StartInstallerActionType,
+  SHOW_BACKUP_IMPORT,
+  type ShowBackupImportActionType,
+} from './installer';
 
 // State
 
@@ -15,41 +22,19 @@ export enum AppViewType {
   Inbox = 'Inbox',
   Installer = 'Installer',
   Standalone = 'Standalone',
-  BackupImport = 'BackupImport',
 }
 
-export type AppStateType = ReadonlyDeep<
-  {
-    hasInitialLoadCompleted: boolean;
-  } & (
-    | {
-        appView: AppViewType.Blank;
-      }
-    | {
-        appView: AppViewType.Inbox;
-      }
-    | {
-        appView: AppViewType.Installer;
-      }
-    | {
-        appView: AppViewType.Standalone;
-      }
-    | {
-        appView: AppViewType.BackupImport;
-        currentBytes?: number;
-        totalBytes?: number;
-      }
-  )
->;
+export type AppStateType = ReadonlyDeep<{
+  hasInitialLoadCompleted: boolean;
+  appView: AppViewType;
+}>;
 
 // Actions
 
 const INITIAL_LOAD_COMPLETE = 'app/INITIAL_LOAD_COMPLETE';
 const OPEN_INBOX = 'app/OPEN_INBOX';
-const OPEN_INSTALLER = 'app/OPEN_INSTALLER';
+export const OPEN_INSTALLER = 'app/OPEN_INSTALLER';
 const OPEN_STANDALONE = 'app/OPEN_STANDALONE';
-const OPEN_BACKUP_IMPORT = 'app/OPEN_BACKUP_IMPORT';
-const UPDATE_BACKUP_IMPORT_PROGRESS = 'app/UPDATE_BACKUP_IMPORT_PROGRESS';
 
 type InitialLoadCompleteActionType = ReadonlyDeep<{
   type: typeof INITIAL_LOAD_COMPLETE;
@@ -59,42 +44,18 @@ type OpenInboxActionType = ReadonlyDeep<{
   type: typeof OPEN_INBOX;
 }>;
 
-type OpenInstallerActionType = ReadonlyDeep<{
-  type: typeof OPEN_INSTALLER;
-}>;
-
 type OpenStandaloneActionType = ReadonlyDeep<{
   type: typeof OPEN_STANDALONE;
 }>;
 
-type OpenBackupImportActionType = ReadonlyDeep<{
-  type: typeof OPEN_BACKUP_IMPORT;
-}>;
-
-type UpdateBackupImportProgressActionType = ReadonlyDeep<{
-  type: typeof UPDATE_BACKUP_IMPORT_PROGRESS;
-  payload: {
-    currentBytes: number;
-    totalBytes: number;
-  };
-}>;
-
 export type AppActionType = ReadonlyDeep<
-  | InitialLoadCompleteActionType
-  | OpenInboxActionType
-  | OpenInstallerActionType
-  | OpenStandaloneActionType
-  | OpenBackupImportActionType
-  | UpdateBackupImportProgressActionType
+  InitialLoadCompleteActionType | OpenInboxActionType | OpenStandaloneActionType
 >;
 
 export const actions = {
   initialLoadComplete,
   openInbox,
-  openInstaller,
   openStandalone,
-  openBackupImport,
-  updateBackupImportProgress,
 };
 
 export const useAppActions = (): BoundActionCreatorsMapObject<typeof actions> =>
@@ -123,21 +84,6 @@ function openInbox(): ThunkAction<
   };
 }
 
-function openInstaller(): ThunkAction<
-  void,
-  RootStateType,
-  unknown,
-  OpenInstallerActionType
-> {
-  return dispatch => {
-    window.IPC.addSetupMenuItems();
-
-    dispatch({
-      type: OPEN_INSTALLER,
-    });
-  };
-}
-
 function openStandalone(): ThunkAction<
   void,
   RootStateType,
@@ -145,7 +91,7 @@ function openStandalone(): ThunkAction<
   OpenStandaloneActionType
 > {
   return dispatch => {
-    if (window.getEnvironment() === 'production') {
+    if (getEnvironment() === Environment.PackagedApp) {
       return;
     }
 
@@ -154,16 +100,6 @@ function openStandalone(): ThunkAction<
       type: OPEN_STANDALONE,
     });
   };
-}
-
-function openBackupImport(): OpenBackupImportActionType {
-  return { type: OPEN_BACKUP_IMPORT };
-}
-
-function updateBackupImportProgress(
-  payload: UpdateBackupImportProgressActionType['payload']
-): UpdateBackupImportProgressActionType {
-  return { type: UPDATE_BACKUP_IMPORT_PROGRESS, payload };
 }
 
 // Reducer
@@ -177,7 +113,9 @@ export function getEmptyState(): AppStateType {
 
 export function reducer(
   state: Readonly<AppStateType> = getEmptyState(),
-  action: Readonly<AppActionType>
+  action: Readonly<
+    AppActionType | StartInstallerActionType | ShowBackupImportActionType
+  >
 ): AppStateType {
   if (action.type === OPEN_INBOX) {
     return {
@@ -193,13 +131,6 @@ export function reducer(
     };
   }
 
-  if (action.type === OPEN_INSTALLER) {
-    return {
-      ...state,
-      appView: AppViewType.Installer,
-    };
-  }
-
   if (action.type === OPEN_STANDALONE) {
     return {
       ...state,
@@ -207,22 +138,11 @@ export function reducer(
     };
   }
 
-  if (action.type === OPEN_BACKUP_IMPORT) {
+  // Foreign action
+  if (action.type === START_INSTALLER || action.type === SHOW_BACKUP_IMPORT) {
     return {
       ...state,
-      appView: AppViewType.BackupImport,
-    };
-  }
-
-  if (action.type === UPDATE_BACKUP_IMPORT_PROGRESS) {
-    if (state.appView !== AppViewType.BackupImport) {
-      return state;
-    }
-
-    return {
-      ...state,
-      currentBytes: action.payload.currentBytes,
-      totalBytes: action.payload.totalBytes,
+      appView: AppViewType.Installer,
     };
   }
 

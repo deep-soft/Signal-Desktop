@@ -941,6 +941,9 @@
   "icu:viewRecentMedia": {
     "messageformat": "Shihni media së fundi"
   },
+  "icu:allMediaMenuItem": {
+    "messageformat": "All media"
+  },
   "icu:back": {
     "messageformat": "Mbrapsht"
   },
@@ -1210,9 +1213,6 @@
   },
   "icu:calling__cant-join": {
     "messageformat": "Nuk mund t'i bashkohesh thirrjes"
-  },
-  "icu:calling__dialog-already-in-call": {
-    "messageformat": "Je tashmë në telefonatë."
   },
   "icu:calling__call-link-connection-issues": {
     "messageformat": "Nuk gjendet informacioni i lidhjes së telefonatës. Kontrollo lidhjen e rrjetit dhe riprovo."
@@ -2705,6 +2705,9 @@
   "icu:CallControls__InfoDisplay--adhoc-call": {
     "messageformat": "Lidhja e thirrjes"
   },
+  "icu:CallControls__InfoDisplay--group-call": {
+    "messageformat": "Group call"
+  },
   "icu:CallControls__InfoDisplay--adhoc-join-request-pending": {
     "messageformat": "Në pritje për të hyrë"
   },
@@ -3522,13 +3525,37 @@
     "messageformat": "Prek “Dhuro për Signal” dhe pajtohu"
   },
   "icu:BackupImportScreen__title": {
-    "messageformat": "Syncing messages"
+    "messageformat": "Po sinkronizohen mesazhet"
   },
   "icu:BackupImportScreen__progressbar-hint": {
-    "messageformat": "Downloading {currentSize} of {totalSize} ({fractionComplete,number,percent})..."
+    "messageformat": "Po shkarkohen {currentSize} nga {totalSize} ({fractionComplete,number,percent})..."
+  },
+  "icu:BackupImportScreen__progressbar-hint--preparing": {
+    "messageformat": "Preparing to download..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "This may take a few minutes depending on the size of your backup"
+    "messageformat": "Kjo mund të zgjasë disa minuta në varësi të madhësisë së kopjeruajtjes"
+  },
+  "icu:BackupImportScreen__cancel": {
+    "messageformat": "Cancel transfer"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__title": {
+    "messageformat": "Cancel transfer?"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__body": {
+    "messageformat": "Your messages and media have not completed restoring. If you choose to cancel, you can transfer again from Settings."
+  },
+  "icu:BackupImportScreen__cancel-confirmation__cancel": {
+    "messageformat": "Continue transfer"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__confirm": {
+    "messageformat": "Cancel transfer"
+  },
+  "icu:BackupMediaDownloadProgress__title": {
+    "messageformat": "Duke rikthyer median"
+  },
+  "icu:BackupMediaDownloadProgress__progressbar-hint": {
+    "messageformat": "{currentSize} nga {totalSize} ({fractionComplete,number,percent})"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Zgjeroje"
@@ -3580,6 +3607,9 @@
   },
   "icu:ContactModal--already-in-call": {
     "messageformat": "Jeni tashmë në një thirrje"
+  },
+  "icu:ContactModal--voice": {
+    "messageformat": "Voice"
   },
   "icu:showChatColorEditor": {
     "messageformat": "Ngjyra e sfondit të bisedës"
@@ -3762,7 +3792,7 @@
     "messageformat": "Ricaktoni lidhje"
   },
   "icu:GroupLinkManagement--approve-label": {
-    "messageformat": "Miratoni anëtarë të rinj"
+    "messageformat": "Require admin approval"
   },
   "icu:GroupLinkManagement--approve-info": {
     "messageformat": "Kërko doemos që një përgjegjës të miratojë anëtarë të rinj që vijnë prej një lidhjeje grupi"
@@ -3949,12 +3979,6 @@
   },
   "icu:MessageAudio--playbackRatep5": {
     "messageformat": ",5"
-  },
-  "icu:emptyInboxMessage": {
-    "messageformat": "Klikoni {composeIcon} më sipër dhe kërkoni për kontaktet ose grupet tuaja për t’u dërguar mesazh."
-  },
-  "icu:composeIcon": {
-    "messageformat": "buton hartimi"
   },
   "icu:emptyInbox__title": {
     "messageformat": "Asnjë bisedë"
@@ -4875,7 +4899,7 @@
     "messageformat": "Kliko <newStoryIcon>Shto një postim të përkohshëm</newStoryIcon> për të shtuar një përditësim."
   },
   "icu:Stories__placeholder-with-icon--text-2": {
-    "messageformat": "Click <newStoryButtonIcon></newStoryButtonIcon> to add an update."
+    "messageformat": "Kliko <newStoryButtonIcon></newStoryButtonIcon> për të shtuar një përditësim."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} për {group}"
@@ -5121,10 +5145,10 @@
     "messageformat": "Reagoi ndaj postimit të përkohshëm"
   },
   "icu:StoryViewsNRepliesModal__reacted--you": {
-    "messageformat": "Reacted to the story"
+    "messageformat": "Reagove ndaj postimit të përkohshëm"
   },
   "icu:StoryViewsNRepliesModal__reacted--someone-else": {
-    "messageformat": "Reacted to the story"
+    "messageformat": "Reagoi ndaj postimit të përkohshëm"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
     "messageformat": "You can’t reply to this story because you’re no longer a member of this group."
@@ -5421,14 +5445,11 @@
   "icu:CallsTab__ToastCallHistoryCleared": {
     "messageformat": "Historia e thirrjeve u fshi"
   },
-  "icu:CallsTab__EmptyStateText": {
-    "messageformat": "Kliko për të parë ose nisur një telefonatë"
-  },
   "icu:CallsTab__EmptyStateText--with-icon": {
     "messageformat": "Kliko <newCallIcon>Thirrje e re</newCallIcon> për të nisur një thirrje të re zanore ose me video."
   },
   "icu:CallsTab__EmptyStateText--with-icon-2": {
-    "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call."
+    "messageformat": "Kliko <newCallButtonIcon></newCallButtonIcon> për të nisur një thirrje të re zanore ose me video."
   },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Kërko"
@@ -5438,9 +5459,6 @@
   },
   "icu:CallsList__ToggleFilterByMissed__RoleDescription": {
     "messageformat": "Shfaqe/Fshihe"
-  },
-  "icu:CallsList__EmptyState--noQuery": {
-    "messageformat": "Nuk ka thirrje së voni. Fillo duke telefonuar një mik."
   },
   "icu:CallsList__EmptyState--noQuery__title": {
     "messageformat": "Nuk ka thirrje"
@@ -5496,21 +5514,6 @@
   "icu:CallsNewCallButton--return": {
     "messageformat": "Kthehu"
   },
-  "icu:CallsNewCallButtonTooltip--in-another-call": {
-    "messageformat": "Duhet të largohesh nga thirrja aktuale përpara se t'i bashkohesh një thirrjeje të re"
-  },
-  "icu:CallHistory__Description--Default": {
-    "messageformat": "{type, select, Audio {{direction, select, Outgoing {Thirrje zanore dalëse} other {Thirrje zanore hyrëse}}} Video {{direction, select, Outgoing {Thirrje video nga ju} other {Thirrje video ardhëse}}} Group {{direction, select, Outgoing {Thirrje dalëse në grup} other {Thirrje hyrëse në grup}}} other {{direction, select, Outgoing {Thirrje nga ju} other {Thirrje ardhëse}}}}"
-  },
-  "icu:CallHistory__Description--Missed": {
-    "messageformat": "{type, select, Audio {Thirrje zanore e humbur} Video {Humbët thirrje video} Group {Thirrje e humbur në grup} other {Thirrje e humbur}}"
-  },
-  "icu:CallHistory__Description--Unanswered": {
-    "messageformat": "{type, select, Audio {Thirrje zanore pa përgjigje} Video {Thirrje video pa përgjigje} Group {Thirrje në grup pa përgjigje} other {Thirrje  pa përgjigje}}"
-  },
-  "icu:CallHistory__Description--Declined": {
-    "messageformat": "{type, select, Audio {Thirrje zanore e refuzuar} Video {Thirrje me video e refuzuar} Group {Thirrje në grup e refuzuar} other {Thirrje  e refuzuar}}"
-  },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Lidhja e thirrjes"
   },
@@ -5536,7 +5539,10 @@
     "messageformat": "Përpuno emrin e telefonuesit"
   },
   "icu:CallLinkDetails__ApproveAllMembersLabel": {
-    "messageformat": "Mirato të gjithë anëtarët"
+    "messageformat": "Require admin approval"
+  },
+  "icu:CallLinkDetails__SettingTooltip--disabled-for-active-call": {
+    "messageformat": "This setting can't be changed while the call is active"
   },
   "icu:CallLinkDetails__CopyLink": {
     "messageformat": "Kopjo linkun"
@@ -5559,6 +5565,9 @@
   "icu:CallLinkDetails__DeleteLinkModal__Delete": {
     "messageformat": "Fshije"
   },
+  "icu:CallLinkDetails__DeleteLinkTooltip--disabled-for-active-call": {
+    "messageformat": "This link can't be deleted while the call is active"
+  },
   "icu:CallLinkEditModal__Title": {
     "messageformat": "Të dhënat e lidhjes së thirrjes"
   },
@@ -5572,7 +5581,13 @@
     "messageformat": "Përpuno emrin e telefonuesit"
   },
   "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
-    "messageformat": "Mirato të gjithë anëtarët"
+    "messageformat": "Require admin approval"
+  },
+  "icu:CallLinkPendingParticipantModal__ApproveButtonLabel": {
+    "messageformat": "Approve entry"
+  },
+  "icu:CallLinkPendingParticipantModal__DenyButtonLabel": {
+    "messageformat": "Deny entry"
   },
   "icu:CallLinkRestrictionsSelect__Option--Off": {
     "messageformat": "Joaktiv"
@@ -5629,13 +5644,16 @@
     "messageformat": "Rregullme të vogla, riparime të gabimeve dhe përmirësime të mbarëvajtjes.  Faleminderit që përdorni Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.22--0": {
-    "messageformat": "Signal Desktop tani mund të rifillojë automatikisht shkarkimet e ndërprera të bashkëngjitjes nga aty ku kanë ngecur, kështu që nuk do të duhet të presësh aq gjatë të qeshësh edhe nëse e mbyll kapakun e laptopit përpara se të përfundojë transferimi i memes që të dërgoi shoku yt."
-  },
   "icu:WhatsNew__v7.23--0": {
-    "messageformat": "Chats now open faster than ever thanks to another round of performance improvements, so you can click on your cliques and see what they're saying real quick."
+    "messageformat": "Bisedat hapen tani më shpejt se kurrë falë një raundi tjetër përmirësimesh të performancës, kështu që mund të klikosh klikat e tua dhe të shohësh se çfarë po thonë shumë shpejt."
   },
   "icu:WhatsNew__v7.23--1": {
-    "messageformat": "We also fixed a handful of bugs, including one that sometimes caused \"Unknown contact started a video call\" to appear in the chat list summary after you started the call. Even if you're still on a journey of self-discovery, you are never completely unknown to yourself."
+    "messageformat": "Rregulluam edhe disa defekte, duke përfshirë atë, i cili ndonjëherë shkaktonte shfaqjen e mesazhit \"Kontakti i panjohur filloi një telefonatë video\" në përmbledhjen e listës së bisedave pasi të kesh filluar thirrjen. Edhe nëse je ende në udhëtim vetë-zbulues, nuk je kurrë plotësisht i panjohur për veten."
+  },
+  "icu:WhatsNew__v7.24--0": {
+    "messageformat": "Përditësimi rregullon defektin ku hapja e njoftimit të një telefonate të humbur në një pajisje nuk do të fshinte automatikisht njoftimin e asaj telefonate të humbur në pajisje të tjera, gjë që ishte një mundësi e humbur për bashkëjetesën e mirë të listës së telefonatave të humbura."
+  },
+  "icu:WhatsNew__v7.25--0": {
+    "messageformat": "Take a trip down memory lane with the new and improved \"All Media\" view. Now when you click on a chat header and select \"See all\" in the shared media section, older photos and videos will automatically appear as you scroll instead of being limited to the most recent entries."
   }
 }

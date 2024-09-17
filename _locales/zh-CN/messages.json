@@ -941,6 +941,9 @@
   "icu:viewRecentMedia": {
     "messageformat": "查看最近媒体"
   },
+  "icu:allMediaMenuItem": {
+    "messageformat": "All media"
+  },
   "icu:back": {
     "messageformat": "返回"
   },
@@ -1210,9 +1213,6 @@
   },
   "icu:calling__cant-join": {
     "messageformat": "无法加入通话"
-  },
-  "icu:calling__dialog-already-in-call": {
-    "messageformat": "您已在通话中。"
   },
   "icu:calling__call-link-connection-issues": {
     "messageformat": "无法获取通话链接信息。请检查您的互联网连接并重试。"
@@ -2705,6 +2705,9 @@
   "icu:CallControls__InfoDisplay--adhoc-call": {
     "messageformat": "通话链接"
   },
+  "icu:CallControls__InfoDisplay--group-call": {
+    "messageformat": "Group call"
+  },
   "icu:CallControls__InfoDisplay--adhoc-join-request-pending": {
     "messageformat": "正在等待通过"
   },
@@ -3522,13 +3525,37 @@
     "messageformat": "点击“给 Signal 捐款”并设置定期捐款"
   },
   "icu:BackupImportScreen__title": {
-    "messageformat": "Syncing messages"
+    "messageformat": "正在同步消息"
   },
   "icu:BackupImportScreen__progressbar-hint": {
-    "messageformat": "Downloading {currentSize} of {totalSize} ({fractionComplete,number,percent})..."
+    "messageformat": "正在下载 {currentSize}/{totalSize} ({fractionComplete,number,percent})…"
+  },
+  "icu:BackupImportScreen__progressbar-hint--preparing": {
+    "messageformat": "Preparing to download..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "This may take a few minutes depending on the size of your backup"
+    "messageformat": "这可能需要几分钟时间，视您的备份大小而定"
+  },
+  "icu:BackupImportScreen__cancel": {
+    "messageformat": "Cancel transfer"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__title": {
+    "messageformat": "Cancel transfer?"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__body": {
+    "messageformat": "Your messages and media have not completed restoring. If you choose to cancel, you can transfer again from Settings."
+  },
+  "icu:BackupImportScreen__cancel-confirmation__cancel": {
+    "messageformat": "Continue transfer"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__confirm": {
+    "messageformat": "Cancel transfer"
+  },
+  "icu:BackupMediaDownloadProgress__title": {
+    "messageformat": "正在恢复媒体"
+  },
+  "icu:BackupMediaDownloadProgress__progressbar-hint": {
+    "messageformat": "{currentSize}/{totalSize}（{fractionComplete,number,percent}）"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "扩展"
@@ -3580,6 +3607,9 @@
   },
   "icu:ContactModal--already-in-call": {
     "messageformat": "您已在通话中"
+  },
+  "icu:ContactModal--voice": {
+    "messageformat": "Voice"
   },
   "icu:showChatColorEditor": {
     "messageformat": "聊天颜色"
@@ -3762,7 +3792,7 @@
     "messageformat": "重置链接"
   },
   "icu:GroupLinkManagement--approve-label": {
-    "messageformat": "批准新成员"
+    "messageformat": "Require admin approval"
   },
   "icu:GroupLinkManagement--approve-info": {
     "messageformat": "新成员通过群组链接加入时，需管理员批准。"
@@ -3949,12 +3979,6 @@
   },
   "icu:MessageAudio--playbackRatep5": {
     "messageformat": "0.5"
-  },
-  "icu:emptyInboxMessage": {
-    "messageformat": "点击上方 的 {composeIcon}，搜索发送消息的联系人或群组。"
-  },
-  "icu:composeIcon": {
-    "messageformat": "撰写按钮"
   },
   "icu:emptyInbox__title": {
     "messageformat": "无聊天"
@@ -4875,7 +4899,7 @@
     "messageformat": "点击<newStoryIcon>添加动态</newStoryIcon>来添加更新。"
   },
   "icu:Stories__placeholder-with-icon--text-2": {
-    "messageformat": "Click <newStoryButtonIcon></newStoryButtonIcon> to add an update."
+    "messageformat": "点击 <newStoryButtonIcon></newStoryButtonIcon> 来添加新动态吧。"
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name}发送给{group}"
@@ -5121,10 +5145,10 @@
     "messageformat": "回应了此动态"
   },
   "icu:StoryViewsNRepliesModal__reacted--you": {
-    "messageformat": "Reacted to the story"
+    "messageformat": "回应了此动态"
   },
   "icu:StoryViewsNRepliesModal__reacted--someone-else": {
-    "messageformat": "Reacted to the story"
+    "messageformat": "回应了此动态"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
     "messageformat": "您已不是此群组的成员，因此不能回复此动态。"
@@ -5421,14 +5445,11 @@
   "icu:CallsTab__ToastCallHistoryCleared": {
     "messageformat": "通话记录已清空"
   },
-  "icu:CallsTab__EmptyStateText": {
-    "messageformat": "点击查看或发起通话"
-  },
   "icu:CallsTab__EmptyStateText--with-icon": {
     "messageformat": "点击<newCallIcon>新通话</newCallIcon>来发起一个新的语音或视频通话。"
   },
   "icu:CallsTab__EmptyStateText--with-icon-2": {
-    "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call."
+    "messageformat": "点击 <newCallButtonIcon></newCallButtonIcon> 来开始发起一个新的语音或视频通话吧。"
   },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "搜索"
@@ -5438,9 +5459,6 @@
   },
   "icu:CallsList__ToggleFilterByMissed__RoleDescription": {
     "messageformat": "切换"
-  },
-  "icu:CallsList__EmptyState--noQuery": {
-    "messageformat": "没有最近呼叫。 呼叫朋友开始互动吧。"
   },
   "icu:CallsList__EmptyState--noQuery__title": {
     "messageformat": "没有通话"
@@ -5496,21 +5514,6 @@
   "icu:CallsNewCallButton--return": {
     "messageformat": "返回"
   },
-  "icu:CallsNewCallButtonTooltip--in-another-call": {
-    "messageformat": "您必须退出当前通话才能加入到其他通话中"
-  },
-  "icu:CallHistory__Description--Default": {
-    "messageformat": "{type, select, Audio {{direction, select, Outgoing {拨出语音通话} other {语音来电}}} Video {{direction, select, Outgoing {拨出视频通话} other {视频来电}}} Group {{direction, select, Outgoing {拨出群组通话} other {拨入群组通话}}} other {{direction, select, Outgoing {呼叫} other {来电}}}}"
-  },
-  "icu:CallHistory__Description--Missed": {
-    "messageformat": "{type, select, Audio {未接语音来电} Video {未接视频来电} Group {未接群组通话} other {未接来电}}"
-  },
-  "icu:CallHistory__Description--Unanswered": {
-    "messageformat": "{type, select, Audio {未接语音通话} Video {未接视频通话} Group {未接群组通话} other {未接通话}}"
-  },
-  "icu:CallHistory__Description--Declined": {
-    "messageformat": "{type, select, Audio {拒接的语音通话} Video {拒接的视频通话} Group {拒接的群组通话} other {拒接的通话}}"
-  },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "通话链接"
   },
@@ -5536,7 +5539,10 @@
     "messageformat": "编辑通话名称"
   },
   "icu:CallLinkDetails__ApproveAllMembersLabel": {
-    "messageformat": "批准所有成员"
+    "messageformat": "Require admin approval"
+  },
+  "icu:CallLinkDetails__SettingTooltip--disabled-for-active-call": {
+    "messageformat": "This setting can't be changed while the call is active"
   },
   "icu:CallLinkDetails__CopyLink": {
     "messageformat": "复制链接"
@@ -5559,6 +5565,9 @@
   "icu:CallLinkDetails__DeleteLinkModal__Delete": {
     "messageformat": "删除"
   },
+  "icu:CallLinkDetails__DeleteLinkTooltip--disabled-for-active-call": {
+    "messageformat": "This link can't be deleted while the call is active"
+  },
   "icu:CallLinkEditModal__Title": {
     "messageformat": "通话链接详情"
   },
@@ -5572,7 +5581,13 @@
     "messageformat": "编辑通话名称"
   },
   "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
-    "messageformat": "批准所有成员"
+    "messageformat": "Require admin approval"
+  },
+  "icu:CallLinkPendingParticipantModal__ApproveButtonLabel": {
+    "messageformat": "Approve entry"
+  },
+  "icu:CallLinkPendingParticipantModal__DenyButtonLabel": {
+    "messageformat": "Deny entry"
   },
   "icu:CallLinkRestrictionsSelect__Option--Off": {
     "messageformat": "关"
@@ -5629,13 +5644,16 @@
     "messageformat": "我们进行了功能微调、漏洞修复和性能强化。感谢使用 Signal！",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.22--0": {
-    "messageformat": "Signal Desktop 现在可以自动恢复中断的附件下载。"
-  },
   "icu:WhatsNew__v7.23--0": {
-    "messageformat": "Chats now open faster than ever thanks to another round of performance improvements, so you can click on your cliques and see what they're saying real quick."
+    "messageformat": "得益于新一轮的性能优化，现在用户可以更快地打开聊天功能。"
   },
   "icu:WhatsNew__v7.23--1": {
-    "messageformat": "We also fixed a handful of bugs, including one that sometimes caused \"Unknown contact started a video call\" to appear in the chat list summary after you started the call. Even if you're still on a journey of self-discovery, you are never completely unknown to yourself."
+    "messageformat": "我们还修复了一些错误，包括一个有时会导致“未知联系人发起了一个视频通话”在您开始通话后出现在聊天列表摘要中的错误。"
+  },
+  "icu:WhatsNew__v7.24--0": {
+    "messageformat": "此次更新修复了一个漏洞：当用户在一台设备上查看未接来电时，该操作不会自动清除其他设备上的未接来电提示。"
+  },
+  "icu:WhatsNew__v7.25--0": {
+    "messageformat": "Take a trip down memory lane with the new and improved \"All Media\" view. Now when you click on a chat header and select \"See all\" in the shared media section, older photos and videos will automatically appear as you scroll instead of being limited to the most recent entries."
   }
 }

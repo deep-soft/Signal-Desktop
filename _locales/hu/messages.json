@@ -941,6 +941,9 @@
   "icu:viewRecentMedia": {
     "messageformat": "Friss médiafájlok megtekintése"
   },
+  "icu:allMediaMenuItem": {
+    "messageformat": "All media"
+  },
   "icu:back": {
     "messageformat": "Vissza"
   },
@@ -1210,9 +1213,6 @@
   },
   "icu:calling__cant-join": {
     "messageformat": "Nem lehet csatlakozni a híváshoz"
-  },
-  "icu:calling__dialog-already-in-call": {
-    "messageformat": "Már csatlakoztál egy híváshoz."
   },
   "icu:calling__call-link-connection-issues": {
     "messageformat": "Nem sikerült lehívni a híváskapcsolati információkat. Kérjük, ellenőrizd a hálózati kapcsolatot és próbáld újra."
@@ -2705,6 +2705,9 @@
   "icu:CallControls__InfoDisplay--adhoc-call": {
     "messageformat": "Híváshivatkozás"
   },
+  "icu:CallControls__InfoDisplay--group-call": {
+    "messageformat": "Group call"
+  },
   "icu:CallControls__InfoDisplay--adhoc-join-request-pending": {
     "messageformat": "Beengedésre vár"
   },
@@ -3522,13 +3525,37 @@
     "messageformat": "Koppints az „Adományozás a Signalnak” lehetőségre, és iratkozz fel"
   },
   "icu:BackupImportScreen__title": {
-    "messageformat": "Syncing messages"
+    "messageformat": "Üzenetek szinkronizálása"
   },
   "icu:BackupImportScreen__progressbar-hint": {
-    "messageformat": "Downloading {currentSize} of {totalSize} ({fractionComplete,number,percent})..."
+    "messageformat": "{totalSize}/{currentSize} ({fractionComplete,number,percent}) letöltése..."
+  },
+  "icu:BackupImportScreen__progressbar-hint--preparing": {
+    "messageformat": "Preparing to download..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "This may take a few minutes depending on the size of your backup"
+    "messageformat": "Ez a biztonsági másolat méretétől függően eltarthat néhány percig"
+  },
+  "icu:BackupImportScreen__cancel": {
+    "messageformat": "Cancel transfer"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__title": {
+    "messageformat": "Cancel transfer?"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__body": {
+    "messageformat": "Your messages and media have not completed restoring. If you choose to cancel, you can transfer again from Settings."
+  },
+  "icu:BackupImportScreen__cancel-confirmation__cancel": {
+    "messageformat": "Continue transfer"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__confirm": {
+    "messageformat": "Cancel transfer"
+  },
+  "icu:BackupMediaDownloadProgress__title": {
+    "messageformat": "Médiafájl visszaállítása"
+  },
+  "icu:BackupMediaDownloadProgress__progressbar-hint": {
+    "messageformat": "{currentSize}/{totalSize} ({fractionComplete,number,percent})"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Bővítés"
@@ -3580,6 +3607,9 @@
   },
   "icu:ContactModal--already-in-call": {
     "messageformat": "Már beléptél a hívásba"
+  },
+  "icu:ContactModal--voice": {
+    "messageformat": "Voice"
   },
   "icu:showChatColorEditor": {
     "messageformat": "Csevegés színe"
@@ -3762,7 +3792,7 @@
     "messageformat": "Hivatkozás cseréje"
   },
   "icu:GroupLinkManagement--approve-label": {
-    "messageformat": "Új tagok jóváhagyása"
+    "messageformat": "Require admin approval"
   },
   "icu:GroupLinkManagement--approve-info": {
     "messageformat": "Admin általi jóváhagyás szükséges csoporthivatkozással csatlakozó tagok felvételéhez."
@@ -3949,12 +3979,6 @@
   },
   "icu:MessageAudio--playbackRatep5": {
     "messageformat": ",5"
-  },
-  "icu:emptyInboxMessage": {
-    "messageformat": "Kattints az {composeIcon}ra a címzettnek szánt kontakt vagy csoport kikereséséhez!"
-  },
-  "icu:composeIcon": {
-    "messageformat": "új üzenet gomb"
   },
   "icu:emptyInbox__title": {
     "messageformat": "Nincs csevegés"
@@ -4875,7 +4899,7 @@
     "messageformat": "Kattints a <newStoryIcon>Történet hozzáadása</newStoryIcon> lehetőségre frissítés hozzáadásához."
   },
   "icu:Stories__placeholder-with-icon--text-2": {
-    "messageformat": "Click <newStoryButtonIcon></newStoryButtonIcon> to add an update."
+    "messageformat": "Kattints a <newStoryButtonIcon></newStoryButtonIcon> lehetőségre frissítés hozzáadásához."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} → {group}"
@@ -5121,10 +5145,10 @@
     "messageformat": "Reagált a Történetre"
   },
   "icu:StoryViewsNRepliesModal__reacted--you": {
-    "messageformat": "Reacted to the story"
+    "messageformat": "Reagáltál a történetre"
   },
   "icu:StoryViewsNRepliesModal__reacted--someone-else": {
-    "messageformat": "Reacted to the story"
+    "messageformat": "Reagált a történetre"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
     "messageformat": "Nem válaszolhatsz erre a Történetre, mert már nem vagy tagja ennek a csoportnak."
@@ -5421,14 +5445,11 @@
   "icu:CallsTab__ToastCallHistoryCleared": {
     "messageformat": "Hívás napló törölve"
   },
-  "icu:CallsTab__EmptyStateText": {
-    "messageformat": "A hívás megtekintéséhez vagy indításához kattints ide"
-  },
   "icu:CallsTab__EmptyStateText--with-icon": {
     "messageformat": "Kattints az <newCallIcon>Új hívás</newCallIcon> lehetőségre új hang- vagy videohívás indításához."
   },
   "icu:CallsTab__EmptyStateText--with-icon-2": {
-    "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call."
+    "messageformat": "Kattints a <newCallButtonIcon></newCallButtonIcon> lehetőségre új hang- vagy videohívás indításához."
   },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Keresés"
@@ -5438,9 +5459,6 @@
   },
   "icu:CallsList__ToggleFilterByMissed__RoleDescription": {
     "messageformat": "Váltás"
-  },
-  "icu:CallsList__EmptyState--noQuery": {
-    "messageformat": "Nincsenek legutóbbi hívások. Először hívd fel egy ismerősödet."
   },
   "icu:CallsList__EmptyState--noQuery__title": {
     "messageformat": "Nincsenek hívások"
@@ -5496,21 +5514,6 @@
   "icu:CallsNewCallButton--return": {
     "messageformat": "Vissza"
   },
-  "icu:CallsNewCallButtonTooltip--in-another-call": {
-    "messageformat": "Egy új híváshoz való csatlakozáshoz előbb ki kell lépned az aktuális hívásból"
-  },
-  "icu:CallHistory__Description--Default": {
-    "messageformat": "{type, select, Audio {{direction, select, Outgoing {Kimenő hanghívás} other {Bejövő hanghívás}}} Video {{direction, select, Outgoing {Kimenő videóhívás} other {Bejövő videóhívás}}} Group {{direction, select, Outgoing {Kimenő csoportos hívás} other {Bejövő csoportos hívás}}} other {{direction, select, Outgoing {Kimenő hívás} other {Bejövő hívás}}}}"
-  },
-  "icu:CallHistory__Description--Missed": {
-    "messageformat": "{type, select, Audio {Nem fogadott hanghívás} Video {Nem fogadott videóhívás} Group {Nem fogadott csoporthívás} other {Nem fogadott hívás}}"
-  },
-  "icu:CallHistory__Description--Unanswered": {
-    "messageformat": "{type, select, Audio {Nem fogadott hanghívás} Video {Nem fogadott videóhívás} Group {Nem fogadott csoporthívás} other {Nem fogadott hívás}}"
-  },
-  "icu:CallHistory__Description--Declined": {
-    "messageformat": "{type, select, Audio {Elutasított hanghívás} Video {Elutasított videohívás} Group {Elutasított csoporthívás} other {Elutasított hívás}}"
-  },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Híváshivatkozás"
   },
@@ -5536,7 +5539,10 @@
     "messageformat": "Hívás nevének szerkesztése"
   },
   "icu:CallLinkDetails__ApproveAllMembersLabel": {
-    "messageformat": "Összes tag jóváhagyása"
+    "messageformat": "Require admin approval"
+  },
+  "icu:CallLinkDetails__SettingTooltip--disabled-for-active-call": {
+    "messageformat": "This setting can't be changed while the call is active"
   },
   "icu:CallLinkDetails__CopyLink": {
     "messageformat": "Hivatkozás másolása"
@@ -5559,6 +5565,9 @@
   "icu:CallLinkDetails__DeleteLinkModal__Delete": {
     "messageformat": "Törlés"
   },
+  "icu:CallLinkDetails__DeleteLinkTooltip--disabled-for-active-call": {
+    "messageformat": "This link can't be deleted while the call is active"
+  },
   "icu:CallLinkEditModal__Title": {
     "messageformat": "Híváslink részletei"
   },
@@ -5572,7 +5581,13 @@
     "messageformat": "Hívás nevének szerkesztése"
   },
   "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
-    "messageformat": "Összes tag jóváhagyása"
+    "messageformat": "Require admin approval"
+  },
+  "icu:CallLinkPendingParticipantModal__ApproveButtonLabel": {
+    "messageformat": "Approve entry"
+  },
+  "icu:CallLinkPendingParticipantModal__DenyButtonLabel": {
+    "messageformat": "Deny entry"
   },
   "icu:CallLinkRestrictionsSelect__Option--Off": {
     "messageformat": "Ki"
@@ -5629,13 +5644,16 @@
     "messageformat": "Apró finomítások, hibajavítások és teljesítménynövelések. Köszönjük, hogy a Signalt használod!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.22--0": {
-    "messageformat": "A Signal Desktop mostantól automatikusan folytathatja a megszakított mellékletletöltéseket."
-  },
   "icu:WhatsNew__v7.23--0": {
-    "messageformat": "Chats now open faster than ever thanks to another round of performance improvements, so you can click on your cliques and see what they're saying real quick."
+    "messageformat": "Az újabb teljesítményfejlesztéseknek hála a csevegés gyorsabban megnyílik, mint valaha."
   },
   "icu:WhatsNew__v7.23--1": {
-    "messageformat": "We also fixed a handful of bugs, including one that sometimes caused \"Unknown contact started a video call\" to appear in the chat list summary after you started the call. Even if you're still on a journey of self-discovery, you are never completely unknown to yourself."
+    "messageformat": "Kijavítottunk néhány olyan hibát is, amely miatt a hívás indítása után néha az „Ismeretlen névjegy indított videohívást” üzenet jelent meg a csevegőlista összefoglalójában."
+  },
+  "icu:WhatsNew__v7.24--0": {
+    "messageformat": "Ez a frissítés kijavítja azt a hibát, amely miatt egy nem fogadott hívás megtekintése az egyik eszközön nem törli automatikusan a nem fogadott hívás jelzését a többi eszközödön."
+  },
+  "icu:WhatsNew__v7.25--0": {
+    "messageformat": "Take a trip down memory lane with the new and improved \"All Media\" view. Now when you click on a chat header and select \"See all\" in the shared media section, older photos and videos will automatically appear as you scroll instead of being limited to the most recent entries."
   }
 }

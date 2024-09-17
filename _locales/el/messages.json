@@ -941,6 +941,9 @@
   "icu:viewRecentMedia": {
     "messageformat": "Προβολή πρόσφατων πολυμέσων"
   },
+  "icu:allMediaMenuItem": {
+    "messageformat": "All media"
+  },
   "icu:back": {
     "messageformat": "Πίσω"
   },
@@ -1210,9 +1213,6 @@
   },
   "icu:calling__cant-join": {
     "messageformat": "Δεν είναι δυνατή η συμμετοχή στην κλήση"
-  },
-  "icu:calling__dialog-already-in-call": {
-    "messageformat": "Είσαι ήδη σε κάποια κλήση."
   },
   "icu:calling__call-link-connection-issues": {
     "messageformat": "Αποτυχία λήψης πληροφοριών συνδέσμου. Παρακαλούμε έλεγξε τη σύνδεση στο δίκτυο και προσπάθησε ξανά."
@@ -2705,6 +2705,9 @@
   "icu:CallControls__InfoDisplay--adhoc-call": {
     "messageformat": "Σύνδεσμος κλήσης"
   },
+  "icu:CallControls__InfoDisplay--group-call": {
+    "messageformat": "Group call"
+  },
   "icu:CallControls__InfoDisplay--adhoc-join-request-pending": {
     "messageformat": "Σε αναμονή για προσθήκη"
   },
@@ -3522,13 +3525,37 @@
     "messageformat": "Πάτα την επιλογή \"Υποστήριξε το Signal\" και κάνε συνδρομή"
   },
   "icu:BackupImportScreen__title": {
-    "messageformat": "Syncing messages"
+    "messageformat": "Συγχρονισμός μηνυμάτων"
   },
   "icu:BackupImportScreen__progressbar-hint": {
-    "messageformat": "Downloading {currentSize} of {totalSize} ({fractionComplete,number,percent})..."
+    "messageformat": "Λήψη {currentSize} από {totalSize} ({fractionComplete,number,percent})..."
+  },
+  "icu:BackupImportScreen__progressbar-hint--preparing": {
+    "messageformat": "Preparing to download..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "This may take a few minutes depending on the size of your backup"
+    "messageformat": "Μπορεί να διαρκέσει μερικά λεπτά, ανάλογα με το μέγεθος του αντιγράφου ασφαλείας σου"
+  },
+  "icu:BackupImportScreen__cancel": {
+    "messageformat": "Cancel transfer"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__title": {
+    "messageformat": "Cancel transfer?"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__body": {
+    "messageformat": "Your messages and media have not completed restoring. If you choose to cancel, you can transfer again from Settings."
+  },
+  "icu:BackupImportScreen__cancel-confirmation__cancel": {
+    "messageformat": "Continue transfer"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__confirm": {
+    "messageformat": "Cancel transfer"
+  },
+  "icu:BackupMediaDownloadProgress__title": {
+    "messageformat": "Επαναφορά πολυμέσων"
+  },
+  "icu:BackupMediaDownloadProgress__progressbar-hint": {
+    "messageformat": "{currentSize} από {totalSize} ({fractionComplete,number,percent})"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Ανάπτυξη"
@@ -3580,6 +3607,9 @@
   },
   "icu:ContactModal--already-in-call": {
     "messageformat": "Είσαι ήδη σε κάποια κλήση"
+  },
+  "icu:ContactModal--voice": {
+    "messageformat": "Voice"
   },
   "icu:showChatColorEditor": {
     "messageformat": "Χρώμα συνομιλίας"
@@ -3762,7 +3792,7 @@
     "messageformat": "Επαναφορά συνδέσμου"
   },
   "icu:GroupLinkManagement--approve-label": {
-    "messageformat": "Έγκριση νέων μελών"
+    "messageformat": "Require admin approval"
   },
   "icu:GroupLinkManagement--approve-info": {
     "messageformat": "Να απαιτείται η έγκριση απο διαχειριστή/τρια για νέα μέλη που μπαίνουν από το σύνδεσμο της ομάδας."
@@ -3949,12 +3979,6 @@
   },
   "icu:MessageAudio--playbackRatep5": {
     "messageformat": ",5"
-  },
-  "icu:emptyInboxMessage": {
-    "messageformat": "Κάντε κλικ στο {composeIcon} παραπάνω και αναζητήστε τις επαφές ή τις ομάδες σας για αποστολή μηνύματος."
-  },
-  "icu:composeIcon": {
-    "messageformat": "κουμπί σύνθεσης"
   },
   "icu:emptyInbox__title": {
     "messageformat": "Καμία συνομιλία"
@@ -4875,7 +4899,7 @@
     "messageformat": "Πάτα <newStoryIcon>Προσθήκη ιστορίας</newStoryIcon> για να προσθέσεις κάποιο νέο."
   },
   "icu:Stories__placeholder-with-icon--text-2": {
-    "messageformat": "Click <newStoryButtonIcon></newStoryButtonIcon> to add an update."
+    "messageformat": "Πάτα <newStoryButtonIcon></newStoryButtonIcon> για να προσθέσεις στην ιστορία σου."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} προς {group}"
@@ -5121,10 +5145,10 @@
     "messageformat": "Αντέδρασε στην ιστορία"
   },
   "icu:StoryViewsNRepliesModal__reacted--you": {
-    "messageformat": "Reacted to the story"
+    "messageformat": "Αντέδρασες στην ιστορία"
   },
   "icu:StoryViewsNRepliesModal__reacted--someone-else": {
-    "messageformat": "Reacted to the story"
+    "messageformat": "Αντέδρασε στην ιστορία"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
     "messageformat": "Δεν μπορείς να απαντήσεις σε αυτήν την ιστορία γιατί δεν είσαι πια μέλος της ομάδας."
@@ -5421,14 +5445,11 @@
   "icu:CallsTab__ToastCallHistoryCleared": {
     "messageformat": "Το ιστορικό κλήσεων διαγράφηκε"
   },
-  "icu:CallsTab__EmptyStateText": {
-    "messageformat": "Κάνε κλικ για να δεις ή να ξεκινήσεις μια κλήση"
-  },
   "icu:CallsTab__EmptyStateText--with-icon": {
     "messageformat": "Πάτα <newCallIcon>Νέα κλήση</newCallIcon> για να ξεκινήσεις μια νέα φωνητική κλήση ή μια βιντεοκλήση."
   },
   "icu:CallsTab__EmptyStateText--with-icon-2": {
-    "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call."
+    "messageformat": "Πάτα <newCallButtonIcon></newCallButtonIcon> για να ξεκινήσεις μια νέα φωνητική κλήση ή μια βιντεοκλήση."
   },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Αναζήτηση"
@@ -5438,9 +5459,6 @@
   },
   "icu:CallsList__ToggleFilterByMissed__RoleDescription": {
     "messageformat": "Ενεργοποίηση"
-  },
-  "icu:CallsList__EmptyState--noQuery": {
-    "messageformat": "Δεν υπάρχουν πρόσφατες κλήσεις. Ξεκίνα καλώντας κάποιο φιλαράκι."
   },
   "icu:CallsList__EmptyState--noQuery__title": {
     "messageformat": "Καμία κλήση"
@@ -5496,21 +5514,6 @@
   "icu:CallsNewCallButton--return": {
     "messageformat": "Επιστροφή"
   },
-  "icu:CallsNewCallButtonTooltip--in-another-call": {
-    "messageformat": "Πρέπει να αποχωρήσεις από την τρέχουσα κλήση πριν συνδεθείς σε νέα"
-  },
-  "icu:CallHistory__Description--Default": {
-    "messageformat": "{type, select, Audio {{direction, select, Outgoing {Εξερχόμενη κλήση} other {Εισερχόμενη κλήση}}} Video {{direction, select, Outgoing {Εξερχόμενη βιντεοκλήση} other {Εισερχόμενη βιντεοκλήση}}} Group {{direction, select, Outgoing {Εξερχόμενη ομαδική κλήση} other {Εισερχόμενη ομαδική κλήση}}} other {{direction, select, Outgoing {Εξερχόμενη κλήση} other {Εισερχόμενη κλήση}}}}"
-  },
-  "icu:CallHistory__Description--Missed": {
-    "messageformat": "{type, select, Audio {Αναπάντητη κλήση} Video {Αναπάντητη βιντεοκλήση} Group {Αναπάντητη ομαδική κλήση} other {Αναπάντητη κλήση}}"
-  },
-  "icu:CallHistory__Description--Unanswered": {
-    "messageformat": "{type, select, Audio {Αναπάντητη κλήση} Video {Αναπάντητη βιντεοκλήση} Group {Αναπάντητη ομαδική κλήση} other {Αναπάντητη κλήση}}"
-  },
-  "icu:CallHistory__Description--Declined": {
-    "messageformat": "{type, select, Audio {Απορρίφθηκε μια κλήση} Video {Απορρίφθηκε μια βιντεοκλήση} Group {Απορρίφθηκε μια ομαδική κλήση} other {Απορρίφθηκε μια κλήση}}"
-  },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Σύνδεσμος κλήσης"
   },
@@ -5536,7 +5539,10 @@
     "messageformat": "Επεξεργασία ονόματος κλήσης"
   },
   "icu:CallLinkDetails__ApproveAllMembersLabel": {
-    "messageformat": "Έγκριση όλων των μελών"
+    "messageformat": "Require admin approval"
+  },
+  "icu:CallLinkDetails__SettingTooltip--disabled-for-active-call": {
+    "messageformat": "This setting can't be changed while the call is active"
   },
   "icu:CallLinkDetails__CopyLink": {
     "messageformat": "Αντιγραφή συνδέσμου"
@@ -5559,6 +5565,9 @@
   "icu:CallLinkDetails__DeleteLinkModal__Delete": {
     "messageformat": "Διαγραφή"
   },
+  "icu:CallLinkDetails__DeleteLinkTooltip--disabled-for-active-call": {
+    "messageformat": "This link can't be deleted while the call is active"
+  },
   "icu:CallLinkEditModal__Title": {
     "messageformat": "Λεπτομέρειες συνδέσμου κλήσης"
   },
@@ -5572,7 +5581,13 @@
     "messageformat": "Επεξεργασία ονόματος κλήσης"
   },
   "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
-    "messageformat": "Έγκριση όλων των μελών"
+    "messageformat": "Require admin approval"
+  },
+  "icu:CallLinkPendingParticipantModal__ApproveButtonLabel": {
+    "messageformat": "Approve entry"
+  },
+  "icu:CallLinkPendingParticipantModal__DenyButtonLabel": {
+    "messageformat": "Deny entry"
   },
   "icu:CallLinkRestrictionsSelect__Option--Off": {
     "messageformat": "Ανενεργό"
@@ -5629,13 +5644,16 @@
     "messageformat": "Μικρές τροποποιήσεις, επιδιορθώσεις σφαλμάτων και βελτιώσεις απόδοσης. Ευχαριστούμε που χρησιμοποιείς το Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.22--0": {
-    "messageformat": "Το Signal Desktop μπορεί τώρα να συνεχίσει αυτόματα τις λήψεις συνημμένων που έχουν διακοπεί."
-  },
   "icu:WhatsNew__v7.23--0": {
-    "messageformat": "Chats now open faster than ever thanks to another round of performance improvements, so you can click on your cliques and see what they're saying real quick."
+    "messageformat": "Οι συνομιλίες ανοίγουν τώρα πιο γρήγορα από ποτέ χάρη σε έναν ακόμη γύρο βελτιώσεων απόδοσης."
   },
   "icu:WhatsNew__v7.23--1": {
-    "messageformat": "We also fixed a handful of bugs, including one that sometimes caused \"Unknown contact started a video call\" to appear in the chat list summary after you started the call. Even if you're still on a journey of self-discovery, you are never completely unknown to yourself."
+    "messageformat": "Διορθώσαμε επίσης ορισμένα σφάλματα, συμπεριλαμβανομένου ενός που μερικές φορές προκαλούσε την εμφάνιση της ειδοποίησης «Άγνωστη επαφή ξεκίνησε βιντεοκλήση» στη σύνοψη της λίστας συνομιλιών μετά την έναρξη της κλήσης."
+  },
+  "icu:WhatsNew__v7.24--0": {
+    "messageformat": "Αυτή η ενημέρωση διορθώνει ένα σφάλμα κατά το οποίο η προβολή μιας αναπάντητης κλήσης σε μια συσκευή δεν εκκαθάριζε αυτόματα την ένδειξη για την εν λόγω αναπάντητη κλήση στις άλλες συσκευές σου."
+  },
+  "icu:WhatsNew__v7.25--0": {
+    "messageformat": "Take a trip down memory lane with the new and improved \"All Media\" view. Now when you click on a chat header and select \"See all\" in the shared media section, older photos and videos will automatically appear as you scroll instead of being limited to the most recent entries."
   }
 }

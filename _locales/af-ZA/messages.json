@@ -941,6 +941,9 @@
   "icu:viewRecentMedia": {
     "messageformat": "Kyk na onlangse media"
   },
+  "icu:allMediaMenuItem": {
+    "messageformat": "All media"
+  },
   "icu:back": {
     "messageformat": "Terug"
   },
@@ -1210,9 +1213,6 @@
   },
   "icu:calling__cant-join": {
     "messageformat": "Kan nie by oproep aansluit nie"
-  },
-  "icu:calling__dialog-already-in-call": {
-    "messageformat": "Jy is reeds in 'n oproep."
   },
   "icu:calling__call-link-connection-issues": {
     "messageformat": "Kon nie oproepskakelinligting herroep nie. Gaan asseblief jou netwerkverbinding na en probeer weer."
@@ -2705,6 +2705,9 @@
   "icu:CallControls__InfoDisplay--adhoc-call": {
     "messageformat": "Oproepskakel"
   },
+  "icu:CallControls__InfoDisplay--group-call": {
+    "messageformat": "Group call"
+  },
   "icu:CallControls__InfoDisplay--adhoc-join-request-pending": {
     "messageformat": "Wag om ingelaat te word"
   },
@@ -3522,13 +3525,37 @@
     "messageformat": "Tik op \"Dra by tot Signal\" en teken in"
   },
   "icu:BackupImportScreen__title": {
-    "messageformat": "Syncing messages"
+    "messageformat": "Besig om boodskappe te sinchroniseer"
   },
   "icu:BackupImportScreen__progressbar-hint": {
-    "messageformat": "Downloading {currentSize} of {totalSize} ({fractionComplete,number,percent})..."
+    "messageformat": "Besig om {currentSize} van {totalSize} ({fractionComplete,number,percent}) af te laai…"
+  },
+  "icu:BackupImportScreen__progressbar-hint--preparing": {
+    "messageformat": "Preparing to download..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "This may take a few minutes depending on the size of your backup"
+    "messageformat": "Dit kan 'n paar minute neem, na gelang van die grootte van jou rugsteun"
+  },
+  "icu:BackupImportScreen__cancel": {
+    "messageformat": "Cancel transfer"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__title": {
+    "messageformat": "Cancel transfer?"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__body": {
+    "messageformat": "Your messages and media have not completed restoring. If you choose to cancel, you can transfer again from Settings."
+  },
+  "icu:BackupImportScreen__cancel-confirmation__cancel": {
+    "messageformat": "Continue transfer"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__confirm": {
+    "messageformat": "Cancel transfer"
+  },
+  "icu:BackupMediaDownloadProgress__title": {
+    "messageformat": "Besig om media te herstel"
+  },
+  "icu:BackupMediaDownloadProgress__progressbar-hint": {
+    "messageformat": "{currentSize} van {totalSize} ({fractionComplete,number,percent})"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Vou uit"
@@ -3580,6 +3607,9 @@
   },
   "icu:ContactModal--already-in-call": {
     "messageformat": "Jy is reeds in 'n oproep"
+  },
+  "icu:ContactModal--voice": {
+    "messageformat": "Voice"
   },
   "icu:showChatColorEditor": {
     "messageformat": "Kletskleur"
@@ -3762,7 +3792,7 @@
     "messageformat": "Stel skakel terug"
   },
   "icu:GroupLinkManagement--approve-label": {
-    "messageformat": "Keur nuwe lede goed"
+    "messageformat": "Require admin approval"
   },
   "icu:GroupLinkManagement--approve-info": {
     "messageformat": "’n Admin moet nuwe lede goedkeur wat d.m.v. die groepskakel aansluit"
@@ -3949,12 +3979,6 @@
   },
   "icu:MessageAudio--playbackRatep5": {
     "messageformat": "0,5"
-  },
-  "icu:emptyInboxMessage": {
-    "messageformat": "Klik die {composeIcon} hier bo en soek na kontakte of groepe om ’n boodskap te stuur."
-  },
-  "icu:composeIcon": {
-    "messageformat": "saamstelknop"
   },
   "icu:emptyInbox__title": {
     "messageformat": "Geen kletse nie"
@@ -4875,7 +4899,7 @@
     "messageformat": "Klik op <newStoryIcon>Voeg 'n storie by</newStoryIcon> om 'n opdatering by te voeg."
   },
   "icu:Stories__placeholder-with-icon--text-2": {
-    "messageformat": "Click <newStoryButtonIcon></newStoryButtonIcon> to add an update."
+    "messageformat": "Klik <newStoryButtonIcon></newStoryButtonIcon> om 'n opdatering by te voeg."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} aan {group}"
@@ -5121,10 +5145,10 @@
     "messageformat": "Het op die storie gereageer"
   },
   "icu:StoryViewsNRepliesModal__reacted--you": {
-    "messageformat": "Reacted to the story"
+    "messageformat": "Het op die storie gereageer"
   },
   "icu:StoryViewsNRepliesModal__reacted--someone-else": {
-    "messageformat": "Reacted to the story"
+    "messageformat": "Het op die storie gereageer"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
     "messageformat": "You can’t reply to this story because you’re no longer a member of this group."
@@ -5421,14 +5445,11 @@
   "icu:CallsTab__ToastCallHistoryCleared": {
     "messageformat": "Oproepgeskiedenis uitgevee"
   },
-  "icu:CallsTab__EmptyStateText": {
-    "messageformat": "Klik om 'n oproep te sien of te begin"
-  },
   "icu:CallsTab__EmptyStateText--with-icon": {
     "messageformat": "Klik op <newCallIcon>Nuwe oproep</newCallIcon> om 'n nuwe stem- of video-oproep te begin."
   },
   "icu:CallsTab__EmptyStateText--with-icon-2": {
-    "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call."
+    "messageformat": "Klik <newCallButtonIcon></newCallButtonIcon> om 'n nuwe stem- of video-oproep te begin."
   },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Soek"
@@ -5438,9 +5459,6 @@
   },
   "icu:CallsList__ToggleFilterByMissed__RoleDescription": {
     "messageformat": "Skakel aan of af"
-  },
-  "icu:CallsList__EmptyState--noQuery": {
-    "messageformat": "Geen onlangse oproepe nie. Begin deur 'n vriend te bel."
   },
   "icu:CallsList__EmptyState--noQuery__title": {
     "messageformat": "Geen oproepe nie"
@@ -5496,21 +5514,6 @@
   "icu:CallsNewCallButton--return": {
     "messageformat": "Keer terug"
   },
-  "icu:CallsNewCallButtonTooltip--in-another-call": {
-    "messageformat": "Jy moet die huidige oproep verlaat voordat jy by 'n nuwe oproep aansluit"
-  },
-  "icu:CallHistory__Description--Default": {
-    "messageformat": "{type, select, Audio {{direction, select, Outgoing {Uitgaande stemoproep} other {Inkomende stemoproep}}} Video {{direction, select, Outgoing {Uitgaande video-oproep} other {Inkomende video-oproep}}} Group {{direction, select, Outgoing {Uitgaande groepoproep} other {Inkomende groepoproep}}} other {{direction, select, Outgoing {Uitgaande oproep} other {Inkomende oproep}}}}"
-  },
-  "icu:CallHistory__Description--Missed": {
-    "messageformat": "{type, select, Audio {Gemiste stemoproep} Video {Gemiste video-oproep} Group {Gemiste groepoproep} other {Gemiste oproep}}"
-  },
-  "icu:CallHistory__Description--Unanswered": {
-    "messageformat": "{type, select, Audio {Onbeantwoorde stemoproep} Video {Onbeantwoorde video-oproep} Group {Onbeantwoorde groepoproep} other {Onbeantwoorde oproep}}"
-  },
-  "icu:CallHistory__Description--Declined": {
-    "messageformat": "{type, select, Audio {Stemoproep geweier} Video {Video-oproep geweier} Group {Groepoproep geweier} other {Oproep geweier}}"
-  },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Oproepskakel"
   },
@@ -5536,7 +5539,10 @@
     "messageformat": "Wysig oproepnaam"
   },
   "icu:CallLinkDetails__ApproveAllMembersLabel": {
-    "messageformat": "Keur alle lede goed"
+    "messageformat": "Require admin approval"
+  },
+  "icu:CallLinkDetails__SettingTooltip--disabled-for-active-call": {
+    "messageformat": "This setting can't be changed while the call is active"
   },
   "icu:CallLinkDetails__CopyLink": {
     "messageformat": "Kopieer skakel"
@@ -5559,6 +5565,9 @@
   "icu:CallLinkDetails__DeleteLinkModal__Delete": {
     "messageformat": "Skrap"
   },
+  "icu:CallLinkDetails__DeleteLinkTooltip--disabled-for-active-call": {
+    "messageformat": "This link can't be deleted while the call is active"
+  },
   "icu:CallLinkEditModal__Title": {
     "messageformat": "Oproepskakelbesonderhede"
   },
@@ -5572,7 +5581,13 @@
     "messageformat": "Wysig oproepnaam"
   },
   "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
-    "messageformat": "Keur alle lede goed"
+    "messageformat": "Require admin approval"
+  },
+  "icu:CallLinkPendingParticipantModal__ApproveButtonLabel": {
+    "messageformat": "Approve entry"
+  },
+  "icu:CallLinkPendingParticipantModal__DenyButtonLabel": {
+    "messageformat": "Deny entry"
   },
   "icu:CallLinkRestrictionsSelect__Option--Off": {
     "messageformat": "Af"
@@ -5629,13 +5644,16 @@
     "messageformat": "Klein veranderings, foutregstellings en prestasieverbeterings. Dankie dat jy Signal gebruik!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.22--0": {
-    "messageformat": "Signal Desktop kan nou outomaties onderbroke aflaai van aanhegsels hervat."
-  },
   "icu:WhatsNew__v7.23--0": {
-    "messageformat": "Chats now open faster than ever thanks to another round of performance improvements, so you can click on your cliques and see what they're saying real quick."
+    "messageformat": "Kletse maak nou vinniger oop as ooit tevore danksy nog 'n rondte prestasieverbeterings."
   },
   "icu:WhatsNew__v7.23--1": {
-    "messageformat": "We also fixed a handful of bugs, including one that sometimes caused \"Unknown contact started a video call\" to appear in the chat list summary after you started the call. Even if you're still on a journey of self-discovery, you are never completely unknown to yourself."
+    "messageformat": "Ons het ook 'n handvol foute reggemaak, met inbegrip van een wat soms veroorsaak het dat \"Onbekende kontak het 'n video-oproep begin\" in die kletslys-opsomming verskyn nadat jy die oproep begin het."
+  },
+  "icu:WhatsNew__v7.24--0": {
+    "messageformat": "Hierdie opdatering maak 'n fout reg waar die bekyk van 'n gemiste oproep op een toestel nie outomaties die aanduiding van daardie gemiste oproep op jou ander toestelle sou uitvee nie."
+  },
+  "icu:WhatsNew__v7.25--0": {
+    "messageformat": "Take a trip down memory lane with the new and improved \"All Media\" view. Now when you click on a chat header and select \"See all\" in the shared media section, older photos and videos will automatically appear as you scroll instead of being limited to the most recent entries."
   }
 }

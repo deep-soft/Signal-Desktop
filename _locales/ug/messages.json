@@ -941,6 +941,9 @@
   "icu:viewRecentMedia": {
     "messageformat": "يېقىنقى مېدىيالارنى كۆرۈش"
   },
+  "icu:allMediaMenuItem": {
+    "messageformat": "All media"
+  },
   "icu:back": {
     "messageformat": "قايت"
   },
@@ -1210,9 +1213,6 @@
   },
   "icu:calling__cant-join": {
     "messageformat": "چاقىرىققا قوشۇلالمىدى"
-  },
-  "icu:calling__dialog-already-in-call": {
-    "messageformat": "سىز ئاللىبۇرۇن چاقىرىقتا."
   },
   "icu:calling__call-link-connection-issues": {
     "messageformat": "چاقىرىق ئۇلانما ئۇچۇرىغا ئېرىشەلمىدى. تور ئۇلىنىشىنى تەكشۈرۈپ قايتا سىناڭ."
@@ -2705,6 +2705,9 @@
   "icu:CallControls__InfoDisplay--adhoc-call": {
     "messageformat": "چاقىرىق ئۇلانمىسى"
   },
+  "icu:CallControls__InfoDisplay--group-call": {
+    "messageformat": "Group call"
+  },
   "icu:CallControls__InfoDisplay--adhoc-join-request-pending": {
     "messageformat": "رۇخسەت كۈتىۋاتىدۇ"
   },
@@ -3522,13 +3525,37 @@
     "messageformat": "«Signal غا ئىئانە قىلىش» نى چېكىپ مۇشتەرى بولۇڭ"
   },
   "icu:BackupImportScreen__title": {
-    "messageformat": "Syncing messages"
+    "messageformat": "ئۇچۇرلارنى ماسقەدەملەش"
   },
   "icu:BackupImportScreen__progressbar-hint": {
-    "messageformat": "Downloading {currentSize} of {totalSize} ({fractionComplete,number,percent})..."
+    "messageformat": "{totalSize} نىڭ {currentSize} تى چۈشۈۋاتىدۇ({fractionComplete,number,percent})..."
+  },
+  "icu:BackupImportScreen__progressbar-hint--preparing": {
+    "messageformat": "Preparing to download..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "This may take a few minutes depending on the size of your backup"
+    "messageformat": "بۇنىڭغا زاپاسلاشنىڭ چوڭ-كىچىكلىكىگە ئاساسەن بىر قانچە مىنۇت ۋاقىت كېتىشى مۇمكىن"
+  },
+  "icu:BackupImportScreen__cancel": {
+    "messageformat": "Cancel transfer"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__title": {
+    "messageformat": "Cancel transfer?"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__body": {
+    "messageformat": "Your messages and media have not completed restoring. If you choose to cancel, you can transfer again from Settings."
+  },
+  "icu:BackupImportScreen__cancel-confirmation__cancel": {
+    "messageformat": "Continue transfer"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__confirm": {
+    "messageformat": "Cancel transfer"
+  },
+  "icu:BackupMediaDownloadProgress__title": {
+    "messageformat": "مېدىيانى ئەسلىگە كەلتۈرىۋاتىدۇ"
+  },
+  "icu:BackupMediaDownloadProgress__progressbar-hint": {
+    "messageformat": "{totalSize} نىڭ {currentSize} چۈشۈپ بولدى (ئومۇمىي {fractionComplete,number,percent})"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "كېڭەيتىش"
@@ -3580,6 +3607,9 @@
   },
   "icu:ContactModal--already-in-call": {
     "messageformat": "سىز ئاللىبۇرۇن چاقىرىقتا"
+  },
+  "icu:ContactModal--voice": {
+    "messageformat": "Voice"
   },
   "icu:showChatColorEditor": {
     "messageformat": "پاراڭ رەڭگى"
@@ -3762,7 +3792,7 @@
     "messageformat": "ئۇلانمىنى ئەسلىگە قايتۇر"
   },
   "icu:GroupLinkManagement--approve-label": {
-    "messageformat": "يېڭى ئەزالارنى دەلىللەش"
+    "messageformat": "Require admin approval"
   },
   "icu:GroupLinkManagement--approve-info": {
     "messageformat": "بىر باشقۇرغۇچىدىن يېڭى ئەزالارنىڭ گۇرۇپپا ئۇلانمىسى ئارقىلىق گۇرۇپپىغا قوشۇلۇشىنى تەستىقلاشنى تەلەپ قىلىڭ"
@@ -3949,12 +3979,6 @@
   },
   "icu:MessageAudio--playbackRatep5": {
     "messageformat": ".5"
-  },
-  "icu:emptyInboxMessage": {
-    "messageformat": "ئۈستىدىكى «{composeIcon}» نى چېكىپ ئۇچۇر يوللايدىغان ئالاقىداش ۋە گۇرۇپپىلارنى ئىزدەڭ."
-  },
-  "icu:composeIcon": {
-    "messageformat": "تۈزۈش كۇنۇپكىسى"
   },
   "icu:emptyInbox__title": {
     "messageformat": "پاراڭلار يوق"
@@ -4875,7 +4899,7 @@
     "messageformat": "<newStoryIcon> بىرھېكايە قۇشۇڭ</newStoryIcon>نى چېكىپ بىر يېڭىلانما قوشۇڭ."
   },
   "icu:Stories__placeholder-with-icon--text-2": {
-    "messageformat": "Click <newStoryButtonIcon></newStoryButtonIcon> to add an update."
+    "messageformat": "<newStoryButtonIcon></newStoryButtonIcon> نى چېكىپ بىر يېڭىلانما قوشۇڭ."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} دىن{group} غىچە"
@@ -5121,10 +5145,10 @@
     "messageformat": "ھېكايىگە ئىنكاس قايتۇردى"
   },
   "icu:StoryViewsNRepliesModal__reacted--you": {
-    "messageformat": "Reacted to the story"
+    "messageformat": "ھېكايىگە ئىنكاس قايتۇردىڭىز"
   },
   "icu:StoryViewsNRepliesModal__reacted--someone-else": {
-    "messageformat": "Reacted to the story"
+    "messageformat": "ھېكايىگە ئىنكاس قايتۇردى"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
     "messageformat": "سىز ئەمدى بۇ گۇرۇپپىنىڭ ئەزاسى بولمىغاچقا بۇ ھېكايىگە ئىنكاس قايتۇرالمايسىز."
@@ -5421,14 +5445,11 @@
   "icu:CallsTab__ToastCallHistoryCleared": {
     "messageformat": "چاقىرىق خاتىرىسى تازىلاندى"
   },
-  "icu:CallsTab__EmptyStateText": {
-    "messageformat": "كۆرۈش ياكى چاقىرىق باشلىتىش ئۈچۈن بۇ يەرنى چېكىڭ"
-  },
   "icu:CallsTab__EmptyStateText--with-icon": {
     "messageformat": "<newCallIcon>يېڭى چاقىرىق</newCallIcon>نى چېكىپ يېڭىدىن بىر ئاۋازلىق ياكى سىنلىق چاقىرىقنى باشلاڭ."
   },
   "icu:CallsTab__EmptyStateText--with-icon-2": {
-    "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call."
+    "messageformat": "<newCallButtonIcon></newCallButtonIcon>نى چېكىپ يېڭى ئاۋازلىق ياكى سىنلىق چاقىرىقنى باشلاڭ."
   },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "ئىزدە"
@@ -5438,9 +5459,6 @@
   },
   "icu:CallsList__ToggleFilterByMissed__RoleDescription": {
     "messageformat": "ئالماشتۇر"
-  },
-  "icu:CallsList__EmptyState--noQuery": {
-    "messageformat": "يېڭى بىر چاقىرىق يوق. دوستىڭىزغا چاقىرىق قىلىپ باشلاڭ."
   },
   "icu:CallsList__EmptyState--noQuery__title": {
     "messageformat": "چاقىرىقلار يوق"
@@ -5496,21 +5514,6 @@
   "icu:CallsNewCallButton--return": {
     "messageformat": "قايت"
   },
-  "icu:CallsNewCallButtonTooltip--in-another-call": {
-    "messageformat": "يېڭى چاقىرىققا قوشۇلۇش ئۈچۈن نۆۋەتتىكى چاقىرىقتىن چېكىنىشىڭىز كېرەك"
-  },
-  "icu:CallHistory__Description--Default": {
-    "messageformat": "{type, select, Audio {{direction, select, Outgoing {ئۇرۇلغان ئاۋازلىق چاقىرىق} other {كەلگەن ئاۋازلىق چاقىرىق}}} Video {{direction, select, Outgoing {ئۇرۇلغان ۋىدېيولۇق چاقىرىق} other {كەلگەن ۋىدېيولۇق چاقىرىق}}} Group {{direction, select, Outgoing {ئۇرۇلغان گۇرۇپپا چاقىرىقى} other {كەلگەن گۇرۇپپا چاقىرىقى}}} other {{direction, select, Outgoing {قىلىنغان  چاقىرىق} other {كەلگەن  چاقىرىق}}}}"
-  },
-  "icu:CallHistory__Description--Missed": {
-    "messageformat": "{type, select, Audio {ئېلىنمىغان ئاۋازلىق چاقىرىق} Video {سۆزلەشمىگەن سىن چاقىرىش} Group {ئېلىنمىغان گۇرۇپپا چاقىرىقى} other {سۆزلەشمىگەن چاقىرىش}}"
-  },
-  "icu:CallHistory__Description--Unanswered": {
-    "messageformat": "{type, select, Audio {جاۋابسىز ئاۋازلىق چاقىرىق} Video {جاۋابسىز ۋىدېيولۇق چاقىرىق} Group {جاۋاپسىز توپ چاقىرىقى} other {جاۋاپسىز  چاقىرىق}}"
-  },
-  "icu:CallHistory__Description--Declined": {
-    "messageformat": "{type, select, Audio {رەت قىلىنغان ئاۋازلىق چاقىرىق} Video {رەت قىلىنغان ۋىدېيولۇق چاقىرىق} Group {رەت قىلىنغان توپ چاقىرىقى} other {رەت قىلىنغان  چاقىرىق}}"
-  },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "چاقىرىق ئۇلانمىسى"
   },
@@ -5536,7 +5539,10 @@
     "messageformat": "چاقىرىق نامىنى تەھرىرلەش"
   },
   "icu:CallLinkDetails__ApproveAllMembersLabel": {
-    "messageformat": "بارلىق ئەزلارغا رۇخسەت"
+    "messageformat": "Require admin approval"
+  },
+  "icu:CallLinkDetails__SettingTooltip--disabled-for-active-call": {
+    "messageformat": "This setting can't be changed while the call is active"
   },
   "icu:CallLinkDetails__CopyLink": {
     "messageformat": "ئۇلانما كۆچۈر"
@@ -5559,6 +5565,9 @@
   "icu:CallLinkDetails__DeleteLinkModal__Delete": {
     "messageformat": "ئۆچۈر"
   },
+  "icu:CallLinkDetails__DeleteLinkTooltip--disabled-for-active-call": {
+    "messageformat": "This link can't be deleted while the call is active"
+  },
   "icu:CallLinkEditModal__Title": {
     "messageformat": "چاقىرىق ئۇلانمىسى تەپسىلاتى"
   },
@@ -5572,7 +5581,13 @@
     "messageformat": "چاقىرىق نامىنى تەھرىرلەش"
   },
   "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
-    "messageformat": "بارلىق ئەزلارغا رۇخسەت"
+    "messageformat": "Require admin approval"
+  },
+  "icu:CallLinkPendingParticipantModal__ApproveButtonLabel": {
+    "messageformat": "Approve entry"
+  },
+  "icu:CallLinkPendingParticipantModal__DenyButtonLabel": {
+    "messageformat": "Deny entry"
   },
   "icu:CallLinkRestrictionsSelect__Option--Off": {
     "messageformat": "ئېتىش"
@@ -5629,13 +5644,16 @@
     "messageformat": "كىچىك ئۆزگەرتىشلەر كىرگۈزۈلدى، كاشىلا ھەل قىلىندى ۋە ئىقتىدار ئەلالاشتۇرۇلدى. Signal نى ئىشلەتكەنلىكىڭىزگە رەھمەت!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.22--0": {
-    "messageformat": "سىگنال ئۈستەلئۈستى ھازىر چۈشۈرۈلىۋاتقاندا ئۈزۈلۈپ قالغان قوشۇمچە ھۆججەتلەرنى ئاپتوماتىك ئەسلىگە كەلتۈرەلەيدۇ."
-  },
   "icu:WhatsNew__v7.23--0": {
-    "messageformat": "Chats now open faster than ever thanks to another round of performance improvements, so you can click on your cliques and see what they're saying real quick."
+    "messageformat": "باشقا بىر يۈرۈش ئىقتىدارلارنىڭ ياخشىلىنىشىغا ئەگىشىپ ، پاراڭلار ئىلگىرىكىگە قارىغاندا تېز ئېچىلىدۇ ، شۇڭا دوستلارنى چېكىپ ، ئۇلارنىڭ نېمە دەۋاتقانلىقىنى تېزلا كۆرەلەيسىز."
   },
   "icu:WhatsNew__v7.23--1": {
-    "messageformat": "We also fixed a handful of bugs, including one that sometimes caused \"Unknown contact started a video call\" to appear in the chat list summary after you started the call. Even if you're still on a journey of self-discovery, you are never completely unknown to yourself."
+    "messageformat": "بىز يەنە بىر قانچە كەمتۈكلۈكنى ئوڭشىدۇق ، بۇلارنىڭ ئىچىدە بەزىدە تېلېفوننى باشلىغاندىن كېيىن پاراڭلىشىش تىزىملىكى خۇلاسىسىدە كۆرۈنىدىغان «نامەلۇم ئالاقىلاشقۇچى بىر سىنلىق چاقىرىقنى باشلىدى» نى كەلتۈرۈپ چىقىرىدىغان كەمتۈكلۈكمۇ بار. سىز ھازىرغىچە ئۆزىڭىزنى بايقاش سەپىرىدە بولسىڭىزمۇ ، ئەمما سىزئۆز- ئۆزىڭىزگە پۈتۈنلەي نامەلۇم ئەمەس."
+  },
+  "icu:WhatsNew__v7.24--0": {
+    "messageformat": "بۇ يېڭىلانما بىر ئۈسكۈنىدە ئېلىنمىغان تېلېفوننى كۆرۈپ بولغاندىن كىيىنمۇ باشقا ئۈسكۈنىدىكى ئوخشاش كۆرسەتكۈچنى ئاپتوماتىك ئۆچۈرەلمەيدىغان كەمتۈكلۈكنى ئوڭشايدۇ ھەمدە ھەممىسىنىڭ ماس قەدەمدە بىللە مەۋجۇد بولۇپ تۇرۇشىنى ئلگىرى سۈرىدۇ."
+  },
+  "icu:WhatsNew__v7.25--0": {
+    "messageformat": "Take a trip down memory lane with the new and improved \"All Media\" view. Now when you click on a chat header and select \"See all\" in the shared media section, older photos and videos will automatically appear as you scroll instead of being limited to the most recent entries."
   }
 }

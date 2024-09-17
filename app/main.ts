@@ -199,7 +199,7 @@ const cliOptions = cliParser.parse(process.argv);
 const defaultWebPrefs = {
   devTools:
     process.argv.some(arg => arg === '--enable-dev-tools') ||
-    getEnvironment() !== Environment.Production ||
+    getEnvironment() !== Environment.PackagedApp ||
     !isProduction(app.getVersion()),
   spellcheck: false,
   // https://chromium.googlesource.com/chromium/src/+/main/third_party/blink/renderer/platform/runtime_enabled_features.json5
@@ -709,7 +709,7 @@ async function createWindow() {
       preload: join(
         __dirname,
         usePreloadBundle
-          ? '../preload.bundle.js'
+          ? '../preload.wrapper.js'
           : '../ts/windows/main/preload.js'
       ),
       spellcheck: await getSpellCheckSetting(),
@@ -2567,6 +2567,9 @@ ipc.on('restart', () => {
   app.quit();
 });
 ipc.on('shutdown', () => {
+  if (process.env.GENERATE_PRELOAD_CACHE) {
+    windowState.markReadyForShutdown();
+  }
   app.quit();
 });
 
@@ -2713,7 +2716,7 @@ ipc.on('get-config', async event => {
     certificateAuthority: config.get<string>('certificateAuthority'),
     environment:
       !isTestEnvironment(getEnvironment()) && ciMode
-        ? Environment.Production
+        ? Environment.PackagedApp
         : getEnvironment(),
     isMockTestEnvironment: Boolean(process.env.MOCK_TEST),
     ciMode,
@@ -2721,6 +2724,7 @@ ipc.on('get-config', async event => {
     dnsFallback: await getDNSFallback(),
     disableIPv6: DISABLE_IPV6,
     ciBackupPath: config.get<string | null>('ciBackupPath') || undefined,
+    ciIsPlaintextBackup: config.get<boolean>('ciIsPlaintextBackup'),
     nodeVersion: process.versions.node,
     hostname: os.hostname(),
     osRelease: os.release(),
