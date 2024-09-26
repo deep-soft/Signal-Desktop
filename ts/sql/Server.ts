@@ -181,7 +181,7 @@ import {
   updateCallLinkState,
   beginDeleteAllCallLinks,
   getAllCallLinkRecordsWithAdminKey,
-  getAllMarkedDeletedCallLinks,
+  getAllMarkedDeletedCallLinkRoomIds,
   finalizeDeleteCallLink,
   beginDeleteCallLink,
   deleteCallLinkFromSync,
@@ -313,7 +313,7 @@ export const DataReader: ServerReadableInterface = {
   getCallLinkByRoomId,
   getCallLinkRecordByRoomId,
   getAllCallLinkRecordsWithAdminKey,
-  getAllMarkedDeletedCallLinks,
+  getAllMarkedDeletedCallLinkRoomIds,
   getMessagesBetween,
   getNearbyMessageFromDeletedSet,
   getMostRecentAddressableMessages,
@@ -486,6 +486,7 @@ export const DataWriter: ServerWritableInterface = {
   saveBackupCdnObjectMetadata,
 
   createOrUpdateStickerPack,
+  createOrUpdateStickerPacks,
   updateStickerPackStatus,
   updateStickerPackInfo,
   createOrUpdateSticker,
@@ -495,6 +496,7 @@ export const DataWriter: ServerWritableInterface = {
   deleteStickerPackReference,
   deleteStickerPack,
   addUninstalledStickerPack,
+  addUninstalledStickerPacks,
   removeUninstalledStickerPack,
   installStickerPack,
   uninstallStickerPack,
@@ -696,6 +698,19 @@ function openAndSetUpSQLCipher(
       // Best effort
     }
     throw error;
+  }
+
+  try {
+    // fullfsync is only supported on macOS
+    db.pragma('fullfsync = false');
+
+    // a lower-impact approach, if fullfsync is too impactful
+    db.pragma('checkpoint_fullfsync = true');
+  } catch (error) {
+    logger.warn(
+      'openAndSetUpSQLCipher: Unable to set fullfsync',
+      Errors.toLogFormat(error)
+    );
   }
 
   return db;
@@ -4166,20 +4181,24 @@ function saveCallHistory(
       callId,
       peerId,
       ringerId,
+      startedById,
       mode,
       type,
       direction,
       status,
-      timestamp
+      timestamp,
+      endedTimestamp
     ) VALUES (
       ${callHistory.callId},
       ${callHistory.peerId},
       ${callHistory.ringerId},
+      ${callHistory.startedById},
       ${callHistory.mode},
       ${callHistory.type},
       ${callHistory.direction},
       ${callHistory.status},
-      ${callHistory.timestamp}
+      ${callHistory.timestamp},
+      ${callHistory.endedTimestamp}
     );
   `;
 
@@ -4785,17 +4804,27 @@ function getNextAttachmentDownloadJobs(
   db: WritableDB,
   {
     limit = 3,
+    sources,
     prioritizeMessageIds,
     timestamp = Date.now(),
     maxLastAttemptForPrioritizedMessages,
   }: {
     limit: number;
     prioritizeMessageIds?: Array<string>;
+    sources?: Array<AttachmentDownloadSource>;
     timestamp?: number;
     maxLastAttemptForPrioritizedMessages?: number;
   }
 ): Array<AttachmentDownloadJobType> {
   let priorityJobs = [];
+
+  const sourceWhereFragment = sources
+    ? sqlFragment`
+      source IN (${sqlJoin(sources)})
+    `
+    : sqlFragment`
+      TRUE
+    `;
 
   // First, try to get jobs for prioritized messages (e.g. those currently user-visible)
   if (prioritizeMessageIds?.length) {
@@ -4813,6 +4842,8 @@ function getNextAttachmentDownloadJobs(
         })
       AND
         messageId IN (${sqlJoin(prioritizeMessageIds)})
+      AND 
+        ${sourceWhereFragment}
       -- for priority messages, let's load them oldest first; this helps, e.g. for stories where we
       -- want the oldest one first
       ORDER BY receivedAt ASC
@@ -4831,6 +4862,8 @@ function getNextAttachmentDownloadJobs(
         active = 0
       AND
         (retryAfter is NULL OR retryAfter <= ${timestamp})
+      AND 
+        ${sourceWhereFragment}
       ORDER BY receivedAt DESC
       LIMIT ${numJobsRemaining}
     `;
@@ -5221,6 +5254,16 @@ function createOrUpdateStickerPack(
     )
     `
   ).run(payload);
+}
+function createOrUpdateStickerPacks(
+  db: WritableDB,
+  packs: ReadonlyArray<StickerPackType>
+): void {
+  db.transaction(() => {
+    for (const pack of packs) {
+      createOrUpdateStickerPack(db, pack);
+    }
+  })();
 }
 function updateStickerPackStatus(
   db: WritableDB,
@@ -5615,6 +5658,16 @@ function addUninstalledStickerPack(
     unknownFields: pack.storageUnknownFields ?? null,
     storageNeedsSync: pack.storageNeedsSync ? 1 : 0,
   });
+}
+function addUninstalledStickerPacks(
+  db: WritableDB,
+  packs: ReadonlyArray<UninstalledStickerPackType>
+): void {
+  return db.transaction(() => {
+    for (const pack of packs) {
+      addUninstalledStickerPack(db, pack);
+    }
+  })();
 }
 function removeUninstalledStickerPack(db: WritableDB, packId: string): void {
   db.prepare<Query>(
@@ -6565,7 +6618,8 @@ function getExternalFilesForMessage(message: MessageType): {
   externalAttachments: Array<string>;
   externalDownloads: Array<string>;
 } {
-  const { attachments, contact, quote, preview, sticker } = message;
+  const { attachments, bodyAttachment, contact, quote, preview, sticker } =
+    message;
   const externalAttachments: Array<string> = [];
   const externalDownloads: Array<string> = [];
 
@@ -6599,6 +6653,16 @@ function getExternalFilesForMessage(message: MessageType): {
       externalAttachments.push(thumbnailFromBackup.path);
     }
   });
+
+  if (bodyAttachment?.path) {
+    externalAttachments.push(bodyAttachment.path);
+  }
+
+  for (const editHistory of message.editHistory ?? []) {
+    if (editHistory.bodyAttachment?.path) {
+      externalAttachments.push(editHistory.bodyAttachment.path);
+    }
+  }
 
   if (quote && quote.attachments && quote.attachments.length) {
     forEach(quote.attachments, attachment => {

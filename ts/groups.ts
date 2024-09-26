@@ -3191,7 +3191,7 @@ async function updateGroup(
       contact.get('profileKey') !== profileKey
     ) {
       contactsWithoutProfileKey.push(contact);
-      drop(contact.setProfileKey(profileKey));
+      drop(contact.setProfileKey(profileKey, { reason: 'updateGroup' }));
     }
   }
 
@@ -3986,7 +3986,7 @@ async function updateGroupViaLogs({
 
   if (
     cachedEndorsementsExpiration != null &&
-    !isValidGroupSendEndorsementsExpiration(cachedEndorsementsExpiration)
+    !isValidGroupSendEndorsementsExpiration(cachedEndorsementsExpiration * 1000)
   ) {
     log.info(
       `updateGroupViaLogs/${logId}: Group had invalid endorsements expiration (${cachedEndorsementsExpiration}), fetching new endorsements`
@@ -5146,8 +5146,17 @@ async function applyGroupChange({
     }
 
     // Capture who added us
-    if (ourAci && sourceServiceId && addedUuid === ourAci) {
+    if (addedUuid === ourAci && pendingAdminApprovalMembers[ourAci]) {
+      result.addedBy = ourAci;
+    } else if (addedUuid === ourAci && sourceServiceId) {
       result.addedBy = sourceServiceId;
+    }
+
+    if (pendingAdminApprovalMembers[addedUuid]) {
+      log.warn(
+        `applyGroupChange/${logId}: Removing newly-added member from pendingAdminApprovalMembers.`
+      );
+      delete pendingAdminApprovalMembers[addedUuid];
     }
 
     if (added.profileKey) {
@@ -5291,6 +5300,7 @@ async function applyGroupChange({
       log.warn(
         `applyGroupChange/${logId}: Attempt to promote pendingMember failed; was not in pendingMembers.`
       );
+      return;
     }
 
     if (members[aci]) {
@@ -5518,6 +5528,7 @@ async function applyGroupChange({
         log.warn(
           `applyGroupChange/${logId}: Attempt to promote pendingAdminApproval failed; was not in pendingAdminApprovalMembers.`
         );
+        return;
       }
       if (pendingMembers[userId]) {
         delete pendingAdminApprovalMembers[userId];
@@ -5531,6 +5542,11 @@ async function applyGroupChange({
           `applyGroupChange/${logId}: Attempt to promote pendingMember failed; was already in members.`
         );
         return;
+      }
+
+      // If we had requested to join, and are approved, we added ourselves
+      if (userId === ourAci) {
+        result.addedBy = ourAci;
       }
 
       members[userId] = {
@@ -5669,7 +5685,7 @@ export async function applyNewAvatar(
     // Group has avatar; has it changed?
     if (
       newAvatarUrl &&
-      (!attributes.avatar || attributes.avatar.url !== newAvatarUrl)
+      (!attributes.avatar?.path || attributes.avatar.url !== newAvatarUrl)
     ) {
       if (!attributes.secretParams) {
         throw new Error('applyNewAvatar: group was missing secretParams!');
@@ -5840,7 +5856,9 @@ async function applyGroupState({
         result.left = false;
 
         // Capture who added us if we were previously not in group
-        if (
+        if (pendingAdminApprovalMembers[ourAci] && !wasPreviouslyAMember) {
+          result.addedBy = sourceServiceId;
+        } else if (
           sourceServiceId &&
           !wasPreviouslyAMember &&
           isNumber(member.joinedAtVersion) &&

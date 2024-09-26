@@ -586,7 +586,7 @@ type ReadableInterface = {
   getCallLinkByRoomId: (roomId: string) => CallLinkType | undefined;
   getCallLinkRecordByRoomId: (roomId: string) => CallLinkRecord | undefined;
   getAllCallLinkRecordsWithAdminKey(): ReadonlyArray<CallLinkRecord>;
-  getAllMarkedDeletedCallLinks(): ReadonlyArray<CallLinkType>;
+  getAllMarkedDeletedCallLinkRoomIds(): ReadonlyArray<string>;
   getMessagesBetween: (
     conversationId: string,
     options: GetMessagesBetweenOptions
@@ -852,6 +852,7 @@ type WritableInterface = {
   getNextAttachmentDownloadJobs: (options: {
     limit: number;
     prioritizeMessageIds?: Array<string>;
+    sources?: Array<AttachmentDownloadSource>;
     timestamp?: number;
   }) => Array<AttachmentDownloadJobType>;
   saveAttachmentDownloadJob: (job: AttachmentDownloadJobType) => void;
@@ -874,6 +875,7 @@ type WritableInterface = {
   ) => void;
 
   createOrUpdateStickerPack: (pack: StickerPackType) => void;
+  createOrUpdateStickerPacks: (packs: ReadonlyArray<StickerPackType>) => void;
   updateStickerPackStatus: (
     id: string,
     status: StickerPackStatusType,
@@ -894,6 +896,9 @@ type WritableInterface = {
   ) => ReadonlyArray<string> | undefined;
   deleteStickerPack: (packId: string) => Array<string>;
   addUninstalledStickerPack: (pack: UninstalledStickerPackType) => void;
+  addUninstalledStickerPacks: (
+    pack: ReadonlyArray<UninstalledStickerPackType>
+  ) => void;
   removeUninstalledStickerPack: (packId: string) => void;
   installStickerPack: (packId: string, timestamp: number) => void;
   uninstallStickerPack: (packId: string, timestamp: number) => void;

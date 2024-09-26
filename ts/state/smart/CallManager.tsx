@@ -46,6 +46,7 @@ import type { ConversationType } from '../ducks/conversations';
 import type { StateType } from '../reducer';
 import { getHasInitialLoadCompleted } from '../selectors/app';
 import {
+  getActiveCallState,
   getAvailableCameras,
   getCallLinkSelector,
   getIncomingCall,
@@ -122,7 +123,7 @@ const mapStateToActiveCallProp = (
   state: StateType
 ): undefined | ActiveCallType => {
   const { calling } = state;
-  const { activeCallState } = calling;
+  const activeCallState = getActiveCallState(state);
 
   if (!activeCallState) {
     return undefined;
@@ -440,15 +441,16 @@ export const SmartCallManager = memo(function SmartCallManager() {
     openSystemPreferencesAction,
     removeClient,
     blockClient,
+    cancelPresenting,
     sendGroupCallRaiseHand,
     sendGroupCallReaction,
+    selectPresentingSource,
     setGroupCallVideoRequest,
     setIsCallActive,
     setLocalAudio,
     setLocalVideo,
     setLocalPreview,
     setOutgoingRing,
-    setPresenting,
     setRendererCanvas,
     switchToPresentationView,
     switchFromPresentationView,
@@ -476,6 +478,7 @@ export const SmartCallManager = memo(function SmartCallManager() {
       bounceAppIconStop={bounceAppIconStop}
       callLink={callLink}
       cancelCall={cancelCall}
+      cancelPresenting={cancelPresenting}
       changeCallView={changeCallView}
       closeNeedPermissionScreen={closeNeedPermissionScreen}
       declineCall={declineCall}
@@ -502,13 +505,13 @@ export const SmartCallManager = memo(function SmartCallManager() {
       renderReactionPicker={renderReactionPicker}
       sendGroupCallRaiseHand={sendGroupCallRaiseHand}
       sendGroupCallReaction={sendGroupCallReaction}
+      selectPresentingSource={selectPresentingSource}
       setGroupCallVideoRequest={setGroupCallVideoRequest}
       setIsCallActive={setIsCallActive}
       setLocalAudio={setLocalAudio}
       setLocalPreview={setLocalPreview}
       setLocalVideo={setLocalVideo}
       setOutgoingRing={setOutgoingRing}
-      setPresenting={setPresenting}
       setRendererCanvas={setRendererCanvas}
       showContactModal={showContactModal}
       showShareCallLinkViaSignal={showShareCallLinkViaSignal}

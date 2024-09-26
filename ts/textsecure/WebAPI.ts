@@ -351,23 +351,31 @@ async function _promiseAjax(
   }
 
   let response: Response;
-  let result: string | Uint8Array | Readable | unknown;
+
   try {
     response = socketManager
       ? await socketManager.fetch(url, fetchOptions)
       : await fetch(url, fetchOptions);
-    if (
-      options.serverUrl &&
-      getHostname(options.serverUrl) === getHostname(url)
-    ) {
-      await handleStatusCode(response.status);
+  } catch (e) {
+    log.error(logId, 0, 'Error');
+    const stack = `${e.stack}\nInitial stack:\n${options.stack}`;
+    throw makeHTTPError('promiseAjax catch', 0, {}, e.toString(), stack);
+  }
 
-      if (!unauthenticated && response.status === 401) {
-        log.error('Got 401 from Signal Server. We might be unlinked.');
-        window.Whisper.events.trigger('mightBeUnlinked');
-      }
+  if (
+    options.serverUrl &&
+    getHostname(options.serverUrl) === getHostname(url)
+  ) {
+    await handleStatusCode(response.status);
+
+    if (!unauthenticated && response.status === 401) {
+      log.error('Got 401 from Signal Server. We might be unlinked.');
+      window.Whisper.events.trigger('mightBeUnlinked');
     }
+  }
 
+  let result: string | Uint8Array | Readable | unknown;
+  try {
     if (DEBUG && !isSuccess(response.status)) {
       result = await response.text();
     } else if (
@@ -391,10 +399,15 @@ async function _promiseAjax(
     } else {
       result = await response.textConverted();
     }
-  } catch (e) {
-    log.error(logId, 0, 'Error');
-    const stack = `${e.stack}\nInitial stack:\n${options.stack}`;
-    throw makeHTTPError('promiseAjax catch', 0, {}, e.toString(), stack);
+  } catch (error) {
+    log.error(logId, response.status, 'Error');
+    const stack = `${error.stack}\nInitial stack:\n${options.stack}`;
+    throw makeHTTPError(
+      `promiseAjax: error parsing body (Content-Type: ${response.headers.get('content-type')})`,
+      response.status,
+      response.headers.raw(),
+      stack
+    );
   }
 
   if (!isSuccess(response.status)) {
@@ -872,7 +885,8 @@ const whoamiResultZod = z.object({
   uuid: z.string(),
   pni: z.string(),
   number: z.string(),
-  username: z.string().or(z.null()).optional(),
+  usernameHash: z.string().or(z.null()).optional(),
+  usernameLinkHandle: z.string().or(z.null()).optional(),
 });
 export type WhoamiResultType = z.infer<typeof whoamiResultZod>;
 
@@ -1653,6 +1667,10 @@ export function initialize({
 
     socketManager.on('authError', () => {
       window.Whisper.events.trigger('unlinkAndDisconnect');
+    });
+
+    socketManager.on('firstEnvelope', incoming => {
+      window.Whisper.events.trigger('firstEnvelope', incoming);
     });
 
     if (useWebSocket) {

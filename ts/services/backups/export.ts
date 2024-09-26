@@ -22,6 +22,7 @@ import * as log from '../../logging/log';
 import { GiftBadgeStates } from '../../components/conversation/Message';
 import { type CustomColorType } from '../../types/Colors';
 import { StorySendMode, MY_STORY_ID } from '../../types/Stories';
+import { getStickerPacksForBackup } from '../../types/Stickers';
 import {
   isPniString,
   type AciString,
@@ -47,9 +48,8 @@ import {
   isGroupV2,
   isMe,
 } from '../../util/whatTypeOfConversation';
-import { isConversationUnregistered } from '../../util/isConversationUnregistered';
 import { uuidToBytes } from '../../util/uuidToBytes';
-import { assertDev, strictAssert } from '../../util/assert';
+import { strictAssert } from '../../util/assert';
 import { getSafeLongFromTimestamp } from '../../util/timestampLongUtils';
 import { DAY, MINUTE, SECOND, DurationInSeconds } from '../../util/durations';
 import {
@@ -89,7 +89,10 @@ import * as Bytes from '../../Bytes';
 import { canBeSynced as canPreferredReactionEmojiBeSynced } from '../../reactions/preferredReactionEmoji';
 import { SendStatus } from '../../messages/MessageSendState';
 import { BACKUP_VERSION } from './constants';
-import { getMessageIdForLogging } from '../../util/idForLogging';
+import {
+  getMessageIdForLogging,
+  getConversationIdForLogging,
+} from '../../util/idForLogging';
 import { makeLookup } from '../../util/makeLookup';
 import type {
   CallHistoryDetails,
@@ -106,6 +109,7 @@ import {
 import { isAciString } from '../../util/isAciString';
 import { hslToRGB } from '../../util/hslToRGB';
 import type { AboutMe, LocalChatStyle } from './types';
+import { BackupType } from './types';
 import { messageHasPaymentEvent } from '../../messages/helpers';
 import {
   numberToAddressType,
@@ -115,7 +119,6 @@ import {
   type AttachmentType,
   isGIF,
   isDownloaded,
-  isVoiceMessage as isVoiceMessageAttachment,
 } from '../../types/Attachment';
 import {
   getFilePointerForAttachment,
@@ -130,6 +133,7 @@ import { CallLinkRestrictions } from '../../types/CallLink';
 import { toAdminKeyBytes } from '../../util/callLinks';
 import { getRoomIdFromRootKey } from '../../util/callLinksRingrtc';
 import { SeenStatus } from '../../MessageSeenStatus';
+import { migrateBatchOfMessages } from '../../messages/migrateMessageData';
 
 const MAX_CONCURRENCY = 10;
 
@@ -139,8 +143,6 @@ const FLUSH_TIMEOUT = 30 * MINUTE;
 
 // Threshold for reporting slow flushes
 const REPORTING_THRESHOLD = SECOND;
-
-const ZERO_PROFILE_KEY = new Uint8Array(32);
 
 type GetRecipientIdOptionsType =
   | Readonly<{
@@ -197,6 +199,8 @@ export class BackupExportStream extends Readable {
 
   private readonly backupTimeMs = getSafeLongFromTimestamp(this.now);
   private readonly convoIdToRecipientId = new Map<string, number>();
+  private readonly serviceIdToRecipientId = new Map<string, number>();
+  private readonly e164ToRecipientId = new Map<string, number>();
   private readonly roomIdToRecipientId = new Map<string, number>();
   private attachmentBackupJobs: Array<CoreAttachmentBackupJobType> = [];
   private buffers = new Array<Uint8Array>();
@@ -207,11 +211,34 @@ export class BackupExportStream extends Readable {
   // array.
   private customColorIdByUuid = new Map<string, Long>();
 
+  constructor(private readonly backupType: BackupType) {
+    super();
+  }
+
   public run(backupLevel: BackupLevel): void {
     drop(
       (async () => {
         log.info('BackupExportStream: starting...');
         drop(AttachmentBackupManager.stop());
+        log.info('BackupExportStream: message migration starting...');
+        let batchMigrationResult:
+          | Awaited<ReturnType<typeof migrateBatchOfMessages>>
+          | undefined;
+        let totalMigrated = 0;
+        while (!batchMigrationResult?.done) {
+          // eslint-disable-next-line no-await-in-loop
+          batchMigrationResult = await migrateBatchOfMessages({
+            numMessagesPerBatch: 1000,
+          });
+          totalMigrated += batchMigrationResult.numProcessed;
+          log.info(
+            `BackupExportStream: Migrated batch of ${batchMigrationResult.numProcessed}`
+          );
+        }
+        log.info(
+          `BackupExportStream: message migration complete; ${totalMigrated} messages migrated`
+        );
+
         await pauseWriteAccess();
         try {
           await this.unsafeRun(backupLevel);
@@ -222,12 +249,14 @@ export class BackupExportStream extends Readable {
 
           // TODO (DESKTOP-7344): Clear & add backup jobs in a single transaction
           await DataWriter.clearAllAttachmentBackupJobs();
-          await Promise.all(
-            this.attachmentBackupJobs.map(job =>
-              AttachmentBackupManager.addJobAndMaybeThumbnailJob(job)
-            )
-          );
-          drop(AttachmentBackupManager.start());
+          if (this.backupType !== BackupType.TestOnlyPlaintext) {
+            await Promise.all(
+              this.attachmentBackupJobs.map(job =>
+                AttachmentBackupManager.addJobAndMaybeThumbnailJob(job)
+              )
+            );
+            drop(AttachmentBackupManager.start());
+          }
           log.info('BackupExportStream: finished');
         }
       })()
@@ -379,7 +408,7 @@ export class BackupExportStream extends Readable {
       stats.callLinks += 1;
     }
 
-    const stickerPacks = await DataReader.getInstalledStickerPacks();
+    const stickerPacks = await getStickerPacksForBackup();
 
     for (const { id, key } of stickerPacks) {
       this.pushFrame({
@@ -407,7 +436,17 @@ export class BackupExportStream extends Readable {
 
       let pinnedOrder: number | null = null;
       if (attributes.isPinned) {
-        pinnedOrder = Math.max(0, pinnedConversationIds.indexOf(attributes.id));
+        const index = pinnedConversationIds.indexOf(attributes.id);
+        if (index === -1) {
+          const convoId = getConversationIdForLogging(attributes);
+          log.warn(`backups: ${convoId} is pinned, but is not on the list`);
+        }
+        pinnedOrder = Math.max(1, index + 1);
+      }
+
+      // Skip conversations that have no presence in left pane (no chats)
+      if (!attributes.isPinned && !attributes.active_at) {
+        continue;
       }
 
       this.pushFrame({
@@ -438,6 +477,7 @@ export class BackupExportStream extends Readable {
             color: attributes.conversationColor,
             customColorId: attributes.customColorId,
             dimWallpaperInDarkMode: attributes.dimWallpaperInDarkMode,
+            autoBubbleColor: attributes.autoBubbleColor,
           }),
         },
       });
@@ -686,22 +726,29 @@ export class BackupExportStream extends Readable {
     };
   }
 
-  private getRecipientIdentifier({
-    id,
-    serviceId,
-    e164,
-  }: GetRecipientIdOptionsType): string {
-    const identifier = serviceId ?? e164 ?? id;
-    assertDev(identifier, 'Identifier cannot be blank');
-    return identifier;
+  private getExistingRecipientId(
+    options: GetRecipientIdOptionsType
+  ): Long | undefined {
+    let existing: number | undefined;
+    if (options.serviceId != null) {
+      existing = this.serviceIdToRecipientId.get(options.serviceId);
+    }
+    if (existing === undefined && options.e164 != null) {
+      existing = this.e164ToRecipientId.get(options.e164);
+    }
+    if (existing === undefined && options.id != null) {
+      existing = this.convoIdToRecipientId.get(options.id);
+    }
+    if (existing !== undefined) {
+      return Long.fromNumber(existing);
+    }
+    return undefined;
   }
 
   private getRecipientId(options: GetRecipientIdOptionsType): Long {
-    const identifier = this.getRecipientIdentifier(options);
-
-    const existing = this.convoIdToRecipientId.get(identifier);
+    const existing = this.getExistingRecipientId(options);
     if (existing !== undefined) {
-      return Long.fromNumber(existing);
+      return existing;
     }
 
     const { id, serviceId, e164 } = options;
@@ -713,10 +760,10 @@ export class BackupExportStream extends Readable {
       this.convoIdToRecipientId.set(id, recipientId);
     }
     if (serviceId !== undefined) {
-      this.convoIdToRecipientId.set(serviceId, recipientId);
+      this.serviceIdToRecipientId.set(serviceId, recipientId);
     }
     if (e164 !== undefined) {
-      this.convoIdToRecipientId.set(e164, recipientId);
+      this.e164ToRecipientId.set(e164, recipientId);
     }
     const result = Long.fromNumber(recipientId);
 
@@ -724,8 +771,8 @@ export class BackupExportStream extends Readable {
   }
 
   private getOrPushPrivateRecipient(options: GetRecipientIdOptionsType): Long {
-    const identifier = this.getRecipientIdentifier(options);
-    const needsPush = !this.convoIdToRecipientId.has(identifier);
+    const existing = this.getExistingRecipientId(options);
+    const needsPush = existing == null;
     const result = this.getRecipientId(options);
 
     if (needsPush) {
@@ -788,7 +835,7 @@ export class BackupExportStream extends Readable {
           ? window.storage.blocked.isServiceIdBlocked(convo.serviceId)
           : null,
         visibility,
-        ...(isConversationUnregistered(convo)
+        ...(convo.discoveredUnregisteredAt
           ? {
               notRegistered: {
                 unregisteredTimestamp: convo.firstUnregisteredAt
@@ -832,9 +879,12 @@ export class BackupExportStream extends Readable {
           title: {
             title: convo.name ?? '',
           },
-          description: {
-            descriptionText: convo.description ?? '',
-          },
+          description:
+            convo.description != null
+              ? {
+                  descriptionText: convo.description,
+                }
+              : null,
           avatarUrl: convo.avatar?.url,
           disappearingMessagesTimer:
             convo.expireTimer != null
@@ -847,17 +897,9 @@ export class BackupExportStream extends Readable {
           accessControl: convo.accessControl,
           version: convo.revision || 0,
           members: convo.membersV2?.map(member => {
-            const memberConvo = window.ConversationController.get(member.aci);
-            strictAssert(memberConvo, 'Missing GV2 member');
-
-            const { profileKey } = memberConvo.attributes;
-
             return {
               userId: this.aciToBytes(member.aci),
               role: member.role,
-              profileKey: profileKey
-                ? Bytes.fromBase64(profileKey)
-                : ZERO_PROFILE_KEY,
               joinedAtVersion: member.joinedAtVersion,
             };
           }),
@@ -866,7 +908,6 @@ export class BackupExportStream extends Readable {
               member: {
                 userId: this.serviceIdToBytes(member.serviceId),
                 role: member.role,
-                profileKey: ZERO_PROFILE_KEY,
                 joinedAtVersion: 0,
               },
               addedByUserId: this.aciToBytes(member.addedByUserId),
@@ -875,15 +916,8 @@ export class BackupExportStream extends Readable {
           }),
           membersPendingAdminApproval: convo.pendingAdminApprovalV2?.map(
             member => {
-              const memberConvo = window.ConversationController.get(member.aci);
-              strictAssert(memberConvo, 'Missing GV2 member pending approval');
-
-              const { profileKey } = memberConvo.attributes;
               return {
                 userId: this.aciToBytes(member.aci),
-                profileKey: profileKey
-                  ? Bytes.fromBase64(profileKey)
-                  : ZERO_PROFILE_KEY,
                 timestamp: getSafeLongFromTimestamp(member.timestamp),
               };
             }
@@ -1032,6 +1066,7 @@ export class BackupExportStream extends Readable {
       const { payment } = message;
       switch (payment.kind) {
         case PaymentEventKind.ActivationRequest: {
+          result.directionless = {};
           result.updateMessage = {
             simpleUpdate: {
               type: Backups.SimpleChatUpdate.Type.PAYMENT_ACTIVATION_REQUEST,
@@ -1040,6 +1075,7 @@ export class BackupExportStream extends Readable {
           break;
         }
         case PaymentEventKind.Activation: {
+          result.directionless = {};
           result.updateMessage = {
             simpleUpdate: {
               type: Backups.SimpleChatUpdate.Type.PAYMENTS_ACTIVATED,
@@ -1049,7 +1085,7 @@ export class BackupExportStream extends Readable {
         }
         case PaymentEventKind.Notification:
           result.paymentNotification = {
-            note: payment.note || undefined,
+            note: payment.note ?? null,
             amountMob: payment.amountMob,
             feeMob: payment.feeMob,
             transactionDetails: payment.transactionDetailsBase64
@@ -1118,32 +1154,39 @@ export class BackupExportStream extends Readable {
       const { giftBadge } = message;
       strictAssert(giftBadge != null, 'Message must have gift badge');
 
-      let state: Backups.GiftBadge.State;
-      switch (giftBadge.state) {
-        case GiftBadgeStates.Unopened:
-          state = Backups.GiftBadge.State.UNOPENED;
-          break;
-        case GiftBadgeStates.Opened:
-          state = Backups.GiftBadge.State.OPENED;
-          break;
-        case GiftBadgeStates.Redeemed:
-          state = Backups.GiftBadge.State.REDEEMED;
-          break;
-        default:
-          throw missingCaseError(giftBadge.state);
-      }
+      if (giftBadge.state === GiftBadgeStates.Failed) {
+        result.giftBadge = {
+          state: Backups.GiftBadge.State.FAILED,
+        };
+      } else {
+        let state: Backups.GiftBadge.State;
+        switch (giftBadge.state) {
+          case GiftBadgeStates.Unopened:
+            state = Backups.GiftBadge.State.UNOPENED;
+            break;
+          case GiftBadgeStates.Opened:
+            state = Backups.GiftBadge.State.OPENED;
+            break;
+          case GiftBadgeStates.Redeemed:
+            state = Backups.GiftBadge.State.REDEEMED;
+            break;
+          default:
+            throw missingCaseError(giftBadge);
+        }
 
-      result.giftBadge = {
-        receiptCredentialPresentation: Bytes.fromBase64(
-          giftBadge.receiptCredentialPresentation
-        ),
-        state,
-      };
+        result.giftBadge = {
+          receiptCredentialPresentation: Bytes.fromBase64(
+            giftBadge.receiptCredentialPresentation
+          ),
+          state,
+        };
+      }
     } else {
-      result.standardMessage = await this.toStandardMessage(
+      result.standardMessage = await this.toStandardMessage({
         message,
-        backupLevel
-      );
+        backupLevel,
+      });
+
       result.revisions = await this.toChatItemRevisions(
         result,
         message,
@@ -1223,7 +1266,7 @@ export class BackupExportStream extends Readable {
           return { kind: NonBubbleResultKind.Drop };
         }
 
-        const { ringerId } = callHistory;
+        const { ringerId, startedById } = callHistory;
         if (ringerId) {
           const ringerConversation =
             window.ConversationController.get(ringerId);
@@ -1237,13 +1280,28 @@ export class BackupExportStream extends Readable {
             ringerConversation.attributes
           );
           groupCall.ringerRecipientId = recipientId;
+        }
+
+        if (startedById) {
+          const startedByConvo = window.ConversationController.get(startedById);
+          if (!startedByConvo) {
+            throw new Error(
+              'toChatItemUpdate/callHistory: startedById conversation not found!'
+            );
+          }
+
+          const recipientId = this.getRecipientId(startedByConvo.attributes);
           groupCall.startedCallRecipientId = recipientId;
         }
 
         groupCall.callId = Long.fromString(callId);
         groupCall.state = toGroupCallStateProto(callHistory.status);
         groupCall.startedCallTimestamp = Long.fromNumber(callHistory.timestamp);
-        groupCall.endedCallTimestamp = Long.fromNumber(0);
+        if (callHistory.endedTimestamp != null) {
+          groupCall.endedCallTimestamp = Long.fromNumber(
+            callHistory.endedTimestamp
+          );
+        }
         groupCall.read = message.seenStatus === SeenStatus.Seen;
 
         updateMessage.groupCall = groupCall;
@@ -1432,12 +1490,17 @@ export class BackupExportStream extends Readable {
       let type: Backups.SimpleChatUpdate.Type;
       const { Type } = Backups.SimpleChatUpdate;
       switch (event) {
-        case MessageRequestResponseEvent.ACCEPT:
-        case MessageRequestResponseEvent.BLOCK:
-        case MessageRequestResponseEvent.UNBLOCK:
-          return { kind: NonBubbleResultKind.Drop };
         case MessageRequestResponseEvent.SPAM:
           type = Type.REPORTED_SPAM;
+          break;
+        case MessageRequestResponseEvent.BLOCK:
+          type = Type.BLOCKED;
+          break;
+        case MessageRequestResponseEvent.UNBLOCK:
+          type = Type.UNBLOCKED;
+          break;
+        case MessageRequestResponseEvent.ACCEPT:
+          type = Type.MESSAGE_REQUEST_ACCEPTED;
           break;
         default:
           throw missingCaseError(event);
@@ -1515,7 +1578,7 @@ export class BackupExportStream extends Readable {
 
       updateMessage.simpleUpdate = simpleUpdate;
 
-      return { kind: NonBubbleResultKind.Directed, patch };
+      return { kind: NonBubbleResultKind.Directionless, patch };
     }
 
     if (isGroupV1Migration(message)) {
@@ -1579,7 +1642,7 @@ export class BackupExportStream extends Readable {
 
       updateMessage.simpleUpdate = simpleUpdate;
 
-      return { kind: NonBubbleResultKind.Directed, patch };
+      return { kind: NonBubbleResultKind.Directionless, patch };
     }
 
     if (isChatSessionRefreshed(message)) {
@@ -2024,7 +2087,15 @@ export class BackupExportStream extends Readable {
     return {
       targetSentTimestamp: Long.fromNumber(quote.id),
       authorId,
-      text: quote.text,
+      text:
+        quote.text != null
+          ? {
+              body: quote.text,
+              bodyRanges: quote.bodyRanges?.map(range =>
+                this.toBodyRange(range)
+              ),
+            }
+          : null,
       attachments: await Promise.all(
         quote.attachments.map(
           async (
@@ -2044,7 +2115,6 @@ export class BackupExportStream extends Readable {
           }
         )
       ),
-      bodyRanges: quote.bodyRanges?.map(range => this.toBodyRange(range)),
       type: quote.isGiftBadge
         ? Backups.Quote.Type.GIFTBADGE
         : Backups.Quote.Type.NORMAL,
@@ -2070,7 +2140,9 @@ export class BackupExportStream extends Readable {
   private getMessageAttachmentFlag(
     attachment: AttachmentType
   ): Backups.MessageAttachment.Flag {
-    if (isVoiceMessageAttachment(attachment)) {
+    const flag = SignalService.AttachmentPointer.Flags.VOICE_MESSAGE;
+    // eslint-disable-next-line no-bitwise
+    if (((attachment.flags || 0) & flag) === flag) {
       return Backups.MessageAttachment.Flag.VOICE_MESSAGE;
     }
     if (isGIF([attachment])) {
@@ -2106,7 +2178,7 @@ export class BackupExportStream extends Readable {
     return new Backups.MessageAttachment({
       pointer: filePointer,
       flag: this.getMessageAttachmentFlag(attachment),
-      wasDownloaded: isDownloaded(attachment), // should always be true
+      wasDownloaded: isDownloaded(attachment),
       clientUuid: clientUuid ? uuidToBytes(clientUuid) : undefined,
     });
   }
@@ -2132,15 +2204,19 @@ export class BackupExportStream extends Readable {
       // new keys so that we don't try to re-upload it again on the next export
     }
 
-    const backupJob = await maybeGetBackupJobForAttachmentAndFilePointer({
-      attachment: updatedAttachment ?? attachment,
-      filePointer,
-      getBackupCdnInfo,
-      messageReceivedAt,
-    });
+    // We don't download attachments during integration tests and thus have no
+    // "iv" for an attachment and can't create a job
+    if (this.backupType !== BackupType.TestOnlyPlaintext) {
+      const backupJob = await maybeGetBackupJobForAttachmentAndFilePointer({
+        attachment: updatedAttachment ?? attachment,
+        filePointer,
+        getBackupCdnInfo,
+        messageReceivedAt,
+      });
 
-    if (backupJob) {
-      this.attachmentBackupJobs.push(backupJob);
+      if (backupJob) {
+        this.attachmentBackupJobs.push(backupJob);
+      }
     }
 
     return filePointer;
@@ -2162,9 +2238,6 @@ export class BackupExportStream extends Readable {
           id: reaction.fromId,
         }),
         sentTimestamp: getSafeLongFromTimestamp(reaction.timestamp),
-        receivedTimestamp: getSafeLongFromTimestamp(
-          reaction.receivedAtDate ?? reaction.timestamp
-        ),
         sortOrder: Long.fromNumber(sortOrder),
       };
     });
@@ -2259,6 +2332,9 @@ export class BackupExportStream extends Readable {
             sealedSender,
           });
           break;
+        case SendStatus.Skipped:
+          sendStatus.skipped = {};
+          break;
         case SendStatus.Failed: {
           sendStatus.failed = new Backups.SendStatus.Failed();
           if (!serviceId) {
@@ -2273,6 +2349,10 @@ export class BackupExportStream extends Readable {
           if (identityKeyMismatch) {
             sendStatus.failed.reason =
               Backups.SendStatus.Failed.FailureReason.IDENTITY_KEY_MISMATCH;
+          } else if (errorName === 'UnknownError') {
+            // See ts/backups/import.ts
+            sendStatus.failed.reason =
+              Backups.SendStatus.Failed.FailureReason.UNKNOWN;
           } else {
             sendStatus.failed.reason =
               Backups.SendStatus.Failed.FailureReason.NETWORK;
@@ -2290,29 +2370,30 @@ export class BackupExportStream extends Readable {
     };
   }
 
-  private async toStandardMessage(
+  private async toStandardMessage({
+    message,
+    backupLevel,
+  }: {
     message: Pick<
       MessageAttributesType,
       | 'quote'
       | 'attachments'
       | 'body'
+      | 'bodyAttachment'
       | 'bodyRanges'
       | 'preview'
       | 'reactions'
       | 'received_at'
-    >,
-    backupLevel: BackupLevel
-  ): Promise<Backups.IStandardMessage> {
-    const isVoiceMessage = message.attachments?.some(isVoiceMessageAttachment);
-    const includeText = !isVoiceMessage;
-
+    >;
+    backupLevel: BackupLevel;
+  }): Promise<Backups.IStandardMessage> {
     return {
       quote: await this.toQuote({
         quote: message.quote,
         backupLevel,
         messageReceivedAt: message.received_at,
       }),
-      attachments: message.attachments
+      attachments: message.attachments?.length
         ? await Promise.all(
             message.attachments.map(attachment => {
               return this.processMessageAttachment({
@@ -2323,17 +2404,22 @@ export class BackupExportStream extends Readable {
             })
           )
         : undefined,
-      text: includeText
-        ? {
-            // TODO (DESKTOP-7207): handle long message text attachments
-            // Note that we store full text on the message model so we have to
-            // trim it before serializing.
-            body: message.body?.slice(0, LONG_ATTACHMENT_LIMIT),
-            bodyRanges: message.bodyRanges?.map(range =>
-              this.toBodyRange(range)
-            ),
-          }
+      longText: message.bodyAttachment
+        ? await this.processAttachment({
+            attachment: message.bodyAttachment,
+            backupLevel,
+            messageReceivedAt: message.received_at,
+          })
         : undefined,
+      text:
+        message.body != null
+          ? {
+              body: message.body?.slice(0, LONG_ATTACHMENT_LIMIT),
+              bodyRanges: message.bodyRanges?.map(range =>
+                this.toBodyRange(range)
+              ),
+            }
+          : undefined,
       linkPreview: message.preview
         ? await Promise.all(
             message.preview.map(async preview => {
@@ -2392,7 +2478,10 @@ export class BackupExportStream extends Readable {
               : this.getIncomingMessageDetails(history),
 
             // Message itself
-            standardMessage: await this.toStandardMessage(history, backupLevel),
+            standardMessage: await this.toStandardMessage({
+              message: history,
+              backupLevel,
+            }),
           };
 
           // Backups use oldest to newest order
@@ -2430,7 +2519,7 @@ export class BackupExportStream extends Readable {
 
     const result = new Array<Backups.ChatStyle.ICustomChatColor>();
     for (const [uuid, color] of map.entries()) {
-      const id = Long.fromNumber(result.length);
+      const id = Long.fromNumber(result.length + 1);
       this.customColorIdByUuid.set(uuid, id);
 
       const start = hslToRGBInt(
@@ -2465,18 +2554,25 @@ export class BackupExportStream extends Readable {
     return result;
   }
 
-  private toDefaultChatStyle(): Backups.IChatStyle {
+  private toDefaultChatStyle(): Backups.IChatStyle | null {
     const defaultColor = window.storage.get('defaultConversationColor');
+    const wallpaperPhotoPointer = window.storage.get(
+      'defaultWallpaperPhotoPointer'
+    );
+    const wallpaperPreset = window.storage.get('defaultWallpaperPreset');
+    const dimWallpaperInDarkMode = window.storage.get(
+      'defaultDimWallpaperInDarkMode',
+      false
+    );
+    const autoBubbleColor = window.storage.get('defaultAutoBubbleColor');
 
     return this.toChatStyle({
-      wallpaperPhotoPointer: window.storage.get('defaultWallpaperPhotoPointer'),
-      wallpaperPreset: window.storage.get('defaultWallpaperPreset'),
+      wallpaperPhotoPointer,
+      wallpaperPreset,
       color: defaultColor?.color,
       customColorId: defaultColor?.customColorData?.id,
-      dimWallpaperInDarkMode: window.storage.get(
-        'defaultDimWallpaperInDarkMode',
-        false
-      ),
+      dimWallpaperInDarkMode,
+      autoBubbleColor,
     });
   }
 
@@ -2486,10 +2582,22 @@ export class BackupExportStream extends Readable {
     color,
     customColorId,
     dimWallpaperInDarkMode,
-  }: LocalChatStyle): Backups.IChatStyle {
+    autoBubbleColor,
+  }: LocalChatStyle): Backups.IChatStyle | null {
     const result: Backups.IChatStyle = {
       dimWallpaperInDarkMode,
     };
+
+    // The defaults
+    if (
+      (color == null || color === 'ultramarine') &&
+      wallpaperPhotoPointer == null &&
+      wallpaperPreset == null &&
+      !dimWallpaperInDarkMode &&
+      (autoBubbleColor === true || autoBubbleColor == null)
+    ) {
+      return null;
+    }
 
     if (Bytes.isNotEmpty(wallpaperPhotoPointer)) {
       result.wallpaperPhoto = Backups.FilePointer.decode(wallpaperPhotoPointer);
@@ -2497,7 +2605,7 @@ export class BackupExportStream extends Readable {
       result.wallpaperPreset = wallpaperPreset;
     }
 
-    if (color == null) {
+    if (color == null || autoBubbleColor) {
       result.autoBubbleColor = {};
       return result;
     }

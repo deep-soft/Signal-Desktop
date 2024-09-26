@@ -48,7 +48,10 @@ window.Whisper.events = clone(window.Backbone.Events);
 initMessageCleanup();
 startConversationController();
 
-if (!isProduction(window.SignalContext.getVersion())) {
+if (
+  !isProduction(window.SignalContext.getVersion()) ||
+  window.SignalContext.config.devTools
+) {
   const SignalDebug = {
     cdsLookup: (options: CdsLookupOptionsType) =>
       window.textsecure.server?.cdsLookup(options),
@@ -60,6 +63,8 @@ if (!isProduction(window.SignalContext.getVersion())) {
     getConversation: (id: string) => window.ConversationController.get(id),
     getMessageById: (id: string) =>
       window.MessageCache.__DEPRECATED$getById(id),
+    getMessageBySentAt: (timestamp: number) =>
+      window.MessageCache.findBySentAt(timestamp, () => true),
     getReduxState: () => window.reduxStore.getState(),
     getSfuUrl: () => window.Signal.Services.calling._sfuUrl,
     getIceServerOverride: () =>
