@@ -6,6 +6,7 @@ import {
   hasScreenCapturePermission,
   openSystemPreferences,
 } from 'mac-screen-capture-permissions';
+import { isSupported as isNativeMacScreenShareSupported } from '@indutny/mac-screen-share';
 import { omit } from 'lodash';
 import type { ReadonlyDeep } from 'type-fest';
 import {
@@ -104,7 +105,10 @@ import { addCallHistory, reloadCallHistory } from './callHistory';
 import { saveDraftRecordingIfNeeded } from './composer';
 import type { CallHistoryDetails } from '../../types/CallDisposition';
 import type { StartCallData } from '../../components/ConfirmLeaveCallModal';
-import { getCallLinksByRoomId } from '../selectors/calling';
+import {
+  getCallLinksByRoomId,
+  getPresentingSource,
+} from '../selectors/calling';
 import { storageServiceUploadJob } from '../../services/storage';
 import { CallLinkDeleteManager } from '../../jobs/CallLinkDeleteManager';
 import { callLinkRefreshJobQueue } from '../../jobs/callLinkRefreshJobQueue';
@@ -185,7 +189,6 @@ export type ActiveCallStateType = {
   pip: boolean;
   presentingSource?: PresentedSource;
   presentingSourcesAvailable?: ReadonlyArray<PresentableSource>;
-  capturerBaton?: DesktopCapturerBaton;
   settingsDialogOpen: boolean;
   showNeedsScreenRecordingPermissionsWarning?: boolean;
   showParticipantsList: boolean;
@@ -216,6 +219,7 @@ export type CallingStateType = MediaDeviceSettings & {
   adhocCalls: AdhocCallsType;
   callLinks: CallLinksByRoomIdType;
   activeCallState?: ActiveCallStateType | WaitingCallStateType;
+  capturerBaton?: DesktopCapturerBaton;
 };
 
 export type AcceptCallType = ReadonlyDeep<{
@@ -418,11 +422,6 @@ type StartCallLinkLobbyPayloadType = {
   callLinkState: CallLinkStateType;
   callLinkRoomId: string;
   callLinkRootKey: string;
-};
-
-// eslint-disable-next-line local-rules/type-alias-readonlydeep
-export type SetLocalPreviewType = {
-  element: React.RefObject<HTMLVideoElement> | undefined;
 };
 
 // eslint-disable-next-line local-rules/type-alias-readonlydeep
@@ -649,6 +648,7 @@ const SET_LOCAL_VIDEO_FULFILLED = 'calling/SET_LOCAL_VIDEO_FULFILLED';
 const SET_OUTGOING_RING = 'calling/SET_OUTGOING_RING';
 const SET_PRESENTING = 'calling/SET_PRESENTING';
 const SET_PRESENTING_SOURCES = 'calling/SET_PRESENTING_SOURCES';
+const SET_CAPTURER_BATON = 'calling/SET_CAPTURER_BATON';
 const TOGGLE_NEEDS_SCREEN_RECORDING_PERMISSIONS =
   'calling/TOGGLE_NEEDS_SCREEN_RECORDING_PERMISSIONS';
 const START_DIRECT_CALL = 'calling/START_DIRECT_CALL';
@@ -897,8 +897,12 @@ type SetPresentingSourcesActionType = ReadonlyDeep<{
   type: 'calling/SET_PRESENTING_SOURCES';
   payload: {
     presentableSources: ReadonlyArray<PresentableSource>;
-    capturerBaton: DesktopCapturerBaton;
   };
+}>;
+
+type SetCapturerBatonActionType = ReadonlyDeep<{
+  type: 'calling/SET_CAPTURER_BATON';
+  payload: DesktopCapturerBaton;
 }>;
 
 type SetOutgoingRingActionType = ReadonlyDeep<{
@@ -977,6 +981,7 @@ export type CallingActionType =
   | ReturnToActiveCallActionType
   | SendGroupCallReactionActionType
   | SelectPresentingSourceActionType
+  | SetCapturerBatonActionType
   | SetLocalAudioActionType
   | SetLocalVideoFulfilledActionType
   | SetPresentingSourcesActionType
@@ -1296,6 +1301,7 @@ function getPresentingSources(): ThunkAction<
   void,
   RootStateType,
   unknown,
+  | SetCapturerBatonActionType
   | SetPresentingSourcesActionType
   | ToggleNeedsScreenRecordingPermissionsActionType
 > {
@@ -1311,14 +1317,16 @@ function getPresentingSources(): ThunkAction<
     // capture that state correctly.
     const platform = getPlatform(getState());
     const needsPermission =
-      platform === 'darwin' && !hasScreenCapturePermission();
+      platform === 'darwin' &&
+      !isNativeMacScreenShareSupported &&
+      !hasScreenCapturePermission();
 
     const capturer = new DesktopCapturer({
       i18n,
       onPresentableSources(presentableSources) {
         if (needsPermission) {
           // Abort
-          capturer.selectSource(undefined);
+          capturer.abort();
           return;
         }
 
@@ -1326,20 +1334,13 @@ function getPresentingSources(): ThunkAction<
           type: SET_PRESENTING_SOURCES,
           payload: {
             presentableSources,
-            capturerBaton: capturer.baton,
           },
         });
       },
       onMediaStream(mediaStream) {
-        let presentingSource: PresentedSource | undefined;
-        const { activeCallState } = getState().calling;
-        if (activeCallState?.state === 'Active') {
-          ({ presentingSource } = activeCallState);
-        }
-
         dispatch(
           _setPresenting(
-            presentingSource || {
+            getPresentingSource(getState()) || {
               id: 'media-stream',
               name: '',
             },
@@ -1352,6 +1353,11 @@ function getPresentingSources(): ThunkAction<
       },
     });
     globalCapturers.set(capturer.baton, capturer);
+
+    dispatch({
+      type: SET_CAPTURER_BATON,
+      payload: capturer.baton,
+    });
 
     if (needsPermission) {
       dispatch({
@@ -1824,14 +1830,6 @@ function setIsCallActive(
   };
 }
 
-function setLocalPreview(
-  payload: SetLocalPreviewType
-): ThunkAction<void, RootStateType, unknown, never> {
-  return () => {
-    calling.videoCapturer.setLocalPreview(payload.element);
-  };
-}
-
 function setRendererCanvas(
   payload: SetRendererCanvasType
 ): ThunkAction<void, RootStateType, unknown, never> {
@@ -1948,6 +1946,22 @@ function _setPresenting(
       source: sourceToPresent,
       callLinkRootKey: rootKey,
     });
+
+    if (mediaStream != null) {
+      // If the screen sharing stream is terminated early - stop screen sharing
+      mediaStream.getVideoTracks()[0]?.addEventListener(
+        'ended',
+        () => {
+          const currentSource = getPresentingSource(getState());
+
+          // Verify that the source didn't change while we were waiting.
+          if (currentSource === sourceToPresent) {
+            dispatch(cancelPresenting());
+          }
+        },
+        { once: true }
+      );
+    }
 
     dispatch({
       type: SET_PRESENTING,
@@ -2097,7 +2111,7 @@ function createCallLink(
       DataWriter.saveCallHistory(callHistory),
     ]);
 
-    storageServiceUploadJob();
+    storageServiceUploadJob({ reason: 'createCallLink' });
 
     dispatch({
       type: HANDLE_CALL_LINK_UPDATE,
@@ -2114,7 +2128,7 @@ function deleteCallLink(
 ): ThunkAction<void, RootStateType, unknown, HandleCallLinkDeleteActionType> {
   return async dispatch => {
     await DataWriter.beginDeleteCallLink(roomId, { storageNeedsSync: true });
-    storageServiceUploadJob();
+    storageServiceUploadJob({ reason: 'deleteCallLink' });
     // Wait for storage service sync before finalizing delete
     drop(CallLinkDeleteManager.addJob({ roomId }, { delay: 10000 }));
     dispatch(handleCallLinkDelete({ roomId }));
@@ -2650,7 +2664,6 @@ export const actions = {
   setGroupCallVideoRequest,
   setIsCallActive,
   setLocalAudio,
-  setLocalPreview,
   setLocalVideo,
   setOutgoingRing,
   setRendererCanvas,
@@ -2750,6 +2763,25 @@ function mergeCallWithGroupCallLookups({
           [conversationId]: call,
         }
       : adhocCalls,
+  };
+}
+
+function abortCapturer(
+  state: Readonly<CallingStateType>
+): Readonly<CallingStateType> {
+  const { capturerBaton } = state;
+  if (capturerBaton == null) {
+    return state;
+  }
+
+  // Cancel source selection if running
+  const capturer = globalCapturers.get(capturerBaton);
+  strictAssert(capturer != null, 'Capturer reference exists, but not capturer');
+  capturer.abort();
+
+  return {
+    ...state,
+    capturerBaton: undefined,
   };
 }
 
@@ -2972,17 +3004,22 @@ export function reducer(
     action.type === HANG_UP ||
     action.type === CLOSE_NEED_PERMISSION_SCREEN
   ) {
-    const activeCall = getActiveCall(state);
+    const updatedState = abortCapturer(state);
+    const activeCall = getActiveCall(updatedState);
     if (!activeCall) {
       log.warn(`${action.type}: No active call to remove`);
-      return state;
+      return updatedState;
     }
+
     switch (activeCall.callMode) {
       case CallMode.Direct:
-        return removeConversationFromState(state, activeCall.conversationId);
+        return removeConversationFromState(
+          updatedState,
+          activeCall.conversationId
+        );
       case CallMode.Group:
       case CallMode.Adhoc:
-        return omit(state, 'activeCallState');
+        return omit(updatedState, 'activeCallState');
       default:
         throw missingCaseError(activeCall);
     }
@@ -3471,6 +3508,13 @@ export function reducer(
     };
   }
 
+  if (action.type === SET_CAPTURER_BATON) {
+    return {
+      ...abortCapturer(state),
+      capturerBaton: action.payload,
+    };
+  }
+
   if (
     action.type === SEND_GROUP_CALL_REACTION ||
     action.type === GROUP_CALL_REACTIONS_RECEIVED
@@ -3753,25 +3797,18 @@ export function reducer(
 
   if (action.type === SET_PRESENTING) {
     const { activeCallState } = state;
+
     if (activeCallState?.state !== 'Active') {
       log.warn('Cannot toggle presenting when there is no active call');
       return state;
     }
 
-    // Cancel source selection if running
-    const { capturerBaton } = activeCallState;
-    if (capturerBaton != null) {
-      const capturer = globalCapturers.get(capturerBaton);
-      capturer?.selectSource(undefined);
-    }
-
     return {
-      ...state,
+      ...(action.payload == null ? abortCapturer(state) : state),
       activeCallState: {
         ...activeCallState,
         presentingSource: action.payload,
         presentingSourcesAvailable: undefined,
-        capturerBaton: undefined,
       },
     };
   }
@@ -3788,19 +3825,18 @@ export function reducer(
       activeCallState: {
         ...activeCallState,
         presentingSourcesAvailable: action.payload.presentableSources,
-        capturerBaton: action.payload.capturerBaton,
       },
     };
   }
 
   if (action.type === SELECT_PRESENTING_SOURCE) {
-    const { activeCallState } = state;
+    const { activeCallState, capturerBaton } = state;
     if (activeCallState?.state !== 'Active') {
       log.warn('Cannot set presenting sources when there is no active call');
       return state;
     }
 
-    const { capturerBaton, presentingSourcesAvailable } = activeCallState;
+    const { presentingSourcesAvailable } = activeCallState;
     if (!capturerBaton || !presentingSourcesAvailable) {
       log.warn(
         'Cannot set presenting sources when there is no presenting modal'
@@ -3817,13 +3853,13 @@ export function reducer(
 
     return {
       ...state,
+      capturerBaton: undefined,
       activeCallState: {
         ...activeCallState,
         presentingSource: presentingSourcesAvailable.find(
           source => source.id === action.payload
         ),
         presentingSourcesAvailable: undefined,
-        capturerBaton: undefined,
       },
     };
   }

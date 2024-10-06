@@ -1,7 +1,7 @@
 // Copyright 2020 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { isNumber, throttle, groupBy } from 'lodash';
+import { isNumber, groupBy, throttle } from 'lodash';
 import { render } from 'react-dom';
 import { batch as batchDispatch } from 'react-redux';
 import PQueue from 'p-queue';
@@ -77,7 +77,6 @@ import { parseIntOrThrow } from './util/parseIntOrThrow';
 import { getProfile } from './util/getProfile';
 import type {
   ConfigurationEvent,
-  DecryptionErrorEvent,
   DeliveryEvent,
   EnvelopeQueuedEvent,
   EnvelopeUnsealedEvent,
@@ -129,9 +128,10 @@ import { InstallScreenStep } from './types/InstallScreen';
 import { getEnvironment } from './environment';
 import { SignalService as Proto } from './protobuf';
 import {
+  getOnDecryptionError,
   onRetryRequest,
-  onDecryptionError,
   onInvalidPlaintextMessage,
+  onSuccessfulDecrypt,
 } from './util/handleRetry';
 import { themeChanged } from './shims/themeChanged';
 import { createIPCEvents } from './util/createIPCEvents';
@@ -618,11 +618,14 @@ export async function startApp(): Promise<void> {
       'error',
       queuedEventListener(onError, false)
     );
+
+    messageReceiver.addEventListener(
+      'successful-decrypt',
+      queuedEventListener(onSuccessfulDecrypt)
+    );
     messageReceiver.addEventListener(
       'decryption-error',
-      queuedEventListener((event: DecryptionErrorEvent): void => {
-        drop(onDecryptionErrorQueue.add(() => onDecryptionError(event)));
-      })
+      queuedEventListener(getOnDecryptionError(() => onDecryptionErrorQueue))
     );
     messageReceiver.addEventListener(
       'invalid-plaintext',
@@ -733,6 +736,7 @@ export async function startApp(): Promise<void> {
           );
           log.info('background/shutdown: shutting down messageReceiver');
           server.unregisterRequestHandler(messageReceiver);
+          StorageService.disableStorageService();
           messageReceiver.stopProcessing();
           await window.waitForAllBatchers();
         }
@@ -1308,15 +1312,13 @@ export async function startApp(): Promise<void> {
     remotelyExpired = true;
   });
 
-  async function runStorageService() {
-    if (window.storage.get('backupDownloadPath')) {
-      log.info(
-        'background: not running storage service while downloading backup'
-      );
-      return;
-    }
+  async function runStorageService({ reason }: { reason: string }) {
+    await backupReady.promise;
+
     StorageService.enableStorageService();
-    StorageService.runStorageServiceSyncJob();
+    StorageService.runStorageServiceSyncJob({
+      reason: `runStorageService/${reason}`,
+    });
   }
 
   async function start() {
@@ -1426,10 +1428,7 @@ export async function startApp(): Promise<void> {
       drop(connect(true));
 
       // Connect messageReceiver back to websocket
-      afterStart();
-
-      // Run storage service after linking
-      drop(runStorageService());
+      drop(afterStart());
     });
 
     cancelInitializationMessage();
@@ -1514,12 +1513,10 @@ export async function startApp(): Promise<void> {
       resolveOnAppView = undefined;
     }
 
-    afterStart();
+    drop(afterStart());
   }
 
-  const backupReady = explodePromise<void>();
-
-  function afterStart() {
+  async function afterStart() {
     strictAssert(messageReceiver, 'messageReceiver must be initialized');
     strictAssert(server, 'server must be initialized');
 
@@ -1585,45 +1582,25 @@ export async function startApp(): Promise<void> {
       onOffline();
     }
 
-    drop(downloadBackup());
-  }
+    // Download backup before enabling request handler and storage service
+    try {
+      await backupsService.download({
+        onProgress: (currentBytes, totalBytes) => {
+          window.reduxActions.installer.updateBackupImportProgress({
+            currentBytes,
+            totalBytes,
+          });
+        },
+      });
 
-  async function downloadBackup() {
-    strictAssert(server != null, 'server must be initialized');
-    strictAssert(
-      messageReceiver != null,
-      'MessageReceiver must be initialized'
-    );
-
-    const backupDownloadPath = window.storage.get('backupDownloadPath');
-    if (!backupDownloadPath) {
-      log.warn('downloadBackup: no backup download path, skipping');
       backupReady.resolve();
-      server.registerRequestHandler(messageReceiver);
-      drop(runStorageService());
-      return;
+    } catch (error) {
+      backupReady.reject(error);
+      throw error;
     }
 
-    const absoluteDownloadPath =
-      window.Signal.Migrations.getAbsoluteDownloadsPath(backupDownloadPath);
-    log.info('downloadBackup: downloading...');
-    const hasBackup = await backupsService.download(absoluteDownloadPath, {
-      onProgress: (currentBytes, totalBytes) => {
-        window.reduxActions.installer.updateBackupImportProgress({
-          currentBytes,
-          totalBytes,
-        });
-      },
-    });
-    await window.storage.remove('backupDownloadPath');
-
-    log.info(`downloadBackup: done, had backup=${hasBackup}`);
-
-    // Start storage service sync, etc
-    log.info('downloadBackup: processing websocket messages, storage service');
-    backupReady.resolve();
     server.registerRequestHandler(messageReceiver);
-    drop(runStorageService());
+    drop(runStorageService({ reason: 'afterStart' }));
   }
 
   window.getSyncRequest = (timeoutMillis?: number) => {
@@ -1688,6 +1665,8 @@ export async function startApp(): Promise<void> {
     );
   }
 
+  let backupReady = explodePromise<void>();
+
   let connectCount = 0;
   let connectPromise: ExplodePromiseResultType<void> | undefined;
   let remotelyExpired = false;
@@ -1722,7 +1701,14 @@ export async function startApp(): Promise<void> {
 
     strictAssert(server !== undefined, 'WebAPI not connected');
 
-    await backupReady.promise;
+    // Wait for backup to be downloaded
+    try {
+      await backupReady.promise;
+    } catch (error) {
+      log.error('background: backup download failed, not reconnecting', error);
+      return;
+    }
+    log.info('background: connect unblocked by backups');
 
     try {
       connectPromise = explodePromise();
@@ -1790,7 +1776,7 @@ export async function startApp(): Promise<void> {
       if (connectCount === 1) {
         Stickers.downloadQueuedPacks();
         if (!newVersion) {
-          drop(runStorageService());
+          drop(runStorageService({ reason: 'connect/connectCount=1' }));
         }
       }
 
@@ -1808,7 +1794,7 @@ export async function startApp(): Promise<void> {
           window.getSyncRequest();
 
           void StorageService.reprocessUnknownFields();
-          void runStorageService();
+          void runStorageService({ reason: 'connect/bootAfterUpgrade' });
 
           const manager = window.getAccountManager();
           await Promise.all([
@@ -1904,7 +1890,7 @@ export async function startApp(): Promise<void> {
               MessageSender.getRequestConfigurationSyncMessage()
             ),
             singleProtoJobQueue.add(MessageSender.getRequestBlockSyncMessage()),
-            runStorageService(),
+            runStorageService({ reason: 'firstRun/initialSync' }),
             singleProtoJobQueue.add(
               MessageSender.getRequestContactSyncMessage()
             ),
@@ -3034,7 +3020,11 @@ export async function startApp(): Promise<void> {
       log.info('unlinkAndDisconnect: logging out');
       strictAssert(server !== undefined, 'WebAPI not initialized');
       server.unregisterRequestHandler(messageReceiver);
+      StorageService.disableStorageService();
       messageReceiver.stopProcessing();
+
+      backupReady.reject(new Error('Aborted'));
+      backupReady = explodePromise();
 
       await server.logout();
       await window.waitForAllBatchers();
@@ -3175,7 +3165,7 @@ export async function startApp(): Promise<void> {
       }
       case FETCH_LATEST_ENUM.STORAGE_MANIFEST:
         log.info('onFetchLatestSync: fetching latest manifest');
-        StorageService.runStorageServiceSyncJob();
+        StorageService.runStorageServiceSyncJob({ reason: 'syncFetchLatest' });
         break;
       case FETCH_LATEST_ENUM.SUBSCRIPTION_STATUS:
         log.info('onFetchLatestSync: fetching latest subscription status');
@@ -3233,7 +3223,7 @@ export async function startApp(): Promise<void> {
         }
       }
 
-      await StorageService.runStorageServiceSyncJob();
+      await StorageService.runStorageServiceSyncJob({ reason: 'onKeysSync' });
     }
   }
 

@@ -96,6 +96,9 @@ import {
   REQUESTED_VIDEO_WIDTH,
   REQUESTED_VIDEO_HEIGHT,
   REQUESTED_VIDEO_FRAMERATE,
+  REQUESTED_SCREEN_SHARE_WIDTH,
+  REQUESTED_SCREEN_SHARE_HEIGHT,
+  REQUESTED_SCREEN_SHARE_FRAMERATE,
 } from '../calling/constants';
 import { callingMessageToProto } from '../util/callingMessageToProto';
 import { requestMicrophonePermissions } from '../util/requestMicrophonePermissions';
@@ -152,6 +155,7 @@ import { getConversationIdForLogging } from '../util/idForLogging';
 import { sendCallLinkUpdateSync } from '../util/sendCallLinkUpdateSync';
 import { createIdenticon } from '../util/createIdenticon';
 import { getColorForCallLink } from '../util/getColorForCallLink';
+import { getUseRingrtcAdm } from '../util/ringrtc/ringrtcAdm';
 
 const { wasGroupCallRingPreviouslyCanceled } = DataReader;
 const {
@@ -323,9 +327,13 @@ export type NotifyScreenShareStatusOptionsType = Readonly<
 >;
 
 export class CallingClass {
-  readonly videoCapturer: GumVideoCapturer;
+  private readonly videoCapturer: GumVideoCapturer;
 
   readonly videoRenderer: CanvasVideoRenderer;
+
+  private localPreviewContainer: HTMLDivElement | null = null;
+
+  private localPreview: HTMLVideoElement | undefined;
 
   private reduxInterface?: CallingReduxInterface;
 
@@ -371,6 +379,7 @@ export class CallingClass {
 
     RingRTC.setConfig({
       field_trials: undefined,
+      use_ringrtc_adm: getUseRingrtcAdm(),
     });
 
     RingRTC.handleOutgoingSignaling = this.handleOutgoingSignaling.bind(this);
@@ -948,6 +957,21 @@ export class CallingClass {
           Buffer.from(member.uuidCiphertext)
         )
     );
+  }
+
+  public setLocalPreviewContainer(container: HTMLDivElement | null): void {
+    // Reuse HTMLVideoElement between different containers so that the preview
+    // of the last frame stays valid even if there are no new frames on the
+    // underlying MediaStream.
+    if (this.localPreview == null) {
+      this.localPreview = document.createElement('video');
+      this.localPreview.autoplay = true;
+      this.videoCapturer.setLocalPreview({ current: this.localPreview });
+    }
+
+    this.localPreviewContainer?.removeChild(this.localPreview);
+    this.localPreviewContainer = container;
+    this.localPreviewContainer?.appendChild(this.localPreview);
   }
 
   public async cleanupStaleRingingCalls(): Promise<void> {
@@ -2042,10 +2066,9 @@ export class CallingClass {
       this.hadLocalVideoBeforePresenting = hasLocalVideo;
       drop(
         this.enableCaptureAndSend(call, {
-          // 15fps is much nicer but takes up a lot more CPU.
-          maxFramerate: 5,
-          maxHeight: 1800,
-          maxWidth: 2880,
+          maxFramerate: REQUESTED_SCREEN_SHARE_FRAMERATE,
+          maxHeight: REQUESTED_SCREEN_SHARE_HEIGHT,
+          maxWidth: REQUESTED_SCREEN_SHARE_WIDTH,
           mediaStream,
         })
       );

@@ -207,6 +207,7 @@ import {
 } from '../types/AttachmentBackup';
 import { redactGenericText } from '../util/privacy';
 import { getAttachmentCiphertextLength } from '../AttachmentCrypto';
+import { parseStrict, parseUnknown, safeParseUnknown } from '../util/schemas';
 
 type ConversationRow = Readonly<{
   json: string;
@@ -406,7 +407,6 @@ export const DataWriter: ServerWritableInterface = {
   createOrUpdateSession,
   createOrUpdateSessions,
   commitDecryptResult,
-  bulkAddSessions,
   removeSessionById,
   removeSessionsByConversation,
   removeSessionsByServiceId,
@@ -1442,7 +1442,8 @@ function _getAllSentProtoMessageIds(db: ReadableDB): Array<SentMessageDBType> {
 
 const SESSIONS_TABLE = 'sessions';
 function createOrUpdateSession(db: WritableDB, data: SessionType): void {
-  const { id, conversationId, ourServiceId, serviceId } = data;
+  const { id, conversationId, ourServiceId, serviceId, deviceId, record } =
+    data;
   if (!id) {
     throw new Error(
       'createOrUpdateSession: Provided data did not have a truthy id'
@@ -1462,13 +1463,15 @@ function createOrUpdateSession(db: WritableDB, data: SessionType): void {
       conversationId,
       ourServiceId,
       serviceId,
-      json
+      deviceId,
+      record
     ) values (
       $id,
       $conversationId,
       $ourServiceId,
       $serviceId,
-      $json
+      $deviceId,
+      $record
     )
     `
   ).run({
@@ -1476,7 +1479,8 @@ function createOrUpdateSession(db: WritableDB, data: SessionType): void {
     conversationId,
     ourServiceId,
     serviceId,
-    json: objectToJSON(data),
+    deviceId,
+    record,
   });
 }
 
@@ -1518,9 +1522,6 @@ function commitDecryptResult(
   })();
 }
 
-function bulkAddSessions(db: WritableDB, array: Array<SessionType>): void {
-  return bulkAdd(db, SESSIONS_TABLE, array);
-}
 function removeSessionById(db: WritableDB, id: SessionIdType): number {
   return removeById(db, SESSIONS_TABLE, id);
 }
@@ -1554,7 +1555,7 @@ function removeAllSessions(db: WritableDB): number {
   return removeAllFromTable(db, SESSIONS_TABLE);
 }
 function getAllSessions(db: ReadableDB): Array<SessionType> {
-  return getAllFromTable(db, SESSIONS_TABLE);
+  return db.prepare('SELECT * FROM sessions').all();
 }
 // Conversations
 
@@ -3664,7 +3665,7 @@ function getCallHistory(
     return;
   }
 
-  return callHistoryDetailsSchema.parse(row);
+  return parseUnknown(callHistoryDetailsSchema, row as unknown);
 }
 
 const SEEN_STATUS_UNSEEN = sqlConstant(SeenStatus.Unseen);
@@ -3746,7 +3747,7 @@ function getCallHistoryForCallLogEventTarget(
     return null;
   }
 
-  return callHistoryDetailsSchema.parse(row);
+  return parseUnknown(callHistoryDetailsSchema, row as unknown);
 }
 
 function getConversationIdForCallHistory(
@@ -4110,7 +4111,7 @@ function getCallHistoryGroupsCount(
     return 0;
   }
 
-  return countSchema.parse(result);
+  return parseUnknown(countSchema, result as unknown);
 }
 
 const groupsDataSchema = z.array(
@@ -4135,7 +4136,8 @@ function getCallHistoryGroups(
   // getCallHistoryGroupData creates a temporary table and thus requires
   // write access.
   const writable = toUnsafeWritableDB(db, 'only temp table use');
-  const groupsData = groupsDataSchema.parse(
+  const groupsData = parseUnknown(
+    groupsDataSchema,
     getCallHistoryGroupData(writable, false, filter, pagination)
   );
 
@@ -4145,8 +4147,9 @@ function getCallHistoryGroups(
     .map(groupData => {
       return {
         ...groupData,
-        possibleChildren: possibleChildrenSchema.parse(
-          JSON.parse(groupData.possibleChildren)
+        possibleChildren: parseUnknown(
+          possibleChildrenSchema,
+          JSON.parse(groupData.possibleChildren) as unknown
         ),
         inPeriod: new Set(groupData.inPeriod.split(',')),
       };
@@ -4167,7 +4170,7 @@ function getCallHistoryGroups(
         }
       }
 
-      return callHistoryGroupSchema.parse({ ...rest, type, children });
+      return parseStrict(callHistoryGroupSchema, { ...rest, type, children });
     })
     .reverse();
 }
@@ -4788,14 +4791,14 @@ function getAttachmentDownloadJob(
 
 function removeAllBackupAttachmentDownloadJobs(db: WritableDB): void {
   const [query, params] = sql`
-    DELETE FROM attachment_downloads 
+    DELETE FROM attachment_downloads
     WHERE source = ${AttachmentDownloadSource.BACKUP_IMPORT};`;
   db.prepare(query).run(params);
 }
 
 function getSizeOfPendingBackupAttachmentDownloadJobs(db: ReadableDB): number {
   const [query, params] = sql`
-    SELECT SUM(ciphertextSize) FROM attachment_downloads 
+    SELECT SUM(ciphertextSize) FROM attachment_downloads
     WHERE source = ${AttachmentDownloadSource.BACKUP_IMPORT};`;
   return db.prepare(query).pluck().get(params);
 }
@@ -4842,7 +4845,7 @@ function getNextAttachmentDownloadJobs(
         })
       AND
         messageId IN (${sqlJoin(prioritizeMessageIds)})
-      AND 
+      AND
         ${sourceWhereFragment}
       -- for priority messages, let's load them oldest first; this helps, e.g. for stories where we
       -- want the oldest one first
@@ -4862,7 +4865,7 @@ function getNextAttachmentDownloadJobs(
         active = 0
       AND
         (retryAfter is NULL OR retryAfter <= ${timestamp})
-      AND 
+      AND
         ${sourceWhereFragment}
       ORDER BY receivedAt DESC
       LIMIT ${numJobsRemaining}
@@ -4876,14 +4879,14 @@ function getNextAttachmentDownloadJobs(
   try {
     return allJobs.map(row => {
       try {
-        return attachmentDownloadJobSchema.parse({
+        return parseUnknown(attachmentDownloadJobSchema, {
           ...row,
           active: Boolean(row.active),
           attachment: jsonToObject(row.attachmentJson),
           ciphertextSize:
             row.ciphertextSize ||
             getAttachmentCiphertextLength(row.attachment.size),
-        });
+        } as unknown);
       } catch (error) {
         logger.error(
           `getNextAttachmentDownloadJobs: Error with job for message ${row.messageId}, deleting.`
@@ -5040,11 +5043,11 @@ function getNextAttachmentBackupJobs(
   const rows = db.prepare(query).all(params);
   return rows
     .map(row => {
-      const parseResult = attachmentBackupJobSchema.safeParse({
+      const parseResult = safeParseUnknown(attachmentBackupJobSchema, {
         ...row,
         active: Boolean(row.active),
         data: jsonToObject(row.data),
-      });
+      } as unknown);
       if (!parseResult.success) {
         const redactedMediaName = redactGenericText(row.mediaName);
         logger.error(

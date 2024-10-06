@@ -1258,10 +1258,6 @@
     "messageformat": "Note",
     "description": "Title of Note Preview modal"
   },
-  "icu:viewRecentMedia": {
-    "messageformat": "View recent media",
-    "description": "(Deleted 2024/09/03) This is a menu item for viewing all media (images + video) in a conversation, using the imperative case, as in a command."
-  },
   "icu:allMediaMenuItem": {
     "messageformat": "All media",
     "description": "This is a menu item for viewing all media (images + video) in a conversation"
@@ -3952,7 +3948,7 @@
     "description": "Shown if you click a group link and you have been forbidden from joining via the link"
   },
   "icu:GroupV2--join--prompt-with-approval": {
-    "messageformat": "An admin of this group must approve your request before you can join this group. If approved, your name and photo will be shared with its members.",
+    "messageformat": "An admin of this group must approve your request before you can join this group. When you request to join, your name and photo will be shared with its members.",
     "description": "Shown when you click on a group link to confirm, if it requires admin approval"
   },
   "icu:GroupV2--join--join-button": {
@@ -4838,10 +4834,6 @@
   "icu:ContactModal--remove-from-group": {
     "messageformat": "Remove from group",
     "description": "Button text for remove from group button in Group Contact Details modal"
-  },
-  "icu:ContactModal--already-in-call": {
-    "messageformat": "You are already in a call",
-    "description": "(Deleted 2024/08/28) Tooltip text for video or voice call button in Contact Details modal"
   },
   "icu:ContactModal--voice": {
     "messageformat": "Voice",
@@ -6918,7 +6910,7 @@
     "description": "aria-label for the story list button"
   },
   "icu:StoryListItem__unhide": {
-    "messageformat": "Show stories",
+    "messageformat": "Unhide story",
     "description": "Label for menu item to un-hide the story"
   },
   "icu:StoryListItem__hide": {
@@ -7554,6 +7546,14 @@
   },
   "icu:WhatsNew__v7.27--0": {
     "messageformat": "Now you can remove quoted replies from edited messages. It's perfect for those moments when you realize that your response was so good that it doesn't actually need to stand on another message's shoulders, or when you accidentally reply to the wrong message with \"I love you too.\"",
-    "description": "Release notes for version 7.27"
+    "description": "(Deleted 2024/10/03) Release notes for version 7.27"
+  },
+  "icu:WhatsNew__v7.28--0": {
+    "messageformat": "We fixed a bug that prevented stickers from working correctly in the media editor, and now the picker no longer gets stuck when you're trying to stick a sticker on a picture.",
+    "description": "Release notes for version 7.28"
+  },
+  "icu:WhatsNew__v7.28--1": {
+    "messageformat": "This update also includes support for the new screen sharing interface in macOS Sequoia.",
+    "description": "Release notes for version 7.28"
   }
 }
