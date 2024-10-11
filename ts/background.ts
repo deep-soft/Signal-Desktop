@@ -6,7 +6,7 @@ import { render } from 'react-dom';
 import { batch as batchDispatch } from 'react-redux';
 import PQueue from 'p-queue';
 import pMap from 'p-map';
-import { v4 as generateUuid } from 'uuid';
+import { v7 as generateUuid } from 'uuid';
 
 import * as Registration from './util/registration';
 import MessageReceiver from './textsecure/MessageReceiver';
@@ -169,6 +169,7 @@ import {
   incrementMessageCounter,
   initializeMessageCounter,
 } from './util/incrementMessageCounter';
+import { generateMessageId } from './util/generateMessageId';
 import { RetryPlaceholders } from './util/retryPlaceholders';
 import { setBatchingStrategy } from './util/messageBatcher';
 import { parseRemoteClientExpiration } from './util/parseRemoteClientExpiration';
@@ -196,6 +197,7 @@ import { DataReader, DataWriter } from './sql/Client';
 import { restoreRemoteConfigFromStorage } from './RemoteConfig';
 import { getParametersForRedux, loadAll } from './services/allLoaders';
 import { checkFirstEnvelope } from './util/checkFirstEnvelope';
+import { BLOCKED_UUIDS_ID } from './textsecure/storage/Blocked';
 
 export function isOverHourIntoPast(timestamp: number): boolean {
   return isNumber(timestamp) && isOlderThan(timestamp, HOUR);
@@ -400,6 +402,10 @@ export async function startApp(): Promise<void> {
     }
 
     accountManager = new window.textsecure.AccountManager(server);
+    accountManager.addEventListener('startRegistration', () => {
+      backupReady.reject(new Error('startRegistration'));
+      backupReady = explodePromise();
+    });
     accountManager.addEventListener('registration', () => {
       window.Whisper.events.trigger('userChanged', false);
 
@@ -1307,7 +1313,8 @@ export async function startApp(): Promise<void> {
       return;
     }
 
-    log.warn('background: remote expiration detected, disabling reconnects');
+    log.error('background: remote expiration detected, disabling reconnects');
+    drop(window.storage.put('remoteBuildExpiration', Date.now()));
     drop(server?.onRemoteExpiration());
     remotelyExpired = true;
   });
@@ -1353,6 +1360,18 @@ export async function startApp(): Promise<void> {
     void badgeImageFileDownloader.checkForFilesToDownload();
 
     initializeExpiringMessageService(singleProtoJobQueue);
+
+    log.info('Blocked uuids cleanup: starting...');
+    const blockedUuids = window.storage.get(BLOCKED_UUIDS_ID, []);
+    const blockedAcis = blockedUuids.filter(isAciString);
+    const diff = blockedUuids.length - blockedAcis.length;
+    if (diff > 0) {
+      log.warn(
+        `Blocked uuids cleanup: Found ${diff} non-ACIs in blocked list. Removing.`
+      );
+      await window.storage.put(BLOCKED_UUIDS_ID, blockedAcis);
+    }
+    log.info('Blocked uuids cleanup: complete');
 
     log.info('Expiration start timestamp cleanup: starting...');
     const messagesUnexpectedlyMissingExpirationStartTimestamp =
@@ -1593,8 +1612,10 @@ export async function startApp(): Promise<void> {
         },
       });
 
+      log.info('afterStart: backup downloaded, resolving');
       backupReady.resolve();
     } catch (error) {
+      log.error('afterStart: backup download failed, rejecting');
       backupReady.reject(error);
       throw error;
     }
@@ -1701,17 +1722,21 @@ export async function startApp(): Promise<void> {
 
     strictAssert(server !== undefined, 'WebAPI not connected');
 
-    // Wait for backup to be downloaded
-    try {
-      await backupReady.promise;
-    } catch (error) {
-      log.error('background: backup download failed, not reconnecting', error);
-      return;
-    }
-    log.info('background: connect unblocked by backups');
-
     try {
       connectPromise = explodePromise();
+
+      // Wait for backup to be downloaded
+      try {
+        await backupReady.promise;
+      } catch (error) {
+        log.error(
+          'background: backup download failed, not reconnecting',
+          error
+        );
+        return;
+      }
+      log.info('background: connect unblocked by backups');
+
       // Reset the flag and update it below if needed
       setIsInitialSync(false);
 
@@ -2683,7 +2708,8 @@ export async function startApp(): Promise<void> {
     }
 
     const partialMessage: MessageAttributesType = {
-      id: generateUuid(),
+      ...generateMessageId(data.receivedAtCounter),
+
       canReplyToStory: data.message.isStory
         ? data.message.canReplyToStory
         : undefined,
@@ -2694,7 +2720,6 @@ export async function startApp(): Promise<void> {
       ),
       readStatus: ReadStatus.Read,
       received_at_ms: data.receivedAtDate,
-      received_at: data.receivedAtCounter,
       seenStatus: SeenStatus.NotApplicable,
       sendStateByConversationId,
       sent_at: timestamp,
@@ -2946,13 +2971,13 @@ export async function startApp(): Promise<void> {
       `Did not receive receivedAtCounter for message: ${data.timestamp}`
     );
     const partialMessage: MessageAttributesType = {
-      id: generateUuid(),
+      ...generateMessageId(data.receivedAtCounter),
+
       canReplyToStory: data.message.isStory
         ? data.message.canReplyToStory
         : undefined,
       conversationId: descriptor.id,
       readStatus: ReadStatus.Unread,
-      received_at: data.receivedAtCounter,
       received_at_ms: data.receivedAtDate,
       seenStatus: SeenStatus.Unseen,
       sent_at: data.timestamp,

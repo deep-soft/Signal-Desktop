@@ -36,10 +36,11 @@ import type {
   PresentedSource,
   PresentableSource,
 } from '../../types/Calling';
-import type {
-  CallLinkRestrictions,
-  CallLinkStateType,
-  CallLinkType,
+import {
+  isCallLinkAdmin,
+  type CallLinkRestrictions,
+  type CallLinkStateType,
+  type CallLinkType,
 } from '../../types/CallLink';
 import {
   CALLING_REACTIONS_LIFETIME,
@@ -110,7 +111,7 @@ import {
   getPresentingSource,
 } from '../selectors/calling';
 import { storageServiceUploadJob } from '../../services/storage';
-import { CallLinkDeleteManager } from '../../jobs/CallLinkDeleteManager';
+import { CallLinkFinalizeDeleteManager } from '../../jobs/CallLinkFinalizeDeleteManager';
 import { callLinkRefreshJobQueue } from '../../jobs/callLinkRefreshJobQueue';
 
 // State
@@ -2125,13 +2126,50 @@ function createCallLink(
 
 function deleteCallLink(
   roomId: string
-): ThunkAction<void, RootStateType, unknown, HandleCallLinkDeleteActionType> {
-  return async dispatch => {
-    await DataWriter.beginDeleteCallLink(roomId, { storageNeedsSync: true });
-    storageServiceUploadJob({ reason: 'deleteCallLink' });
-    // Wait for storage service sync before finalizing delete
-    drop(CallLinkDeleteManager.addJob({ roomId }, { delay: 10000 }));
-    dispatch(handleCallLinkDelete({ roomId }));
+): ThunkAction<
+  void,
+  RootStateType,
+  unknown,
+  HandleCallLinkDeleteActionType | ShowErrorModalActionType
+> {
+  return async (dispatch, getState) => {
+    const callLink = await DataReader.getCallLinkByRoomId(roomId);
+    if (!callLink) {
+      return;
+    }
+
+    const isStorageSyncNeeded = await DataWriter.beginDeleteCallLink(roomId);
+    if (isStorageSyncNeeded) {
+      storageServiceUploadJob({ reason: 'deleteCallLink' });
+    }
+    try {
+      if (isCallLinkAdmin(callLink)) {
+        // This throws if call link is active or network is unavailable.
+        await calling.deleteCallLink(callLink);
+        // Wait for storage service sync before finalizing delete.
+        drop(
+          CallLinkFinalizeDeleteManager.addJob(
+            { roomId: callLink.roomId },
+            { delay: 10000 }
+          )
+        );
+      }
+
+      await DataWriter.deleteCallHistoryByRoomId(callLink.roomId);
+      dispatch(handleCallLinkDelete({ roomId }));
+    } catch (error) {
+      log.warn('clearCallHistory: Failed to delete call link', error);
+
+      const i18n = getIntl(getState());
+      dispatch({
+        type: SHOW_ERROR_MODAL,
+        payload: {
+          title: null,
+          description: i18n('icu:calling__call-link-delete-failed'),
+          buttonVariant: ButtonVariant.Primary,
+        },
+      });
+    }
   };
 }
 
@@ -2252,6 +2290,7 @@ const _startCallLinkLobby = async ({
     return;
   }
 
+  let success = false;
   try {
     dispatch({
       type: WAITING_FOR_CALL_LINK_LOBBY,
@@ -2342,22 +2381,25 @@ const _startCallLinkLobby = async ({
         isConversationTooBigToRing: false,
       },
     });
+    success = true;
   } catch (error) {
     log.error(`${logId}: Failed to start lobby`, Errors.toLogFormat(error));
+  } finally {
+    if (!success) {
+      try {
+        calling.stopCallingLobby(roomId);
+      } catch (innerError) {
+        log.error(
+          `${logId}: Failed to stop calling lobby`,
+          Errors.toLogFormat(innerError)
+        );
+      }
 
-    try {
-      calling.stopCallingLobby(roomId);
-    } catch (innerError) {
-      log.error(
-        `${logId}: Failed to stop calling lobby`,
-        Errors.toLogFormat(innerError)
-      );
+      dispatch({
+        type: CALL_LOBBY_FAILED,
+        payload: { conversationId: roomId },
+      });
     }
-
-    dispatch({
-      type: CALL_LOBBY_FAILED,
-      payload: { conversationId: roomId },
-    });
   }
 };
 
@@ -2437,6 +2479,7 @@ function startCallingLobby({
       return;
     }
 
+    let success = false;
     try {
       dispatch({
         type: WAITING_FOR_CALLING_LOBBY,
@@ -2473,22 +2516,25 @@ function startCallingLobby({
           isConversationTooBigToRing: isConversationTooBigToRing(conversation),
         },
       });
+      success = true;
     } catch (error) {
       log.error(`${logId}: Failed to start lobby`, Errors.toLogFormat(error));
+    } finally {
+      if (!success) {
+        try {
+          calling.stopCallingLobby(conversationId);
+        } catch (innerError) {
+          log.error(
+            `${logId}: Failed to stop calling lobby`,
+            Errors.toLogFormat(innerError)
+          );
+        }
 
-      try {
-        calling.stopCallingLobby(conversationId);
-      } catch (innerError) {
-        log.error(
-          `${logId}: Failed to stop calling lobby`,
-          Errors.toLogFormat(innerError)
-        );
+        dispatch({
+          type: CALL_LOBBY_FAILED,
+          payload: { conversationId },
+        });
       }
-
-      dispatch({
-        type: CALL_LOBBY_FAILED,
-        payload: { conversationId },
-      });
     }
   };
 }
@@ -3974,6 +4020,15 @@ export function reducer(
         ...callLinks,
         [roomId]: callLink,
       },
+    };
+  }
+
+  if (action.type === HANDLE_CALL_LINK_DELETE) {
+    const { roomId } = action.payload;
+
+    return {
+      ...state,
+      callLinks: omit(state.callLinks, roomId),
     };
   }
 

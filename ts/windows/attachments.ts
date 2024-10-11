@@ -5,13 +5,14 @@ import { ipcRenderer } from 'electron';
 import { isString, isTypedArray } from 'lodash';
 import { join, normalize, basename } from 'path';
 import fse from 'fs-extra';
-import getGuid from 'uuid/v4';
+import { v4 as getGuid } from 'uuid';
 
 import { isPathInside } from '../util/isPathInside';
 import { writeWindowsZoneIdentifier } from '../util/windowsZoneIdentifier';
 import OS from '../util/os/osMain';
 import { getRelativePath, createName } from '../util/attachmentPath';
 
+export * from '../util/ensureAttachmentIsReencryptable';
 export * from '../../app/attachments';
 
 type FSAttrType = {

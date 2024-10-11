@@ -9,7 +9,6 @@ import rimraf from 'rimraf';
 import { randomBytes } from 'crypto';
 import type { Database, Statement } from '@signalapp/better-sqlite3';
 import SQL from '@signalapp/better-sqlite3';
-import { v4 as generateUuid } from 'uuid';
 import { z } from 'zod';
 import type { ReadonlyDeep } from 'type-fest';
 
@@ -49,6 +48,7 @@ import { isNormalNumber } from '../util/isNormalNumber';
 import { isNotNil } from '../util/isNotNil';
 import { parseIntOrThrow } from '../util/parseIntOrThrow';
 import * as durations from '../util/durations';
+import { generateMessageId } from '../util/generateMessageId';
 import { formatCountForLogging } from '../logging/formatCountForLogging';
 import type { ConversationColorType, CustomColorType } from '../types/Colors';
 import type { BadgeType, BadgeImageType } from '../badges/types';
@@ -180,6 +180,9 @@ import {
   updateCallLinkAdminKeyByRoomId,
   updateCallLinkState,
   beginDeleteAllCallLinks,
+  deleteCallHistoryByRoomId,
+  deleteCallLinkAndHistory,
+  getAllAdminCallLinks,
   getAllCallLinkRecordsWithAdminKey,
   getAllMarkedDeletedCallLinkRoomIds,
   finalizeDeleteCallLink,
@@ -313,6 +316,7 @@ export const DataReader: ServerReadableInterface = {
   getAllCallLinks,
   getCallLinkByRoomId,
   getCallLinkRecordByRoomId,
+  getAllAdminCallLinks,
   getAllCallLinkRecordsWithAdminKey,
   getAllMarkedDeletedCallLinkRoomIds,
   getMessagesBetween,
@@ -451,6 +455,8 @@ export const DataWriter: ServerWritableInterface = {
   updateCallLinkState,
   beginDeleteAllCallLinks,
   beginDeleteCallLink,
+  deleteCallHistoryByRoomId,
+  deleteCallLinkAndHistory,
   finalizeDeleteCallLink,
   _removeAllCallLinks,
   deleteCallLinkFromSync,
@@ -1585,11 +1591,13 @@ function saveConversation(db: WritableDB, data: ConversationType): void {
     profileLastFetchedAt,
     type,
     serviceId,
+    expireTimerVersion,
   } = data;
 
   const membersList = getConversationMembersList(data);
 
-  db.prepare<Query>(
+  prepare(
+    db,
     `
     INSERT INTO conversations (
       id,
@@ -1606,7 +1614,8 @@ function saveConversation(db: WritableDB, data: ConversationType): void {
       profileName,
       profileFamilyName,
       profileFullName,
-      profileLastFetchedAt
+      profileLastFetchedAt,
+      expireTimerVersion
     ) values (
       $id,
       $json,
@@ -1622,7 +1631,8 @@ function saveConversation(db: WritableDB, data: ConversationType): void {
       $profileName,
       $profileFamilyName,
       $profileFullName,
-      $profileLastFetchedAt
+      $profileLastFetchedAt,
+      $expireTimerVersion
     );
     `
   ).run({
@@ -1643,6 +1653,7 @@ function saveConversation(db: WritableDB, data: ConversationType): void {
     profileFamilyName: profileFamilyName || null,
     profileFullName: combineNames(profileName, profileFamilyName) || null,
     profileLastFetchedAt: profileLastFetchedAt || null,
+    expireTimerVersion,
   });
 }
 
@@ -1673,7 +1684,8 @@ function updateConversation(db: WritableDB, data: ConversationType): void {
 
   const membersList = getConversationMembersList(data);
 
-  db.prepare(
+  prepare(
+    db,
     `
     UPDATE conversations SET
       json = $json,
@@ -2322,7 +2334,7 @@ export function saveMessage(
 
   const toCreate = {
     ...data,
-    id: id || generateUuid(),
+    id: id || generateMessageId(data.received_at).id,
   };
 
   prepare(
@@ -3537,6 +3549,14 @@ function _removeAllCallHistory(db: WritableDB): void {
   db.prepare(query).run(params);
 }
 
+/**
+ * Deletes call history by marking it deleted. Tombstoning is needed in case sync messages
+ * come in around the same time, to prevent reappearance of deleted call history.
+ * Limitation: History for admin call links is skipped. Admin call links need to be
+ * deleted on the calling server first, before we can clear local history.
+ *
+ *  @returns ReadonlyArray<string>: message ids of call history messages
+ */
 function clearCallHistory(
   db: WritableDB,
   target: CallLogEventTarget
@@ -3549,17 +3569,33 @@ function clearCallHistory(
     }
     const { timestamp } = callHistory;
 
+    // Admin call links are deleted separately after server confirmation
+    const [selectAdminCallLinksQuery, selectAdminCallLinksParams] = sql`
+      SELECT roomId
+      FROM callLinks
+      WHERE callLinks.adminKey IS NOT NULL;
+    `;
+
+    const adminCallLinkIds: ReadonlyArray<string> = db
+      .prepare(selectAdminCallLinksQuery)
+      .pluck()
+      .all(selectAdminCallLinksParams);
+    const adminCallLinkIdsFragment = sqlJoin(adminCallLinkIds);
+
     const [selectCallsQuery, selectCallsParams] = sql`
       SELECT callsHistory.callId
       FROM callsHistory
       WHERE
-        -- Prior calls
-        (callsHistory.timestamp <= ${timestamp})
-        -- Unused call links
-        OR (
-          callsHistory.mode IS ${CALL_MODE_ADHOC} AND
-          callsHistory.status IS ${CALL_STATUS_PENDING}
-        );
+        (
+          -- Prior calls
+          (callsHistory.timestamp <= ${timestamp})
+          -- Unused call links
+          OR (
+            callsHistory.mode IS ${CALL_MODE_ADHOC} AND
+            callsHistory.status IS ${CALL_STATUS_PENDING}
+          )
+        ) AND
+        callsHistory.peerId NOT IN (${adminCallLinkIdsFragment});
     `;
 
     const deletedCallIds: ReadonlyArray<string> = db
@@ -4654,7 +4690,6 @@ function getUnprocessedCount(db: ReadableDB): number {
 }
 
 function getAllUnprocessedIds(db: WritableDB): Array<string> {
-  logger.info('getAllUnprocessedIds');
   return db.transaction(() => {
     // cleanup first
     const { changes: deletedStaleCount } = db
@@ -6808,23 +6843,30 @@ function pageMessages(
       writable.exec(
         `
         CREATE TEMP TABLE tmp_${runId}_updated_messages
-          (rowid INTEGER PRIMARY KEY ASC);
+          (rowid INTEGER PRIMARY KEY, received_at INTEGER, sent_at INTEGER);
 
-        INSERT INTO tmp_${runId}_updated_messages (rowid)
-        SELECT rowid FROM messages;
+        CREATE INDEX tmp_${runId}_updated_messages_received_at
+          ON tmp_${runId}_updated_messages (received_at ASC, sent_at ASC);
+
+        INSERT INTO tmp_${runId}_updated_messages
+          (rowid, received_at, sent_at)
+          SELECT rowid, received_at, sent_at FROM messages
+          ORDER BY received_at ASC, sent_at ASC;
 
         CREATE TEMP TRIGGER tmp_${runId}_message_updates
         UPDATE OF json ON messages
         BEGIN
-          INSERT OR IGNORE INTO tmp_${runId}_updated_messages (rowid)
-          VALUES (NEW.rowid);
+          INSERT OR IGNORE INTO tmp_${runId}_updated_messages
+          (rowid, received_at, sent_at)
+          VALUES (NEW.rowid, NEW.received_at, NEW.sent_at);
         END;
 
         CREATE TEMP TRIGGER tmp_${runId}_message_inserts
         AFTER INSERT ON messages
         BEGIN
-          INSERT OR IGNORE INTO tmp_${runId}_updated_messages (rowid)
-          VALUES (NEW.rowid);
+          INSERT OR IGNORE INTO tmp_${runId}_updated_messages
+          (rowid, received_at, sent_at)
+          VALUES (NEW.rowid, NEW.received_at, NEW.sent_at);
         END;
         `
       );
@@ -6835,10 +6877,11 @@ function pageMessages(
     const rowids: Array<number> = writable
       .prepare<Query>(
         `
-      DELETE FROM tmp_${runId}_updated_messages
-      RETURNING rowid
-      LIMIT $chunkSize;
-      `
+          DELETE FROM tmp_${runId}_updated_messages
+          RETURNING rowid
+          ORDER BY received_at ASC, sent_at ASC
+          LIMIT $chunkSize;
+        `
       )
       .pluck()
       .all({ chunkSize });

@@ -1633,6 +1633,10 @@
     "messageformat": "Signal Call",
     "description": "Default title for Signal call links."
   },
+  "icu:calling__call-link-delete-failed": {
+    "messageformat": "Can't delete link. Check your connection and try again.",
+    "description": "Default title for Signal call links."
+  },
   "icu:calling__join-request-denied": {
     "messageformat": "Your request to join this call has been denied.",
     "description": "Error message when a request to join a call link call was rejected by a call admin."
@@ -4723,6 +4727,34 @@
     "messageformat": "Cancel transfer",
     "description": "Text of the confirmation button of the cancel confirmation modal in the backup import screen"
   },
+  "icu:BackupImportScreen__error__title": {
+    "messageformat": "Error transferring your messages",
+    "description": "Title of the error modal in the backup import screen"
+  },
+  "icu:BackupImportScreen__error__body": {
+    "messageformat": "Your messages could not be transferred. Check your internet connection and try again.",
+    "description": "Body of the error modal in the backup import screen"
+  },
+  "icu:BackupImportScreen__error__confirm": {
+    "messageformat": "Retry",
+    "description": "Text of the retry button of the error modal in the backup import screen"
+  },
+  "icu:BackupImportScreen__skip": {
+    "messageformat": "Skip",
+    "description": "Text of the Skip button in the error and skip confirmation modals in the backup import screen"
+  },
+  "icu:BackupImportScreen__skip-confirmation__title": {
+    "messageformat": "Skip message transfer?",
+    "description": "Title of the cancel confirmation modal in the backup import screen"
+  },
+  "icu:BackupImportScreen__skip-confirmation__body": {
+    "messageformat": "If you choose to skip, you won’t have access to any of your messages or media on this device. You can start a new transfer after skipping from Settings > Chats > Transfer.",
+    "description": "Body of the cancel confirmation modal in the backup import screen"
+  },
+  "icu:BackupImportScreen__skip-confirmation__cancel": {
+    "messageformat": "Cancel",
+    "description": "Text of the cancel button of the skip confirmation modal in the backup import screen"
+  },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
     "messageformat": "Restoring media",
     "description": "Label next to a progress bar showing active media (attachment) download progress after restoring from backup"
@@ -5909,11 +5941,11 @@
   },
   "icu:ProfileEditor__invalid-about__title": {
     "messageformat": "Invalid characters",
-    "description": "Title of the confirmation model for profile editor when about text contains invalid characters"
+    "description": "(Deleted 2024/10/10) Title of the confirmation model for profile editor when about text contains invalid characters"
   },
   "icu:ProfileEditor__invalid-about__body": {
     "messageformat": "One or more characters you’ve entered can’t be used. Try again.",
-    "description": "Body of the confirmation model for profile editor when about text contains invalid characters"
+    "description": "(Deleted 2024/10/10) Body of the confirmation model for profile editor when about text contains invalid characters"
   },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "Message an admin",
@@ -7270,7 +7302,11 @@
     "description": "Calls Tab > Confirm Clear Call History Dialog > Title"
   },
   "icu:CallsTab__ConfirmClearCallHistory__Body": {
-    "messageformat": "This will permanently delete all call history",
+    "messageformat": "This will permanently delete all call history.",
+    "description": "Calls Tab > Confirm Clear Call History Dialog > Body Text"
+  },
+  "icu:CallsTab__ConfirmClearCallHistory__Body--call-links": {
+    "messageformat": "This will permanently delete all call history. Call links you’ve created will no longer work for people who have them. ",
     "description": "Calls Tab > Confirm Clear Call History Dialog > Body Text"
   },
   "icu:CallsTab__ConfirmClearCallHistory__ConfirmButton": {
@@ -7280,6 +7316,14 @@
   "icu:CallsTab__ToastCallHistoryCleared": {
     "messageformat": "Call history cleared",
     "description": "Calls Tab > Clear Call History > Toast"
+  },
+  "icu:CallsTab__ClearCallHistoryError--call-links": {
+    "messageformat": "Not all call links could be deleted. Check your connection and try again.",
+    "description": "Calls Tab > Clear Call History > Error modal when we failed to delete call links."
+  },
+  "icu:CallsTab__ClearCallHistoryError": {
+    "messageformat": "Not all call history could be cleared. Check your connection and try again.",
+    "description": "Calls Tab > Clear Call History > Generic error modal"
   },
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call.",
@@ -7540,20 +7584,16 @@
     "description": "Release notes for releases that only include bug fixes",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.26--0": {
-    "messageformat": "Sometimes leaving something behind is the best way to discover that you want to find it again, so we fixed a bug that made it difficult to search for groups that you're no longer a part of anymore but that still remain in your conversation list (and quite possibly in your heart).",
-    "description": "(Deleted 2024/09/25) Release notes for version 7.26"
-  },
-  "icu:WhatsNew__v7.27--0": {
-    "messageformat": "Now you can remove quoted replies from edited messages. It's perfect for those moments when you realize that your response was so good that it doesn't actually need to stand on another message's shoulders, or when you accidentally reply to the wrong message with \"I love you too.\"",
-    "description": "(Deleted 2024/10/03) Release notes for version 7.27"
-  },
   "icu:WhatsNew__v7.28--0": {
     "messageformat": "We fixed a bug that prevented stickers from working correctly in the media editor, and now the picker no longer gets stuck when you're trying to stick a sticker on a picture.",
-    "description": "Release notes for version 7.28"
+    "description": "(Deleted 2024/10/10) Release notes for version 7.28"
   },
   "icu:WhatsNew__v7.28--1": {
     "messageformat": "This update also includes support for the new screen sharing interface in macOS Sequoia.",
-    "description": "Release notes for version 7.28"
+    "description": "(Deleted 2024/10/10) Release notes for version 7.28"
+  },
+  "icu:WhatsNew__v7.29--0": {
+    "messageformat": "This update improves startup speed by around 5%, so feel free to slow down a little bit in other areas of your life.",
+    "description": "Release notes for version 7.29"
   }
 }
