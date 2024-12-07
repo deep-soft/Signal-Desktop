@@ -114,6 +114,18 @@ export type BootstrapOptions = Readonly<{
   unknownContactCount?: number;
   contactNames?: ReadonlyArray<string>;
   contactPreKeyCount?: number;
+
+  useLegacyStorageEncryption?: boolean;
+}>;
+
+export type EphemeralBackupType = Readonly<{
+  cdn: 3;
+  key: string;
+}>;
+
+export type LinkOptionsType = Readonly<{
+  extraConfig?: Partial<RendererConfigType>;
+  ephemeralBackup?: EphemeralBackupType;
 }>;
 
 type BootstrapInternalOptions = BootstrapOptions &
@@ -242,6 +254,9 @@ export class Bootstrap {
       contacts: this.contacts,
       contactsWithoutProfileKey: this.contactsWithoutProfileKey,
     });
+    if (this.options.useLegacyStorageEncryption) {
+      this.privPhone.storageRecordIkm = undefined;
+    }
 
     this.storagePath = await fs.mkdtemp(path.join(os.tmpdir(), 'mock-signal-'));
 
@@ -302,7 +317,10 @@ export class Bootstrap {
     ]);
   }
 
-  public async link(extraConfig?: Partial<RendererConfigType>): Promise<App> {
+  public async link({
+    extraConfig,
+    ephemeralBackup,
+  }: LinkOptionsType = {}): Promise<App> {
     debug('linking');
 
     const app = await this.startApp(extraConfig);
@@ -332,6 +350,10 @@ export class Bootstrap {
       provisionURL,
       primaryDevice: this.phone,
     });
+
+    if (ephemeralBackup != null) {
+      await this.server.provideTransferArchive(this.desktop, ephemeralBackup);
+    }
 
     debug('new desktop device %j', this.desktop.debugId);
 

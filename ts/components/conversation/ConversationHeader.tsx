@@ -631,6 +631,19 @@ function HeaderMenu({
             </MenuItem>
           )}
         </SubMenu>
+        {conversation.isArchived ? (
+          <MenuItem onClick={onConversationUnarchive}>
+            {i18n('icu:moveConversationToInbox')}
+          </MenuItem>
+        ) : (
+          <MenuItem onClick={onConversationArchive}>
+            {i18n('icu:archiveConversation')}
+          </MenuItem>
+        )}
+
+        <MenuItem onClick={onConversationDeleteMessages}>
+          {i18n('icu:deleteConversation')}
+        </MenuItem>
       </ContextMenu>
     );
   }
@@ -654,7 +667,7 @@ function HeaderMenu({
         )}
 
         <MenuItem onClick={onConversationDeleteMessages}>
-          {i18n('icu:deleteMessagesInConversation')}
+          {i18n('icu:deleteConversation')}
         </MenuItem>
       </ContextMenu>
     );
@@ -792,7 +805,7 @@ function HeaderMenu({
             </MenuItem>
           )}
           <MenuItem onClick={onConversationDeleteMessages}>
-            {i18n('icu:deleteMessagesInConversation')}
+            {i18n('icu:deleteConversation')}
           </MenuItem>
           {isGroup && (
             <MenuItem onClick={onConversationLeaveGroup}>
@@ -1002,17 +1015,17 @@ function DeleteMessagesConfirmationDialog({
 
   const dialogBody = isDeleteSyncSendEnabled
     ? i18n(
-        'icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync'
+        'icu:ConversationHeader__DeleteConversationConfirmation__description-with-sync'
       )
     : i18n(
-        'icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description'
+        'icu:ConversationHeader__DeleteConversationConfirmation__description'
       );
 
   return (
     <ConfirmationDialog
       dialogName="ConversationHeader.destroyMessages"
       title={i18n(
-        'icu:ConversationHeader__DeleteMessagesInConversationConfirmation__title'
+        'icu:ConversationHeader__DeleteConversationConfirmation__title'
       )}
       actions={[
         {

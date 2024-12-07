@@ -53,6 +53,15 @@
   "icu:appleSilicon": {
     "messageformat": "Apple silicon"
   },
+  "icu:About__AppEnvironment": {
+    "messageformat": "{appEnv}"
+  },
+  "icu:About__AppEnvironment--AppleSilicon": {
+    "messageformat": "{appEnv} (Apple silicon)"
+  },
+  "icu:About__AppEnvironment--AppleIntel": {
+    "messageformat": "{appEnv} (Intel)"
+  },
   "icu:copyErrorAndQuit": {
     "messageformat": "Kopier feil og avslutt"
   },
@@ -575,14 +584,14 @@
   "icu:decryptionErrorToast": {
     "messageformat": "Desktop støtte på en dekrypteringsfeil fra {name}, enhet {deviceId}"
   },
-  "icu:decryptionErrorToastAction": {
-    "messageformat": "Send inn logg"
-  },
   "icu:Toast__ActionLabel--SubmitLog": {
     "messageformat": "Send inn logg"
   },
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
+  },
+  "icu:Toast--FailedToImportBackup": {
+    "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "Du kan ikke sende bilder og videoer sammen med filer."
@@ -680,6 +689,9 @@
   "icu:search": {
     "messageformat": "Søk"
   },
+  "icu:searchUnreadChats": {
+    "messageformat": "Søk i uleste samtaler"
+  },
   "icu:clearSearch": {
     "messageformat": "Fjern søk"
   },
@@ -689,11 +701,26 @@
   "icu:noSearchResults": {
     "messageformat": "Ingen resultater for \"{searchTerm}\""
   },
+  "icu:noSearchResultsWithUnreadFilter": {
+    "messageformat": "«{searchTerm}» i uleste samtaler ga ingen resultater"
+  },
+  "icu:noSearchResultsOnlyUnreadFilter": {
+    "messageformat": "Ingen uleste samtaler"
+  },
   "icu:noSearchResults--sms-only": {
     "messageformat": "SMS/MMS-kontakter er ikke tilgjengelig på Desktop versjonen av Signal."
   },
   "icu:noSearchResultsInConversation": {
     "messageformat": "Ingen resultater for \"{searchTerm}\" i {conversationName}"
+  },
+  "icu:conversationsUnreadHeader": {
+    "messageformat": "Filtrert etter ulest"
+  },
+  "icu:filterByUnreadButtonLabel": {
+    "messageformat": "Filtrer etter ulest"
+  },
+  "icu:clearFilterButton": {
+    "messageformat": "Tøm filter"
   },
   "icu:conversationsHeader": {
     "messageformat": "Samtaler"
@@ -788,11 +815,14 @@
   "icu:voiceNoteError": {
     "messageformat": "Det oppstod et problem med opptaket."
   },
-  "icu:attachmentSaved": {
-    "messageformat": "Vedlegget er lagret."
+  "icu:attachmentSavedPlural": {
+    "messageformat": "{count, plural, one {Vedlegget ble lagret} other {{count,number} vedlegg ble lagret}}"
   },
   "icu:attachmentSavedShow": {
     "messageformat": "Vis i mappe"
+  },
+  "icu:attachmentStillDownloading": {
+    "messageformat": "{count, plural, one {Vedlegget er ikke lastet ned ennå og kan derfor ikke lagres} other {{count,number} av vedleggene er ikke lastet ned ennå og kan derfor ikke lagres}}"
   },
   "icu:you": {
     "messageformat": "Du"
@@ -992,17 +1022,17 @@
   "icu:MessageContextMenu__info": {
     "messageformat": "Info"
   },
-  "icu:deleteMessagesInConversation": {
-    "messageformat": "Slett meldingene"
+  "icu:deleteConversation": {
+    "messageformat": "Slett"
   },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__title": {
-    "messageformat": "Vil du slette meldingene?"
+  "icu:ConversationHeader__DeleteConversationConfirmation__title": {
+    "messageformat": "Vil du slette samtalen?"
   },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
-    "messageformat": "Alle meldingene i denne samtalen slettes fra enheten. Du kan søke etter samtalen selv om meldingene er slettet."
+  "icu:ConversationHeader__DeleteConversationConfirmation__description": {
+    "messageformat": "Alle meldingene i denne samtalen slettes fra enheten."
   },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
-    "messageformat": "Alle meldingene i denne samtalen slettes fra alle enhetene dine. Du kan søke etter samtalen selv om meldingene er slettet."
+  "icu:ConversationHeader__DeleteConversationConfirmation__description-with-sync": {
+    "messageformat": "Alle meldingene i denne samtalen slettes fra alle enhetene dine."
   },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "Forlat gruppen"
@@ -1372,6 +1402,9 @@
   },
   "icu:calling__pre-call-info--many-people-in-call": {
     "messageformat": "{others, plural, one {{first}, {second} og {others,number} annen deltar i denne samtalen} other {{first}, {second} og {others,number} andre deltar i denne samtalen}}"
+  },
+  "icu:calling__pre-call-info--only-unknown-contacts-in-call": {
+    "messageformat": "{count, plural, one {{count,number} person deltar i denne samtalen} other {{count,number} personer deltar i denne samtalen}}"
   },
   "icu:calling__pre-call-info--will-ring-1": {
     "messageformat": "Signal ringer {person}"
@@ -2693,6 +2726,9 @@
   "icu:incomingGroupCall__ringing-many": {
     "messageformat": "{remaining, plural, one {{ringer} ringer deg, {first}, {second} og {remaining,number} annen} other {{ringer} ringer deg, {first}, {second} og {remaining,number} andre}}"
   },
+  "icu:outgoingCallConnecting": {
+    "messageformat": "Connecting..."
+  },
   "icu:outgoingCallRinging": {
     "messageformat": "Det ringer …"
   },
@@ -3540,7 +3576,7 @@
     "messageformat": "Laster ned {currentSize} av {totalSize} ({fractionComplete,number,percent}) …"
   },
   "icu:BackupImportScreen__progressbar-hint--processing": {
-    "messageformat": "Finalizing message transfer..."
+    "messageformat": "Ferdigstiller meldingsoverføringen …"
   },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "Gjør klart for nedlasting …"
@@ -3550,6 +3586,9 @@
   },
   "icu:BackupImportScreen__cancel": {
     "messageformat": "Avbryt overføring"
+  },
+  "icu:BackupImportScreen__security-description": {
+    "messageformat": "Meldinger og samtaleinnhold beskyttes av ende-til-ende-kryptering. Dette inkluderer også synkroniseringen. <learnMoreLink>Les mer</learnMoreLink>"
   },
   "icu:BackupImportScreen__cancel-confirmation__title": {
     "messageformat": "Vil du avbryte overføringen?"
@@ -3589,6 +3628,12 @@
   },
   "icu:BackupMediaDownloadProgress__title-paused": {
     "messageformat": "Nedlastingen er satt på pause"
+  },
+  "icu:BackupMediaDownloadProgress__title-idle": {
+    "messageformat": "{currentSize} av {totalSize} gjenopprettet"
+  },
+  "icu:BackupMediaDownloadProgress__description-idle": {
+    "messageformat": "Mediefilene lastes ned i bakgrunnen"
   },
   "icu:BackupMediaDownloadProgress__button-pause": {
     "messageformat": "Sett overføring på pause"
@@ -4472,12 +4517,6 @@
   "icu:ProfileEditorModal--error": {
     "messageformat": "Profilen din kunne ikke oppdateres. Prøv igjen."
   },
-  "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "Ugyldige tegn"
-  },
-  "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "Teksten inneholder ugyldige tegn. Prøv på nytt."
-  },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "Send melding til en administrator"
   },
@@ -4678,6 +4717,15 @@
   },
   "icu:DialogNetworkStatus__outage": {
     "messageformat": "Signal opplever tekniske problemer. Vi jobber for å løse problemet."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__title": {
+    "messageformat": "Oppdatering kreves"
+  },
+  "icu:InstallScreenUpdateDialog--update-required__body": {
+    "messageformat": "Du må oppdatere Signal Desktop for å synkronisere meldingene dine."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__action-update": {
+    "messageformat": "Oppdater"
   },
   "icu:InstallScreenUpdateDialog--unsupported-os__title": {
     "messageformat": "Oppdatering kreves"
@@ -5517,8 +5565,14 @@
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "Trykk på <newCallButtonIcon></newCallButtonIcon> for å starte en ny lyd- eller videosamtale."
   },
+  "icu:CallsList__SearchInputPlaceholder--missed-calls": {
+    "messageformat": "Søk etter anrop"
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Søk"
+  },
+  "icu:CallsList__FilteredByMissedHeader": {
+    "messageformat": "Filtrer etter ubesvart"
   },
   "icu:CallsList__ToggleFilterByMissedLabel": {
     "messageformat": "Vis kun ubesvarte"
@@ -5532,14 +5586,14 @@
   "icu:CallsList__EmptyState--noQuery__subtitle": {
     "messageformat": "Nylige samtaler dukker opp her."
   },
-  "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "Ingen ubesvarte anrop"
-  },
-  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Tapte anrop dukker opp her."
-  },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "«{query}» ga ingen resultater"
+  },
+  "icu:CallsList__EmptyState--hasQueryAndMissedCalls": {
+    "messageformat": "«{query}» i ubesvarte anrop ga ingen resultater"
+  },
+  "icu:CallsList__EmptyState--missedCalls": {
+    "messageformat": "Ingen ubesvarte anrop"
   },
   "icu:CallsList__CreateCallLink": {
     "messageformat": "Opprett en samtalelenke"
@@ -5710,19 +5764,13 @@
     "messageformat": "Noen små justeringer, feilrettinger og ytelsesforbedringer. Takk for at du bruker Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.29--0": {
-    "messageformat": "Denne oppdateringen sørger for at appen starter opp 5 % kjappere."
+  "icu:WhatsNew__v7.35--0": {
+    "messageformat": "Det nye filtreringsikonet ved siden av søkefeltet gjør det enkelt å finne uleste samtaler."
   },
-  "icu:WhatsNew__v7.30--header": {
-    "messageformat": "Introducing Call Links: The missing link for calendar invites and impromptu gatherings."
+  "icu:WhatsNew__v7.36--0": {
+    "messageformat": "This update fixes a bug on macOS Sonoma that prevented screen sharing from working correctly if permission to share the screen had previously been denied — so you no longer need to share your screen with an error message."
   },
-  "icu:WhatsNew__v7.30--0": {
-    "messageformat": "Now you can quickly create an easy link that anyone on Signal can use to join a group call without having to join a Signal group chat first."
-  },
-  "icu:WhatsNew__v7.30--1": {
-    "messageformat": "Call links are reusable and ideal for recurring phone dates with your best friends or weekly check-ins with your coworkers."
-  },
-  "icu:WhatsNew__v7.30--2": {
-    "messageformat": "You can manage your call links, control approval settings, and copy links from the calls tab for quick sharing."
+  "icu:WhatsNew__v7.36--1": {
+    "messageformat": "Filter by Unread now highlights the selected chat, and the list of unread chats will automatically update as new messages arrive or when you catch up in one chat and click on another."
   }
 }

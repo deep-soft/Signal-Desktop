@@ -33,6 +33,7 @@ import { DAY } from '../util/durations';
 import { getMessageQueueTime } from '../util/getMessageQueueTime';
 import { getLocalAttachmentUrl } from '../util/getLocalAttachmentUrl';
 import type { ReencryptionInfo } from '../AttachmentCrypto';
+import { redactGenericText } from '../util/privacy';
 
 const MAX_WIDTH = 300;
 const MAX_HEIGHT = MAX_WIDTH * 1.5;
@@ -983,6 +984,7 @@ export const save = async ({
   readAttachmentData,
   saveAttachmentToDisk,
   timestamp,
+  baseDir,
 }: {
   attachment: AttachmentType;
   index?: number;
@@ -992,8 +994,14 @@ export const save = async ({
   saveAttachmentToDisk: (options: {
     data: Uint8Array;
     name: string;
+    baseDir?: string;
   }) => Promise<{ name: string; fullPath: string } | null>;
   timestamp?: number;
+  /**
+   * Base directory for saving the attachment.
+   * If omitted, a dialog will be opened to let the user choose a directory
+   */
+  baseDir?: string;
 }): Promise<string | null> => {
   let data: Uint8Array;
   if (attachment.path) {
@@ -1009,6 +1017,7 @@ export const save = async ({
   const result = await saveAttachmentToDisk({
     data,
     name,
+    baseDir,
   });
 
   if (!result) {
@@ -1229,4 +1238,12 @@ export function isAttachmentLocallySaved(
   attachment: AttachmentType
 ): attachment is LocallySavedAttachment {
   return Boolean(attachment.path);
+}
+
+export function getAttachmentIdForLogging(attachment: AttachmentType): string {
+  const { digest } = attachment;
+  if (typeof digest === 'string') {
+    return redactGenericText(digest);
+  }
+  return '[MissingDigest]';
 }

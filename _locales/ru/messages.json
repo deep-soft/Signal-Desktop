@@ -53,6 +53,15 @@
   "icu:appleSilicon": {
     "messageformat": "Apple silicon"
   },
+  "icu:About__AppEnvironment": {
+    "messageformat": "{appEnv}"
+  },
+  "icu:About__AppEnvironment--AppleSilicon": {
+    "messageformat": "{appEnv} (Apple silicon)"
+  },
+  "icu:About__AppEnvironment--AppleIntel": {
+    "messageformat": "{appEnv} (Intel)"
+  },
   "icu:copyErrorAndQuit": {
     "messageformat": "Скопировать ошибку и выйти"
   },
@@ -575,14 +584,14 @@
   "icu:decryptionErrorToast": {
     "messageformat": "В Signal Desktop произошла ошибка расшифровки сообщения от {name}, устройство {deviceId}"
   },
-  "icu:decryptionErrorToastAction": {
-    "messageformat": "Отправить журнал"
-  },
   "icu:Toast__ActionLabel--SubmitLog": {
     "messageformat": "Отправить журнал"
   },
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
+  },
+  "icu:Toast--FailedToImportBackup": {
+    "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "Вы не можете выбирать фото и видео вместе с файлами."
@@ -680,6 +689,9 @@
   "icu:search": {
     "messageformat": "Поиск"
   },
+  "icu:searchUnreadChats": {
+    "messageformat": "Поиск непрочитанных чатов"
+  },
   "icu:clearSearch": {
     "messageformat": "Очистить поиск"
   },
@@ -689,11 +701,26 @@
   "icu:noSearchResults": {
     "messageformat": "Нет результатов для «{searchTerm}»"
   },
+  "icu:noSearchResultsWithUnreadFilter": {
+    "messageformat": "Нет результатов для «{searchTerm}» в непрочитанных чатах"
+  },
+  "icu:noSearchResultsOnlyUnreadFilter": {
+    "messageformat": "Нет непрочитанных чатов"
+  },
   "icu:noSearchResults--sms-only": {
     "messageformat": "Контакты SMS/MMS недоступны в Signal Desktop."
   },
   "icu:noSearchResultsInConversation": {
     "messageformat": "Нет результатов для «{searchTerm}» в {conversationName}"
+  },
+  "icu:conversationsUnreadHeader": {
+    "messageformat": "Отфильтровано по непрочитанным"
+  },
+  "icu:filterByUnreadButtonLabel": {
+    "messageformat": "Отфильтровать по непрочитанным"
+  },
+  "icu:clearFilterButton": {
+    "messageformat": "Очистить фильтр"
   },
   "icu:conversationsHeader": {
     "messageformat": "Чаты"
@@ -788,11 +815,14 @@
   "icu:voiceNoteError": {
     "messageformat": "При записи голосового сообщения произошла ошибка."
   },
-  "icu:attachmentSaved": {
-    "messageformat": "Вложение сохранено."
+  "icu:attachmentSavedPlural": {
+    "messageformat": "{count, plural, one {Вложение сохранено} few {{count,number} вложения сохранено} many {{count,number} вложений сохранено} other {{count,number} вложения сохранено}}"
   },
   "icu:attachmentSavedShow": {
     "messageformat": "Показать в папке"
+  },
+  "icu:attachmentStillDownloading": {
+    "messageformat": "{count, plural, one {Не удаётся сохранить вложение, так как его загрузка ещё не завершена} few {Не удаётся сохранить вложения, так как загрузка {count,number} файлов ещё не завершена} many {Не удаётся сохранить вложения, так как загрузка {count,number} файлов ещё не завершена} other {Не удаётся сохранить вложения, так как загрузка {count,number} файла ещё не завершена}}"
   },
   "icu:you": {
     "messageformat": "Вы"
@@ -992,17 +1022,17 @@
   "icu:MessageContextMenu__info": {
     "messageformat": "Информация"
   },
-  "icu:deleteMessagesInConversation": {
-    "messageformat": "Удалить сообщения"
+  "icu:deleteConversation": {
+    "messageformat": "Удалить"
   },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__title": {
-    "messageformat": "Удалить сообщения?"
+  "icu:ConversationHeader__DeleteConversationConfirmation__title": {
+    "messageformat": "Удалить чат?"
   },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
-    "messageformat": "Все сообщения в этом чате будут удалены с этого устройства. После удаления сообщений вы сможете продолжать поиск по этому чату."
+  "icu:ConversationHeader__DeleteConversationConfirmation__description": {
+    "messageformat": "Все сообщения в этом чате будут удалены с этого устройства."
   },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
-    "messageformat": "Все сообщения в этом чате будут удалены со всех ваших устройств. После удаления сообщений вы сможете продолжать поиск по этому чату."
+  "icu:ConversationHeader__DeleteConversationConfirmation__description-with-sync": {
+    "messageformat": "Все сообщения в этом чате будут удалены со всех ваших устройств."
   },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "Покинуть группу"
@@ -1372,6 +1402,9 @@
   },
   "icu:calling__pre-call-info--many-people-in-call": {
     "messageformat": "{others, plural, one {{first}, {second} и ещё {others,number} человек в этом звонке} few {{first}, {second} и ещё {others,number} человека в этом звонке} many {{first}, {second} и ещё {others,number} человек в этом звонке} other {{first}, {second} и ещё {others,number} человека в этом звонке}}"
+  },
+  "icu:calling__pre-call-info--only-unknown-contacts-in-call": {
+    "messageformat": "{count, plural, one {{count,number} человек в этом звонке} few {{count,number} человека в этом звонке} many {{count,number} человек в этом звонке} other {{count,number} человека в этом звонке}}"
   },
   "icu:calling__pre-call-info--will-ring-1": {
     "messageformat": "Signal будет звонить у {person}"
@@ -2693,6 +2726,9 @@
   "icu:incomingGroupCall__ringing-many": {
     "messageformat": "{remaining, plural, one {{ringer} звонит вам, {first}, {second} и ещё {remaining,number} человеку} few {{ringer} звонит вам, {first}, {second} и ещё {remaining,number} людям} many {{ringer} звонит вам, {first}, {second} и ещё {remaining,number} людям} other {{ringer} звонит вам, {first}, {second} и ещё {remaining,number} людям}}"
   },
+  "icu:outgoingCallConnecting": {
+    "messageformat": "Connecting..."
+  },
   "icu:outgoingCallRinging": {
     "messageformat": "Звоним…"
   },
@@ -3540,7 +3576,7 @@
     "messageformat": "Загрузка {currentSize} из {totalSize} ({fractionComplete,number,percent})..."
   },
   "icu:BackupImportScreen__progressbar-hint--processing": {
-    "messageformat": "Finalizing message transfer..."
+    "messageformat": "Завершение переноса сообщений..."
   },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "Готовимся к загрузке..."
@@ -3550,6 +3586,9 @@
   },
   "icu:BackupImportScreen__cancel": {
     "messageformat": "Отменить трансфер"
+  },
+  "icu:BackupImportScreen__security-description": {
+    "messageformat": "Сообщения и информация о чате защищены сквозным шифрованием, включая процесс синхронизации. <learnMoreLink>Узнать больше</learnMoreLink>"
   },
   "icu:BackupImportScreen__cancel-confirmation__title": {
     "messageformat": "Отменить трансфер?"
@@ -3589,6 +3628,12 @@
   },
   "icu:BackupMediaDownloadProgress__title-paused": {
     "messageformat": "Восстановление приостановлено"
+  },
+  "icu:BackupMediaDownloadProgress__title-idle": {
+    "messageformat": "{currentSize} из {totalSize} восстановлено"
+  },
+  "icu:BackupMediaDownloadProgress__description-idle": {
+    "messageformat": "Медиафайлы будут по-прежнему загружаться в фоновом режиме"
   },
   "icu:BackupMediaDownloadProgress__button-pause": {
     "messageformat": "Приостановить трансфер"
@@ -4472,12 +4517,6 @@
   "icu:ProfileEditorModal--error": {
     "messageformat": "Не удалось обновить ваш профиль. Пожалуйста, попробуйте еще раз."
   },
-  "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "Недопустимые символы"
-  },
-  "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "Один или несколько введённых символов не могут быть использованы. Попробуйте ещё раз."
-  },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "Написать сообщение администратору"
   },
@@ -4678,6 +4717,15 @@
   },
   "icu:DialogNetworkStatus__outage": {
     "messageformat": "У Signal возникли технические неполадки. Мы прилагаем все усилия, чтобы как можно быстрее восстановить обслуживание."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__title": {
+    "messageformat": "Требуется обновление"
+  },
+  "icu:InstallScreenUpdateDialog--update-required__body": {
+    "messageformat": "Чтобы завершить синхронизацию сообщений, обновите Signal Desktop прямо сейчас."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__action-update": {
+    "messageformat": "Обновить"
   },
   "icu:InstallScreenUpdateDialog--unsupported-os__title": {
     "messageformat": "Требуется обновление"
@@ -5517,8 +5565,14 @@
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "Нажмите <newCallButtonIcon></newCallButtonIcon>, чтобы начать новый аудио- или видеозвонок."
   },
+  "icu:CallsList__SearchInputPlaceholder--missed-calls": {
+    "messageformat": "Поиск пропущенных звонков"
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Поиск"
+  },
+  "icu:CallsList__FilteredByMissedHeader": {
+    "messageformat": "Отфильтровано по пропущенным"
   },
   "icu:CallsList__ToggleFilterByMissedLabel": {
     "messageformat": "Отфильтровать по пропущенным"
@@ -5532,14 +5586,14 @@
   "icu:CallsList__EmptyState--noQuery__subtitle": {
     "messageformat": "Недавние звонки появятся здесь."
   },
-  "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "Нет пропущенных звонков"
-  },
-  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Пропущенные звонки появятся здесь."
-  },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "Нет результатов для «{query}»"
+  },
+  "icu:CallsList__EmptyState--hasQueryAndMissedCalls": {
+    "messageformat": "Нет результатов для «{query}» в пропущенных звонках"
+  },
+  "icu:CallsList__EmptyState--missedCalls": {
+    "messageformat": "Нет пропущенных звонков"
   },
   "icu:CallsList__CreateCallLink": {
     "messageformat": "Создать ссылку для звонка"
@@ -5710,19 +5764,13 @@
     "messageformat": "Небольшие изменения, исправления ошибок и улучшения производительности. Спасибо за то, что пользуетесь Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.29--0": {
-    "messageformat": "Это обновление повышает скорость запуска примерно на 5%, поэтому вы можете спокойно замедлиться в чём-то другом."
+  "icu:WhatsNew__v7.35--0": {
+    "messageformat": "Новый значок фильтра рядом с окном поиска позволяет легко находить непрочитанные чаты, но не спешите решать, стоит ли оставлять их в прочитанном после прочтения."
   },
-  "icu:WhatsNew__v7.30--header": {
-    "messageformat": "Introducing Call Links: The missing link for calendar invites and impromptu gatherings."
+  "icu:WhatsNew__v7.36--0": {
+    "messageformat": "This update fixes a bug on macOS Sonoma that prevented screen sharing from working correctly if permission to share the screen had previously been denied — so you no longer need to share your screen with an error message."
   },
-  "icu:WhatsNew__v7.30--0": {
-    "messageformat": "Now you can quickly create an easy link that anyone on Signal can use to join a group call without having to join a Signal group chat first."
-  },
-  "icu:WhatsNew__v7.30--1": {
-    "messageformat": "Call links are reusable and ideal for recurring phone dates with your best friends or weekly check-ins with your coworkers."
-  },
-  "icu:WhatsNew__v7.30--2": {
-    "messageformat": "You can manage your call links, control approval settings, and copy links from the calls tab for quick sharing."
+  "icu:WhatsNew__v7.36--1": {
+    "messageformat": "Filter by Unread now highlights the selected chat, and the list of unread chats will automatically update as new messages arrive or when you catch up in one chat and click on another."
   }
 }

@@ -53,6 +53,15 @@
   "icu:appleSilicon": {
     "messageformat": "Silikon Apple"
   },
+  "icu:About__AppEnvironment": {
+    "messageformat": "{appEnv}"
+  },
+  "icu:About__AppEnvironment--AppleSilicon": {
+    "messageformat": "{appEnv} (Apple silicon)"
+  },
+  "icu:About__AppEnvironment--AppleIntel": {
+    "messageformat": "{appEnv} (Intel)"
+  },
   "icu:copyErrorAndQuit": {
     "messageformat": "Ralat menyalin dan berhenti"
   },
@@ -575,14 +584,14 @@
   "icu:decryptionErrorToast": {
     "messageformat": "Komputer meja mengalami ralat penyahsulitan daripada {name}, peranti {deviceId}"
   },
-  "icu:decryptionErrorToastAction": {
-    "messageformat": "Hantar log"
-  },
   "icu:Toast__ActionLabel--SubmitLog": {
     "messageformat": "Hantar log"
   },
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
+  },
+  "icu:Toast--FailedToImportBackup": {
+    "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "Anda tidak boleh memilih foto dan video bersama-sama dengan fail."
@@ -680,6 +689,9 @@
   "icu:search": {
     "messageformat": "Cari"
   },
+  "icu:searchUnreadChats": {
+    "messageformat": "Cari sembang yang belum dibaca"
+  },
   "icu:clearSearch": {
     "messageformat": "Kosongkan Hasil"
   },
@@ -689,11 +701,26 @@
   "icu:noSearchResults": {
     "messageformat": "Tiada keputusan untuk \"{searchTerm}\""
   },
+  "icu:noSearchResultsWithUnreadFilter": {
+    "messageformat": "Tiada hasil untuk \"{searchTerm}\" dalam sembang yang belum dibaca"
+  },
+  "icu:noSearchResultsOnlyUnreadFilter": {
+    "messageformat": "Tiada sembang belum dibaca"
+  },
   "icu:noSearchResults--sms-only": {
     "messageformat": "Kenalan SMS/MMS tidak tersedia di Desktop."
   },
   "icu:noSearchResultsInConversation": {
     "messageformat": "Tiada keputusan untuk \"{searchTerm}\" dalam {conversationName}"
+  },
+  "icu:conversationsUnreadHeader": {
+    "messageformat": "Ditapis mengikut belum dibaca"
+  },
+  "icu:filterByUnreadButtonLabel": {
+    "messageformat": "Ditapis mengikut Belum Dibaca"
+  },
+  "icu:clearFilterButton": {
+    "messageformat": "Kosongkan penapis"
   },
   "icu:conversationsHeader": {
     "messageformat": "Sembang"
@@ -788,11 +815,14 @@
   "icu:voiceNoteError": {
     "messageformat": "Terdapat ralat dengan perakam suara."
   },
-  "icu:attachmentSaved": {
-    "messageformat": "Lampiran disimpan."
+  "icu:attachmentSavedPlural": {
+    "messageformat": "{count, plural, other {{count,number} lampiran disimpan}}"
   },
   "icu:attachmentSavedShow": {
     "messageformat": "Tunjuk dalam folder"
+  },
+  "icu:attachmentStillDownloading": {
+    "messageformat": "{count, plural, other {Tidak dapat menyimpan lampiran, kerana {count,number} belum selesai dimuat turun}}"
   },
   "icu:you": {
     "messageformat": "Anda"
@@ -992,17 +1022,17 @@
   "icu:MessageContextMenu__info": {
     "messageformat": "Maklumat"
   },
-  "icu:deleteMessagesInConversation": {
-    "messageformat": "Padam mesej"
+  "icu:deleteConversation": {
+    "messageformat": "Padam"
   },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__title": {
-    "messageformat": "Padam mesej?"
+  "icu:ConversationHeader__DeleteConversationConfirmation__title": {
+    "messageformat": "Padam sembang?"
   },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
-    "messageformat": "Semua mesej dalam sembang ini akan dipadamkan daripada peranti ini. Anda masih boleh mencari sembang ini selepas anda memadamkan mesej."
+  "icu:ConversationHeader__DeleteConversationConfirmation__description": {
+    "messageformat": "Semua mesej dalam sembang ini akan dipadamkan daripada peranti ini."
   },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
-    "messageformat": "Semua mesej dalam sembang ini akan dipadamkan daripada semua peranti anda. Anda masih boleh mencari sembang ini selepas memadamkan mesej."
+  "icu:ConversationHeader__DeleteConversationConfirmation__description-with-sync": {
+    "messageformat": "Semua mesej dalam sembang ini akan dipadamkan daripada semua peranti anda."
   },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "Keluar kumpulan"
@@ -1372,6 +1402,9 @@
   },
   "icu:calling__pre-call-info--many-people-in-call": {
     "messageformat": "{others, plural, other {{first}, {second} dan {others,number} yang lain dalam panggilan ini}}"
+  },
+  "icu:calling__pre-call-info--only-unknown-contacts-in-call": {
+    "messageformat": "{count, plural, other {{count,number} orang berada dalam panggilan ini}}"
   },
   "icu:calling__pre-call-info--will-ring-1": {
     "messageformat": "Signal akan memanggil {person}"
@@ -2693,6 +2726,9 @@
   "icu:incomingGroupCall__ringing-many": {
     "messageformat": "{remaining, plural, other {{ringer} memanggil anda, {first}, {second}, dan {remaining,number} yang lain}}"
   },
+  "icu:outgoingCallConnecting": {
+    "messageformat": "Connecting..."
+  },
   "icu:outgoingCallRinging": {
     "messageformat": "Sedang mendering..."
   },
@@ -3540,7 +3576,7 @@
     "messageformat": "Memuat turun {currentSize} daripada {totalSize} ({fractionComplete,number,percent})..."
   },
   "icu:BackupImportScreen__progressbar-hint--processing": {
-    "messageformat": "Finalizing message transfer..."
+    "messageformat": "Memuktamadkan pemindahan mesej..."
   },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "Bersedia untuk memuat turun..."
@@ -3550,6 +3586,9 @@
   },
   "icu:BackupImportScreen__cancel": {
     "messageformat": "Batalkan pemindahan"
+  },
+  "icu:BackupImportScreen__security-description": {
+    "messageformat": "Mesej dan maklumat sembang dilindungi oleh penyulitan hujung ke hujung termasuk proses penyegerakan. <learnMoreLink>Ketahui lebih lanjut</learnMoreLink>"
   },
   "icu:BackupImportScreen__cancel-confirmation__title": {
     "messageformat": "Batalkan pemindahan?"
@@ -3589,6 +3628,12 @@
   },
   "icu:BackupMediaDownloadProgress__title-paused": {
     "messageformat": "Pemulihan dijeda"
+  },
+  "icu:BackupMediaDownloadProgress__title-idle": {
+    "messageformat": "{currentSize} daripada {totalSize} dipulihkan"
+  },
+  "icu:BackupMediaDownloadProgress__description-idle": {
+    "messageformat": "Media akan terus memuat turun di latar belakang"
   },
   "icu:BackupMediaDownloadProgress__button-pause": {
     "messageformat": "Jeda pemindahan"
@@ -4472,12 +4517,6 @@
   "icu:ProfileEditorModal--error": {
     "messageformat": "Profil anda tidak dapat dikemas kini. Sila cuba lagi."
   },
-  "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "Aksara tidak sah"
-  },
-  "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "Satu atau lebih aksara yang anda masukkan tidak boleh digunakan. Cuba lagi."
-  },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "Mesej pentadbir"
   },
@@ -4678,6 +4717,15 @@
   },
   "icu:DialogNetworkStatus__outage": {
     "messageformat": "Signal sedang mengalami masalah teknikal. Kami sedang berusaha untuk memulihkan perkhidmatan dengan secepat mungkin."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__title": {
+    "messageformat": "Kemas Kini Diperlukan"
+  },
+  "icu:InstallScreenUpdateDialog--update-required__body": {
+    "messageformat": "Untuk melengkapkan penyegerakan mesej anda, kemas kini desktop Signal sekarang."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__action-update": {
+    "messageformat": "Kemas Kini"
   },
   "icu:InstallScreenUpdateDialog--unsupported-os__title": {
     "messageformat": "Kemas Kini Diperlukan"
@@ -5517,8 +5565,14 @@
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "Klik <newCallButtonIcon></newCallButtonIcon> untuk memulakan panggilan suara atau video baharu."
   },
+  "icu:CallsList__SearchInputPlaceholder--missed-calls": {
+    "messageformat": "Cari panggilan terlepas"
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Cari"
+  },
+  "icu:CallsList__FilteredByMissedHeader": {
+    "messageformat": "Tapis mengikut panggilan terlepas"
   },
   "icu:CallsList__ToggleFilterByMissedLabel": {
     "messageformat": "Tapis mengikut panggilan terlepas"
@@ -5532,14 +5586,14 @@
   "icu:CallsList__EmptyState--noQuery__subtitle": {
     "messageformat": "Panggilan terbaharu akan dipaparkan di sini."
   },
-  "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "Tiada panggilan terlepas"
-  },
-  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Panggilan terlepas akan dipaparkan di sini."
-  },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "Tiada hasil untuk “{query}”"
+  },
+  "icu:CallsList__EmptyState--hasQueryAndMissedCalls": {
+    "messageformat": "Tiada hasil untuk “{query}” dalam panggilan terlepas"
+  },
+  "icu:CallsList__EmptyState--missedCalls": {
+    "messageformat": "Tiada panggilan terlepas"
   },
   "icu:CallsList__CreateCallLink": {
     "messageformat": "Cipta Pautan Panggilan"
@@ -5710,19 +5764,13 @@
     "messageformat": "Sedikit pengubahsuaian, pembaikan pepijat dan peningkatan prestasi. Terima kasih kerana menggunakan Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.29--0": {
-    "messageformat": "Kemas kini ini meningkatkan kelajuan permulaan sekitar 5%."
+  "icu:WhatsNew__v7.35--0": {
+    "messageformat": "Ikon penapis baharu di sebelah kotak carian memudahkan anda mencari sembang yang belum dibaca."
   },
-  "icu:WhatsNew__v7.30--header": {
-    "messageformat": "Introducing Call Links: The missing link for calendar invites and impromptu gatherings."
+  "icu:WhatsNew__v7.36--0": {
+    "messageformat": "This update fixes a bug on macOS Sonoma that prevented screen sharing from working correctly if permission to share the screen had previously been denied — so you no longer need to share your screen with an error message."
   },
-  "icu:WhatsNew__v7.30--0": {
-    "messageformat": "Now you can quickly create an easy link that anyone on Signal can use to join a group call without having to join a Signal group chat first."
-  },
-  "icu:WhatsNew__v7.30--1": {
-    "messageformat": "Call links are reusable and ideal for recurring phone dates with your best friends or weekly check-ins with your coworkers."
-  },
-  "icu:WhatsNew__v7.30--2": {
-    "messageformat": "You can manage your call links, control approval settings, and copy links from the calls tab for quick sharing."
+  "icu:WhatsNew__v7.36--1": {
+    "messageformat": "Filter by Unread now highlights the selected chat, and the list of unread chats will automatically update as new messages arrive or when you catch up in one chat and click on another."
   }
 }

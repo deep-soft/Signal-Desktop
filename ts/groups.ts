@@ -12,7 +12,7 @@ import {
 } from 'lodash';
 import Long from 'long';
 import type { ClientZkGroupCipher } from '@signalapp/libsignal-client/zkgroup';
-import LRU from 'lru-cache';
+import { LRUCache } from 'lru-cache';
 import * as log from './logging/log';
 import {
   getCheckedGroupCredentialsForToday,
@@ -98,7 +98,7 @@ import { sleep } from './util/sleep';
 import { groupInvitesRoute } from './util/signalRoutes';
 import {
   decodeGroupSendEndorsementResponse,
-  isValidGroupSendEndorsementsExpiration,
+  validateGroupSendEndorsementsExpiration,
 } from './util/groupSendEndorsements';
 import { getProfile } from './util/getProfile';
 import { generateMessageId } from './util/generateMessageId';
@@ -264,7 +264,7 @@ export type GroupFields = {
 
 const MAX_CACHED_GROUP_FIELDS = 100;
 
-const groupFieldsCache = new LRU<string, GroupFields>({
+const groupFieldsCache = new LRUCache<string, GroupFields>({
   max: MAX_CACHED_GROUP_FIELDS,
 });
 
@@ -2783,6 +2783,7 @@ export async function respondToGroupV2Migration({
   let groupSendEndorsementResponse: Uint8Array | null | undefined;
 
   try {
+    const fetchedAt = Date.now();
     const response: GroupLogResponseType = await makeRequestWithCredentials({
       logId: `getGroupLog/${logId}`,
       publicParams,
@@ -2799,6 +2800,7 @@ export async function respondToGroupV2Migration({
           options
         ),
     });
+    setLastSuccessfulGroupFetch(conversation.id, fetchedAt);
 
     // Attempt to start with the first group state, only later processing future updates
     firstGroupState = response?.changes?.groupChanges?.[0]?.groupState;
@@ -2809,12 +2811,14 @@ export async function respondToGroupV2Migration({
         `respondToGroupV2Migration/${logId}: Failed to access log endpoint; fetching full group state`
       );
       try {
+        const fetchedAt = Date.now();
         const groupResponse = await makeRequestWithCredentials({
           logId: `getGroup/${logId}`,
           publicParams,
           secretParams,
           request: (sender, options) => sender.getGroup(options),
         });
+        setLastSuccessfulGroupFetch(conversation.id, fetchedAt);
 
         firstGroupState = groupResponse.group;
         groupSendEndorsementResponse =
@@ -3051,9 +3055,8 @@ export async function waitThenMaybeUpdateGroup(
     try {
       // And finally try to update the group
       await maybeUpdateGroup(options, { viaFirstStorageSync });
-
-      conversation.lastSuccessfulGroupFetch = Date.now();
     } catch (error) {
+      setLastSuccessfulGroupFetch(conversation.id, undefined);
       log.error(
         `${logId}: maybeUpdateGroup failure:`,
         Errors.toLogFormat(error)
@@ -3533,7 +3536,10 @@ async function getGroupUpdates({
       groupChange.changeEpoch <= SUPPORTED_CHANGE_EPOCH;
 
     if (isChangeSupported) {
-      if (!wrappedGroupChange.isTrusted) {
+      const { isTrusted } = wrappedGroupChange;
+      let isUntrustedChangeVerified = false;
+
+      if (!isTrusted) {
         strictAssert(
           groupChange.serverSignature,
           'Server signature must be present in untrusted group change'
@@ -3560,13 +3566,34 @@ async function getGroupUpdates({
             newProfileKeys: new Map(),
           };
         }
+
+        const { groupId: groupIdBytes } = Proto.GroupChange.Actions.decode(
+          groupChange.actions || new Uint8Array(0)
+        );
+        const actionsGroupId: string | undefined =
+          groupIdBytes && groupIdBytes.length !== 0
+            ? Bytes.toBase64(groupIdBytes)
+            : undefined;
+        if (actionsGroupId && actionsGroupId === group.groupId) {
+          isUntrustedChangeVerified = true;
+        } else if (!actionsGroupId) {
+          log.warn(
+            `getGroupUpdates/${logId}: Missing groupId in group change actions`
+          );
+        } else {
+          log.warn(
+            `getGroupUpdates/${logId}: Incorrect groupId in group change actions`
+          );
+        }
       }
 
-      return updateGroupViaSingleChange({
-        group,
-        newRevision,
-        groupChange,
-      });
+      if (isTrusted || isUntrustedChangeVerified) {
+        return updateGroupViaSingleChange({
+          group,
+          newRevision,
+          groupChange,
+        });
+      }
     }
 
     log.info(
@@ -3767,24 +3794,20 @@ async function updateGroupViaState({
   dropInitialJoinMessage?: boolean;
   group: ConversationAttributesType;
 }): Promise<UpdatesResultType> {
-  const logId = idForLogging(group.groupId);
-  const { publicParams, secretParams } = group;
+  const { id, publicParams, secretParams } = group;
+  const logId = `updateGroupViaState/${idForLogging(group.groupId)}`;
 
-  strictAssert(
-    secretParams,
-    'updateGroupViaState: group was missing secretParams!'
-  );
-  strictAssert(
-    publicParams,
-    'updateGroupViaState: group was missing publicParams!'
-  );
+  strictAssert(secretParams, `${logId}: Missing secretParams`);
+  strictAssert(publicParams, `${logId}: Missing publicParams`);
 
+  const fetchedAt = Date.now();
   const groupResponse = await makeRequestWithCredentials({
     logId: `getGroup/${logId}`,
     publicParams,
     secretParams,
     request: (sender, requestOptions) => sender.getGroup(requestOptions),
   });
+  setLastSuccessfulGroupFetch(id, fetchedAt);
 
   const { group: groupState, groupSendEndorsementResponse } = groupResponse;
   strictAssert(groupState, 'updateGroupViaState: Group state must be present');
@@ -3853,6 +3876,9 @@ async function updateGroupViaSingleChange({
   const previouslyKnewAboutThisGroup =
     isNumber(group.revision) && group.membersV2?.length;
   const wasInGroup = !group.left;
+
+  setLastSuccessfulGroupFetch(group.id, undefined);
+
   const singleChangeResult: UpdatesResultType = await integrateGroupChange({
     group,
     groupChange,
@@ -3989,13 +4015,15 @@ async function updateGroupViaLogs({
   let cachedEndorsementsExpiration =
     await DataReader.getGroupSendCombinedEndorsementExpiration(groupId);
 
-  if (
-    cachedEndorsementsExpiration != null &&
-    !isValidGroupSendEndorsementsExpiration(cachedEndorsementsExpiration * 1000)
-  ) {
-    log.info(
-      `updateGroupViaLogs/${logId}: Group had invalid endorsements expiration (${cachedEndorsementsExpiration}), fetching new endorsements`
+  if (cachedEndorsementsExpiration != null) {
+    const result = validateGroupSendEndorsementsExpiration(
+      cachedEndorsementsExpiration * 1000
     );
+    if (!result.valid) {
+      log.info(
+        `updateGroupViaLogs/${logId}: Endorsements are expired (${result.reason}), fetching new endorsements`
+      );
+    }
     cachedEndorsementsExpiration = null;
   }
 
@@ -4003,6 +4031,7 @@ async function updateGroupViaLogs({
   let groupSendEndorsementResponse: Uint8Array | null = null;
   const changes: Array<Proto.IGroupChanges> = [];
   do {
+    const fetchedAt = Date.now();
     // eslint-disable-next-line no-await-in-loop
     response = await makeRequestWithCredentials({
       logId: `getGroupLog/${logId}`,
@@ -4022,6 +4051,7 @@ async function updateGroupViaLogs({
           requestOptions
         ),
     });
+    setLastSuccessfulGroupFetch(group.id, fetchedAt);
 
     // When the log is long enough that it needs to be paginated, the server is
     // not stateful enough to only give us endorsements when we need them.
@@ -4507,6 +4537,10 @@ async function integrateGroupChange({
   };
 }
 
+function normalizeTextField(text: string | null | undefined): string {
+  return text?.trim() ?? '';
+}
+
 function extractDiffs({
   current,
   dropInitialJoinMessage,
@@ -4611,11 +4645,12 @@ function extractDiffs({
   }
 
   // name
-
-  if (old.name !== current.name) {
+  const oldName = normalizeTextField(old.name);
+  const newName = normalizeTextField(current.name);
+  if (oldName !== newName) {
     details.push({
       type: 'title',
-      newTitle: current.name,
+      newTitle: newName,
     });
   }
 
@@ -4634,11 +4669,13 @@ function extractDiffs({
   }
 
   // description
-  if (old.description !== current.description) {
+  const oldDescription = normalizeTextField(old.description);
+  const newDescription = normalizeTextField(current.description);
+  if (oldDescription !== newDescription) {
     details.push({
       type: 'description',
-      removed: !current.description,
-      description: current.description,
+      removed: !newDescription,
+      description: newDescription,
     });
   }
 
@@ -5367,7 +5404,7 @@ async function applyGroupChange({
   if (actions.modifyTitle) {
     const { title } = actions.modifyTitle;
     if (title && title.content === 'title') {
-      result.name = dropNull(title.title);
+      result.name = dropNull(title.title)?.trim();
     } else {
       log.warn(
         `applyGroupChange/${logId}: Clearing group title due to missing data.`
@@ -5569,7 +5606,7 @@ async function applyGroupChange({
   if (actions.modifyDescription) {
     const { descriptionBytes } = actions.modifyDescription;
     if (descriptionBytes && descriptionBytes.content === 'descriptionText') {
-      result.description = dropNull(descriptionBytes.descriptionText);
+      result.description = dropNull(descriptionBytes.descriptionText)?.trim();
     } else {
       log.warn(
         `applyGroupChange/${logId}: Clearing group description due to missing data.`
@@ -5803,7 +5840,7 @@ async function applyGroupState({
   // Note: During decryption, title becomes a GroupAttributeBlob
   const { title } = groupState;
   if (title && title.content === 'title') {
-    result.name = dropNull(title.title);
+    result.name = dropNull(title.title)?.trim();
   } else {
     result.name = undefined;
   }
@@ -6013,7 +6050,7 @@ async function applyGroupState({
   // descriptionBytes
   const { descriptionBytes } = groupState;
   if (descriptionBytes && descriptionBytes.content === 'descriptionText') {
-    result.description = dropNull(descriptionBytes.descriptionText);
+    result.description = dropNull(descriptionBytes.descriptionText)?.trim();
   } else {
     result.description = undefined;
   }
@@ -7235,4 +7272,16 @@ export function getMembershipList(
     const uuidCiphertext = encryptServiceId(clientZkGroupCipher, aci);
     return { aci, uuidCiphertext };
   });
+}
+
+function setLastSuccessfulGroupFetch(
+  conversationId: string,
+  timestamp: number | undefined
+): void {
+  const conversation = window.ConversationController.get(conversationId);
+  strictAssert(
+    conversation,
+    `setLastSuccessfulGroupFetch/${idForLogging(conversationId)}: Conversation must exist`
+  );
+  conversation.lastSuccessfulGroupFetch = timestamp;
 }

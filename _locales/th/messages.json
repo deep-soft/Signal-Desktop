@@ -53,6 +53,15 @@
   "icu:appleSilicon": {
     "messageformat": "Apple Silicon"
   },
+  "icu:About__AppEnvironment": {
+    "messageformat": "{appEnv}"
+  },
+  "icu:About__AppEnvironment--AppleSilicon": {
+    "messageformat": "{appEnv} (Apple silicon)"
+  },
+  "icu:About__AppEnvironment--AppleIntel": {
+    "messageformat": "{appEnv} (Intel)"
+  },
   "icu:copyErrorAndQuit": {
     "messageformat": "คัดลอกข้อผิดพลาดและออก"
   },
@@ -575,14 +584,14 @@
   "icu:decryptionErrorToast": {
     "messageformat": "เดสก์ท็อปพบข้อผิดพลาดในการถอดรหัสจาก {name}, อุปกรณ์ {deviceId}"
   },
-  "icu:decryptionErrorToastAction": {
-    "messageformat": "ส่งปูม"
-  },
   "icu:Toast__ActionLabel--SubmitLog": {
     "messageformat": "ส่งบันทึก"
   },
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
+  },
+  "icu:Toast--FailedToImportBackup": {
+    "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "ไม่สามารถเลือกรูปภาพและวิดีโอพร้อมกับไฟล์อื่นได้"
@@ -680,6 +689,9 @@
   "icu:search": {
     "messageformat": "ค้นหา"
   },
+  "icu:searchUnreadChats": {
+    "messageformat": "ค้นหาแชทที่ยังไม่ได้อ่าน"
+  },
   "icu:clearSearch": {
     "messageformat": "ล้างการค้นหา"
   },
@@ -689,11 +701,26 @@
   "icu:noSearchResults": {
     "messageformat": "ไม่มีผลลัพธ์สำหรับ \"{searchTerm}\""
   },
+  "icu:noSearchResultsWithUnreadFilter": {
+    "messageformat": "ไม่มีผลลัพธ์สำหรับ \"{searchTerm}\" ในแชทที่ยังไม่ได้อ่าน"
+  },
+  "icu:noSearchResultsOnlyUnreadFilter": {
+    "messageformat": "ไม่มีแชทที่ยังไม่ได้อ่าน"
+  },
   "icu:noSearchResults--sms-only": {
     "messageformat": "ไม่มีผู้ติดต่อ SMS/MMS บนเดสก์ท็อป"
   },
   "icu:noSearchResultsInConversation": {
     "messageformat": "ไม่มีผลลัพ์สำหรับ \"{searchTerm}\" ใน  {conversationName}"
+  },
+  "icu:conversationsUnreadHeader": {
+    "messageformat": "กรองตามแชทที่ยังไม่ได้อ่าน"
+  },
+  "icu:filterByUnreadButtonLabel": {
+    "messageformat": "กรองตามแชทที่ยังไม่ได้อ่าน"
+  },
+  "icu:clearFilterButton": {
+    "messageformat": "ล้างตัวกรอง"
   },
   "icu:conversationsHeader": {
     "messageformat": "แชท"
@@ -788,11 +815,14 @@
   "icu:voiceNoteError": {
     "messageformat": "เกิดข้อผิดพลาดในการอัดเสียง"
   },
-  "icu:attachmentSaved": {
-    "messageformat": "บันทึกแฟ้มแนบแล้ว"
+  "icu:attachmentSavedPlural": {
+    "messageformat": "{count, plural, other {บันทึกไฟล์แนบ {count,number} รายการ}}"
   },
   "icu:attachmentSavedShow": {
     "messageformat": "แสดงในโฟลเดอร์"
+  },
+  "icu:attachmentStillDownloading": {
+    "messageformat": "{count, plural, other {ไม่สามารถบันทึกไฟล์แนบ เนื่องจากยังดาวน์โหลด {count,number} ไฟล์ไม่เสร็จสิ้น}}"
   },
   "icu:you": {
     "messageformat": "คุณ"
@@ -992,17 +1022,17 @@
   "icu:MessageContextMenu__info": {
     "messageformat": "ข้อมูล"
   },
-  "icu:deleteMessagesInConversation": {
-    "messageformat": "ลบข้อความ"
+  "icu:deleteConversation": {
+    "messageformat": "ลบ"
   },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__title": {
-    "messageformat": "ลบข้อความหรือไม่"
+  "icu:ConversationHeader__DeleteConversationConfirmation__title": {
+    "messageformat": "ลบแชทใช่หรือไม่"
   },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
-    "messageformat": "ระบบจะลบข้อความทั้งหมดในแชทออกจากอุปกรณ์เครื่องนี้ โดยคุณจะยังสามารถค้นหาแชทนี้ได้แม้จะลบข้อความไปแล้ว"
+  "icu:ConversationHeader__DeleteConversationConfirmation__description": {
+    "messageformat": "ระบบจะลบข้อความทั้งหมดในแชทออกจากอุปกรณ์เครื่องนี้"
   },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
-    "messageformat": "ข้อความทั้งหมดในแชทนี้จะถูกลบออกจากอุปกรณ์ทุกเครื่องของคุณ โดยคุณจะยังสามารถค้นหาแชทนี้ได้แม้จะลบข้อความไปแล้ว"
+  "icu:ConversationHeader__DeleteConversationConfirmation__description-with-sync": {
+    "messageformat": "ข้อความทั้งหมดในแชทนี้จะถูกลบออกจากอุปกรณ์ทุกเครื่องของคุณ"
   },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "ออกจากกลุ่ม"
@@ -1372,6 +1402,9 @@
   },
   "icu:calling__pre-call-info--many-people-in-call": {
     "messageformat": "{others, plural, other {{first}, {second} และคนอื่นๆ อีก {others,number} คน อยู่ในสายนี้}}"
+  },
+  "icu:calling__pre-call-info--only-unknown-contacts-in-call": {
+    "messageformat": "{count, plural, other {{count,number} คนอยู่ในสายนี้}}"
   },
   "icu:calling__pre-call-info--will-ring-1": {
     "messageformat": "Signal จะส่งเสียงเรียก {person}"
@@ -2693,6 +2726,9 @@
   "icu:incomingGroupCall__ringing-many": {
     "messageformat": "{remaining, plural, other {{ringer} กำลังโทรหาคุณ {first}, {second}, และ {remaining,number} อื่นๆ}}"
   },
+  "icu:outgoingCallConnecting": {
+    "messageformat": "Connecting..."
+  },
   "icu:outgoingCallRinging": {
     "messageformat": "กำลังเรียกสาย…"
   },
@@ -3540,7 +3576,7 @@
     "messageformat": "กำลังดาวน์โหลด {currentSize} จาก {totalSize} ({fractionComplete,number,percent})..."
   },
   "icu:BackupImportScreen__progressbar-hint--processing": {
-    "messageformat": "Finalizing message transfer..."
+    "messageformat": "กำลังดำเนินการถ่ายโอนข้อความให้เสร็จสิ้น..."
   },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "กำลังเตรียมการดาวน์โหลด..."
@@ -3550,6 +3586,9 @@
   },
   "icu:BackupImportScreen__cancel": {
     "messageformat": "ยกเลิกการถ่ายโอน"
+  },
+  "icu:BackupImportScreen__security-description": {
+    "messageformat": "ปกป้องข้อความและข้อมูลการแชทด้วยการเข้ารหัสตั้งแต่ต้นทางถึงปลายทาง รวมถึงในขั้นตอนการซิงค์ <learnMoreLink>เรียนรู้เพิ่มเติม</learnMoreLink>"
   },
   "icu:BackupImportScreen__cancel-confirmation__title": {
     "messageformat": "ยกเลิกการถ่ายโอนใช่หรือไม่"
@@ -3589,6 +3628,12 @@
   },
   "icu:BackupMediaDownloadProgress__title-paused": {
     "messageformat": "การกู้คืนหยุดชั่วคราว"
+  },
+  "icu:BackupMediaDownloadProgress__title-idle": {
+    "messageformat": "กู้คืน {currentSize} จาก {totalSize}"
+  },
+  "icu:BackupMediaDownloadProgress__description-idle": {
+    "messageformat": "การดาวน์โหลดไฟล์สื่อจะยังคงดำเนินต่อในพื้นหลัง"
   },
   "icu:BackupMediaDownloadProgress__button-pause": {
     "messageformat": "หยุดการถ่ายโอนชั่วคราว"
@@ -4472,12 +4517,6 @@
   "icu:ProfileEditorModal--error": {
     "messageformat": "โปรไฟล์ของคุณไม่สามารถปรับปรุงได้ โปรดลองอีกครั้ง"
   },
-  "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "อักขระไม่ถูกต้อง"
-  },
-  "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "อักขระอย่างน้อยหนึ่งตัวที่คุณกรอกไม่สามารถใช้ได้ โปรดลองอีกครั้ง"
-  },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "ส่งข้อความถึงผู้ดูแล"
   },
@@ -4678,6 +4717,15 @@
   },
   "icu:DialogNetworkStatus__outage": {
     "messageformat": "Signal กำลังพบกับอุปสรรคทางเทคนิค เรากำลังทำงานอย่างหนักเพื่อให้สามารถกลับมาให้บริการได้โดยเร็วที่สุดเท่าที่จะเป็นไปได้"
+  },
+  "icu:InstallScreenUpdateDialog--update-required__title": {
+    "messageformat": "จำเป็นต้องอัปเดต"
+  },
+  "icu:InstallScreenUpdateDialog--update-required__body": {
+    "messageformat": "โปรดอัปเดต Signal เดสก์ท็อปเพื่อซิงค์ข้อความของคุณให้เสร็จสมบูรณ์"
+  },
+  "icu:InstallScreenUpdateDialog--update-required__action-update": {
+    "messageformat": "อัปเดต"
   },
   "icu:InstallScreenUpdateDialog--unsupported-os__title": {
     "messageformat": "จำเป็นต้องอัปเดต"
@@ -5517,8 +5565,14 @@
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "คลิก <newCallButtonIcon></newCallButtonIcon> เพื่อเริ่มต้นการโทรด้วยเสียงหรือวิดีโอคอล"
   },
+  "icu:CallsList__SearchInputPlaceholder--missed-calls": {
+    "messageformat": "ค้นหาสายที่ไม่ได้รับ"
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "ค้นหา"
+  },
+  "icu:CallsList__FilteredByMissedHeader": {
+    "messageformat": "กรองสายที่ไม่ได้รับ"
   },
   "icu:CallsList__ToggleFilterByMissedLabel": {
     "messageformat": "กรองเฉพาะสายที่ไม่ได้รับ"
@@ -5532,14 +5586,14 @@
   "icu:CallsList__EmptyState--noQuery__subtitle": {
     "messageformat": "การโทรล่าสุดจะปรากฏที่นี่"
   },
-  "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "ไม่มีสายที่ไม่ได้รับ"
-  },
-  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "สายที่ไม่ได้รับจะปรากฏที่นี่"
-  },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "ไม่พบผลลัพธ์สำหรับ “{query}”"
+  },
+  "icu:CallsList__EmptyState--hasQueryAndMissedCalls": {
+    "messageformat": "ไม่มีผลลัพธ์สำหรับ “{query}” ในสายที่ไม่ได้รับ"
+  },
+  "icu:CallsList__EmptyState--missedCalls": {
+    "messageformat": "ไม่มีสายที่ไม่ได้รับ"
   },
   "icu:CallsList__CreateCallLink": {
     "messageformat": "สร้างลิงก์การโทร"
@@ -5710,19 +5764,13 @@
     "messageformat": "มีการปรับเปลี่ยนเล็กน้อย พร้อมแก้ไขบั๊ก และการพัฒนาประสิทธิภาพให้ดียิ่งขึ้น ขอขอบคุณที่เลือกใช้ Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.29--0": {
-    "messageformat": "การอัปเดตครั้งนี้มาพร้อมการเพิ่มความเร็วในการเปิดแอปให้ยิ่งทันใจ ไวขึ้นอีก 5%"
+  "icu:WhatsNew__v7.35--0": {
+    "messageformat": "เพิ่มไอคอนตัวกรองไว้ด้านข้างกล่องค้นหาเพื่อให้คุณค้นหาแชทที่ยังไม่ได้อ่านได้ง่ายและรวดเร็วขึ้น"
   },
-  "icu:WhatsNew__v7.30--header": {
-    "messageformat": "Introducing Call Links: The missing link for calendar invites and impromptu gatherings."
+  "icu:WhatsNew__v7.36--0": {
+    "messageformat": "This update fixes a bug on macOS Sonoma that prevented screen sharing from working correctly if permission to share the screen had previously been denied — so you no longer need to share your screen with an error message."
   },
-  "icu:WhatsNew__v7.30--0": {
-    "messageformat": "Now you can quickly create an easy link that anyone on Signal can use to join a group call without having to join a Signal group chat first."
-  },
-  "icu:WhatsNew__v7.30--1": {
-    "messageformat": "Call links are reusable and ideal for recurring phone dates with your best friends or weekly check-ins with your coworkers."
-  },
-  "icu:WhatsNew__v7.30--2": {
-    "messageformat": "You can manage your call links, control approval settings, and copy links from the calls tab for quick sharing."
+  "icu:WhatsNew__v7.36--1": {
+    "messageformat": "Filter by Unread now highlights the selected chat, and the list of unread chats will automatically update as new messages arrive or when you catch up in one chat and click on another."
   }
 }

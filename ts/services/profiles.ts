@@ -69,7 +69,7 @@ type JobType = {
 
 const OBSERVED_CAPABILITY_KEYS = Object.keys({
   deleteSync: true,
-  versionedExpirationTimer: true,
+  ssre2: true,
 } satisfies CapabilitiesType) as ReadonlyArray<keyof CapabilitiesType>;
 
 export class ProfileService {
@@ -458,7 +458,9 @@ async function doGetProfile(
   c: ConversationModel,
   groupId: string | null
 ): Promise<void> {
-  const logId = `getProfile(${c.idForLogging()})`;
+  const logId = groupId
+    ? `getProfile(${c.idForLogging()} in groupv2(${groupId}))`
+    : `getProfile(${c.idForLogging()})`;
   const { messaging } = window.textsecure;
   strictAssert(
     messaging,
@@ -504,10 +506,6 @@ async function doGetProfile(
     if (request.accessKey != null || request.groupSendToken != null) {
       profile = await messaging.server.getProfileUnauth(serviceId, request);
     } else {
-      strictAssert(
-        !isMe(c.attributes),
-        `${logId}: Should never fetch own profile on auth connection`
-      );
       profile = await messaging.server.getProfile(serviceId, request);
     }
   } catch (error) {

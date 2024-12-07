@@ -31,7 +31,6 @@ import type {
   UploadedAttachmentType,
 } from '../../types/Attachment';
 import { copyCdnFields } from '../../util/attachments';
-import { LONG_ATTACHMENT_LIMIT } from '../../types/Message';
 import type { RawBodyRange } from '../../types/BodyRange';
 import type { EmbeddedContactWithUploadedAvatar } from '../../types/EmbeddedContact';
 import type { StoryContextType } from '../../types/Util';
@@ -55,6 +54,8 @@ import {
   getChangesForPropAtTimestamp,
 } from '../../util/editHelpers';
 import { getMessageSentTimestamp } from '../../util/getMessageSentTimestamp';
+import { isSignalConversation } from '../../util/isSignalConversation';
+import { isBodyTooLong, trimBody } from '../../util/longAttachment';
 
 const MAX_CONCURRENT_ATTACHMENT_UPLOADS = 5;
 
@@ -84,6 +85,13 @@ export async function sendNormalMessage(
   if (messageConversation !== conversation) {
     log.error(
       `Message conversation '${messageConversation?.idForLogging()}' does not match job conversation ${conversation.idForLogging()}`
+    );
+    return;
+  }
+
+  if (isSignalConversation(messageConversation)) {
+    log.error(
+      `Message conversation '${messageConversation?.idForLogging()}' is the Signal serviceId, not sending`
     );
     return;
   }
@@ -587,8 +595,8 @@ async function getMessageSendData({
     targetTimestamp,
   });
 
-  if (body && body.length > LONG_ATTACHMENT_LIMIT) {
-    body = body.slice(0, LONG_ATTACHMENT_LIMIT);
+  if (body && isBodyTooLong(body)) {
+    body = trimBody(body);
   }
 
   const uploadQueue = new PQueue({
@@ -905,7 +913,7 @@ async function uploadMessageQuote({
 
   return {
     isGiftBadge: loadedQuote.isGiftBadge,
-    id: loadedQuote.id,
+    id: loadedQuote.id ?? undefined,
     authorAci: loadedQuote.authorAci
       ? normalizeAci(loadedQuote.authorAci, 'sendNormalMessage.quote.authorAci')
       : undefined,

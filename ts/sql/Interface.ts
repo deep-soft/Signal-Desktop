@@ -589,6 +589,7 @@ type ReadableInterface = {
   getCallLinkRecordByRoomId: (roomId: string) => CallLinkRecord | undefined;
   getAllAdminCallLinks(): ReadonlyArray<CallLinkType>;
   getAllCallLinkRecordsWithAdminKey(): ReadonlyArray<CallLinkRecord>;
+  getAllDefunctCallLinksWithAdminKey(): ReadonlyArray<DefunctCallLinkType>;
   getAllMarkedDeletedCallLinkRoomIds(): ReadonlyArray<string>;
   getMessagesBetween: (
     conversationId: string,
@@ -760,6 +761,10 @@ type WritableInterface = {
     arrayOfMessages: ReadonlyArray<ReadonlyDeep<MessageType>>,
     options: { forceSave?: boolean; ourAci: AciString }
   ) => Array<string>;
+  saveMessagesIndividually: (
+    arrayOfMessages: ReadonlyArray<ReadonlyDeep<MessageType>>,
+    options: { forceSave?: boolean; ourAci: AciString }
+  ) => { failedIndices: Array<number> };
 
   getUnreadByConversationAndMarkRead: (options: {
     conversationId: string;
@@ -823,7 +828,8 @@ type WritableInterface = {
   deleteCallLinkAndHistory(roomId: string): void;
   finalizeDeleteCallLink(roomId: string): void;
   _removeAllCallLinks(): void;
-  insertDefunctCallLink(callLink: DefunctCallLinkType): void;
+  insertDefunctCallLink(defunctCallLink: DefunctCallLinkType): void;
+  updateDefunctCallLink(defunctCallLink: DefunctCallLinkType): void;
   deleteCallLinkFromSync(roomId: string): void;
   migrateConversationMessages: (obsoleteId: string, currentId: string) => void;
   saveEditedMessage: (
@@ -839,7 +845,10 @@ type WritableInterface = {
 
   removeSyncTaskById: (id: string) => void;
   saveSyncTasks: (tasks: Array<SyncTaskType>) => void;
-  getAllSyncTasks: () => Array<SyncTaskType>;
+  dequeueOldestSyncTasks: (previousRowId: number | null) => {
+    tasks: Array<SyncTaskType>;
+    lastRowId: number | null;
+  };
 
   getAllUnprocessedIds: () => Array<string>;
   getUnprocessedByIdsAndIncrementAttempts: (
@@ -861,6 +870,7 @@ type WritableInterface = {
     timestamp?: number;
   }) => Array<AttachmentDownloadJobType>;
   saveAttachmentDownloadJob: (job: AttachmentDownloadJobType) => void;
+  saveAttachmentDownloadJobs: (jobs: Array<AttachmentDownloadJobType>) => void;
   resetAttachmentDownloadActive: () => void;
   removeAttachmentDownloadJob: (job: AttachmentDownloadJobType) => void;
   removeAllBackupAttachmentDownloadJobs: () => void;
@@ -944,6 +954,10 @@ type WritableInterface = {
 
   insertJob(job: Readonly<StoredJob>): void;
   deleteJob(id: string): void;
+
+  disableMessageInsertTriggers(): void;
+  enableMessageInsertTriggersAndBackfill(): void;
+  ensureMessageInsertTriggersAreEnabled(): void;
 
   processGroupCallRingCancellation(ringId: bigint): void;
   cleanExpiredGroupCallRingCancellations(): void;

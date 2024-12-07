@@ -11,13 +11,13 @@ import {
   callIdFromRingId,
   RingUpdate,
 } from '@signalapp/ringrtc';
-import { v4 as generateGuid } from 'uuid';
 import { isEqual } from 'lodash';
 import { strictAssert } from './assert';
 import { DataReader, DataWriter } from '../sql/Client';
 import { SignalService as Proto } from '../protobuf';
 import { bytesToUuid, uuidToBytes } from './uuidToBytes';
 import { missingCaseError } from './missingCaseError';
+import { generateMessageId } from './generateMessageId';
 import { CallEndedReason, GroupCallJoinState } from '../types/Calling';
 import {
   CallMode,
@@ -282,10 +282,14 @@ const callLogEventFromProto: Partial<
 export function getCallLogEventForProto(
   callLogEventProto: Proto.SyncMessage.ICallLogEvent
 ): CallLogEventDetails {
-  const callLogEvent = parsePartial(
-    callLogEventNormalizeSchema,
-    callLogEventProto
-  );
+  // CallLogEvent peerId is ambiguous whether it's a conversationId (direct, or groupId)
+  // or roomId so handle both cases
+  const { peerId: peerIdBytes } = callLogEventProto;
+  const callLogEvent = parsePartial(callLogEventNormalizeSchema, {
+    ...callLogEventProto,
+    peerIdAsConversationId: peerIdBytes,
+    peerIdAsRoomId: peerIdBytes,
+  });
 
   const type = callLogEventFromProto[callLogEvent.type];
   if (type == null) {
@@ -295,7 +299,8 @@ export function getCallLogEventForProto(
   return {
     type,
     timestamp: callLogEvent.timestamp,
-    peerId: callLogEvent.peerId ?? null,
+    peerIdAsConversationId: callLogEvent.peerIdAsConversationId ?? null,
+    peerIdAsRoomId: callLogEvent.peerIdAsRoomId ?? null,
     callId: callLogEvent.callId ?? null,
   };
 }
@@ -354,7 +359,7 @@ export function getBytesForPeerId(callHistory: CallHistoryDetails): Uint8Array {
 
 export function getCallIdForProto(
   callHistory: CallHistoryDetails
-): Long.Long | undefined {
+): Long | undefined {
   try {
     return Long.fromString(callHistory.callId);
   } catch (error) {
@@ -1212,16 +1217,18 @@ async function saveCallHistory({
     seenStatus = maxSeenStatus(seenStatus, prevMessage.seenStatus);
   }
 
+  const counter =
+    prevMessage?.received_at ?? receivedAtCounter ?? incrementMessageCounter();
+
+  const { id: newId } = generateMessageId(counter);
+
   const message: MessageAttributesType = {
-    id: prevMessage?.id ?? generateGuid(),
+    id: prevMessage?.id ?? newId,
     conversationId: conversation.id,
     type: 'call-history',
     timestamp: prevMessage?.timestamp ?? callHistory.timestamp,
     sent_at: prevMessage?.sent_at ?? callHistory.timestamp,
-    received_at:
-      prevMessage?.received_at ??
-      receivedAtCounter ??
-      incrementMessageCounter(),
+    received_at: counter,
     received_at_ms:
       prevMessage?.received_at_ms ?? receivedAtMS ?? callHistory.timestamp,
     readStatus: ReadStatus.Read,
@@ -1490,38 +1497,46 @@ export async function updateLocalGroupCallHistoryTimestamp(
   if (conversation == null) {
     return null;
   }
-  const peerId = getPeerIdFromConversation(conversation.attributes);
 
-  const prevCallHistory =
-    (await DataReader.getCallHistory(callId, peerId)) ?? null;
+  return conversation.queueJob<CallHistoryDetails | null>(
+    'updateLocalGroupCallHistoryTimestamp',
+    async () => {
+      const peerId = getPeerIdFromConversation(conversation.attributes);
 
-  // We don't have all the details to add new call history here
-  if (prevCallHistory != null) {
-    log.info(
-      'updateLocalGroupCallHistoryTimestamp: Found previous call history:',
-      formatCallHistory(prevCallHistory)
-    );
-  } else {
-    log.info('updateLocalGroupCallHistoryTimestamp: No previous call history');
-    return null;
-  }
+      const prevCallHistory =
+        (await DataReader.getCallHistory(callId, peerId)) ?? null;
 
-  if (timestamp >= prevCallHistory.timestamp) {
-    log.info(
-      'updateLocalGroupCallHistoryTimestamp: New timestamp is later than existing call history, ignoring'
-    );
-    return prevCallHistory;
-  }
+      // We don't have all the details to add new call history here
+      if (prevCallHistory != null) {
+        log.info(
+          'updateLocalGroupCallHistoryTimestamp: Found previous call history:',
+          formatCallHistory(prevCallHistory)
+        );
+      } else {
+        log.info(
+          'updateLocalGroupCallHistoryTimestamp: No previous call history'
+        );
+        return null;
+      }
 
-  const updatedCallHistory = await saveCallHistory({
-    callHistory: {
-      ...prevCallHistory,
-      timestamp,
-    },
-    conversation,
-    receivedAtCounter: null,
-    receivedAtMS: null,
-  });
+      if (timestamp >= prevCallHistory.timestamp) {
+        log.info(
+          'updateLocalGroupCallHistoryTimestamp: New timestamp is later than existing call history, ignoring'
+        );
+        return prevCallHistory;
+      }
 
-  return updatedCallHistory;
+      const updatedCallHistory = await saveCallHistory({
+        callHistory: {
+          ...prevCallHistory,
+          timestamp,
+        },
+        conversation,
+        receivedAtCounter: null,
+        receivedAtMS: null,
+      });
+
+      return updatedCallHistory;
+    }
+  );
 }

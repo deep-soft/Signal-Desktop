@@ -53,6 +53,15 @@
   "icu:appleSilicon": {
     "messageformat": "Apple silicon"
   },
+  "icu:About__AppEnvironment": {
+    "messageformat": "{appEnv}"
+  },
+  "icu:About__AppEnvironment--AppleSilicon": {
+    "messageformat": "{appEnv} (Apple silicon)"
+  },
+  "icu:About__AppEnvironment--AppleIntel": {
+    "messageformat": "{appEnv} (Intel)"
+  },
   "icu:copyErrorAndQuit": {
     "messageformat": "Копирај ја грешката и напушти"
   },
@@ -575,14 +584,14 @@
   "icu:decryptionErrorToast": {
     "messageformat": "Се појави грешка при дешифрирање од {name}, уред {deviceId}"
   },
-  "icu:decryptionErrorToastAction": {
-    "messageformat": "Испрати запис"
-  },
   "icu:Toast__ActionLabel--SubmitLog": {
     "messageformat": "Испрати запис"
   },
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
+  },
+  "icu:Toast--FailedToImportBackup": {
+    "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "Не можете да изберете слики и видеа заедно со датотеки."
@@ -680,6 +689,9 @@
   "icu:search": {
     "messageformat": "Барај"
   },
+  "icu:searchUnreadChats": {
+    "messageformat": "Пребарувајте непрочитани разговори"
+  },
   "icu:clearSearch": {
     "messageformat": "Исчисти пребарување"
   },
@@ -689,11 +701,26 @@
   "icu:noSearchResults": {
     "messageformat": "Нема резултати за \"{searchTerm}\""
   },
+  "icu:noSearchResultsWithUnreadFilter": {
+    "messageformat": "Не се пронајдени резултати за „{searchTerm}“ во непрочитаните разговори"
+  },
+  "icu:noSearchResultsOnlyUnreadFilter": {
+    "messageformat": "Немате непрочитани разговори"
+  },
   "icu:noSearchResults--sms-only": {
     "messageformat": "SMS/MMS контактите не се достапни на десктоп."
   },
   "icu:noSearchResultsInConversation": {
     "messageformat": "Нема резултати за \"{searchTerm}\" во {conversationName}"
+  },
+  "icu:conversationsUnreadHeader": {
+    "messageformat": "Филтрирани се непрочитаните разговори"
+  },
+  "icu:filterByUnreadButtonLabel": {
+    "messageformat": "Филтрирајте по непрочитани"
+  },
+  "icu:clearFilterButton": {
+    "messageformat": "Отстрани го филтерот"
   },
   "icu:conversationsHeader": {
     "messageformat": "Разговори"
@@ -788,11 +815,14 @@
   "icu:voiceNoteError": {
     "messageformat": "Имаше грешка со диктафонот."
   },
-  "icu:attachmentSaved": {
-    "messageformat": "Прилогот е зачуван."
+  "icu:attachmentSavedPlural": {
+    "messageformat": "{count, plural, one {Прилогот е зачуван} other {Зачувани се {count,number} прилози}}"
   },
   "icu:attachmentSavedShow": {
     "messageformat": "Прикажи во папката"
+  },
+  "icu:attachmentStillDownloading": {
+    "messageformat": "{count, plural, one {Прилогот не може да се зачува бидејќи сè уште се презема} other {Прилозите не може да се зачуваат бидејќи сè уште се преземаат {count,number} прилози}}"
   },
   "icu:you": {
     "messageformat": "Вие"
@@ -992,17 +1022,17 @@
   "icu:MessageContextMenu__info": {
     "messageformat": "Информации"
   },
-  "icu:deleteMessagesInConversation": {
-    "messageformat": "Избриши ги пораките"
+  "icu:deleteConversation": {
+    "messageformat": "Избриши"
   },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__title": {
-    "messageformat": "Да се избришат пораките?"
+  "icu:ConversationHeader__DeleteConversationConfirmation__title": {
+    "messageformat": "Да се избрише разговорот?"
   },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
-    "messageformat": "Пораките во овој разговор ќе бидат избришани од овој уред. Ќе можете да го пронајдате овој разговор и откако ќе ги избришете пораките."
+  "icu:ConversationHeader__DeleteConversationConfirmation__description": {
+    "messageformat": "Пораките во овој разговор ќе бидат избришани од овој уред."
   },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
-    "messageformat": "Сите пораки во овој разговор ќе бидат избришани од вашите уреди. Ќе можете да го пронајдeте овој разговор и откако ќе ги избришете пораките."
+  "icu:ConversationHeader__DeleteConversationConfirmation__description-with-sync": {
+    "messageformat": "Сите пораки во овој разговор ќе бидат избришани од вашите уреди."
   },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "Напушти ја групата"
@@ -1372,6 +1402,9 @@
   },
   "icu:calling__pre-call-info--many-people-in-call": {
     "messageformat": "{others, plural, one {{first}, {second}, и {others,number} друг се на овој повик} other {{first}, {second}, и {others,number} други се на овој повик}}"
+  },
+  "icu:calling__pre-call-info--only-unknown-contacts-in-call": {
+    "messageformat": "{count, plural, one {{count,number} личност е во овој повик} other {{count,number} лица се во овој повик}}"
   },
   "icu:calling__pre-call-info--will-ring-1": {
     "messageformat": "Signal ќе ѕвони на {person}"
@@ -2693,6 +2726,9 @@
   "icu:incomingGroupCall__ringing-many": {
     "messageformat": "{remaining, plural, one {{ringer} Ве повикува Вас, {first}, {second}, и {remaining,number} друг} other {{ringer} Ве повикува Вас, {first}, {second} и {remaining,number} други}}"
   },
+  "icu:outgoingCallConnecting": {
+    "messageformat": "Connecting..."
+  },
   "icu:outgoingCallRinging": {
     "messageformat": "Ѕвонам…"
   },
@@ -3540,7 +3576,7 @@
     "messageformat": "Се преземаат {currentSize} од {totalSize} ({fractionComplete,number,percent})…"
   },
   "icu:BackupImportScreen__progressbar-hint--processing": {
-    "messageformat": "Finalizing message transfer..."
+    "messageformat": "Преносот на пораките се финализира…"
   },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "Се подготвува за преземање…"
@@ -3550,6 +3586,9 @@
   },
   "icu:BackupImportScreen__cancel": {
     "messageformat": "Откажи пренос"
+  },
+  "icu:BackupImportScreen__security-description": {
+    "messageformat": "Пораките и информациите за разговорите се заштитени со целосно шифрирање, вклучувајќи го и процесот на синхронизација. <learnMoreLink>Дознајте повеќе</learnMoreLink>"
   },
   "icu:BackupImportScreen__cancel-confirmation__title": {
     "messageformat": "Да се откаже преносот?"
@@ -3589,6 +3628,12 @@
   },
   "icu:BackupMediaDownloadProgress__title-paused": {
     "messageformat": "Враќањето е паузирано"
+  },
+  "icu:BackupMediaDownloadProgress__title-idle": {
+    "messageformat": "Вратени {currentSize} од {totalSize}"
+  },
+  "icu:BackupMediaDownloadProgress__description-idle": {
+    "messageformat": "Медиумските датотеки ќе продолжат да се преземаат во заднина"
   },
   "icu:BackupMediaDownloadProgress__button-pause": {
     "messageformat": "Паузирајте го преносот"
@@ -4472,12 +4517,6 @@
   "icu:ProfileEditorModal--error": {
     "messageformat": "Вашиот профил не можеше да се ажурира. Ве молиме обидете се повторно."
   },
-  "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "Неважечки знаци"
-  },
-  "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "Еден или повеќе од знаците коишто ги внесовте не може да се користат. Обидете се повторно."
-  },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "Испрати порака на админ"
   },
@@ -4678,6 +4717,15 @@
   },
   "icu:DialogNetworkStatus__outage": {
     "messageformat": "Signal се соочува со технички потешкотии. Работиме напорно да ја вратиме услугата што е можно побрзо."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__title": {
+    "messageformat": "Потребно е ажурирање"
+  },
+  "icu:InstallScreenUpdateDialog--update-required__body": {
+    "messageformat": "За да ја завршите синхронизацијата на вашите пораки, ажурирајте ја апликацијата Signal Desktop сега."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__action-update": {
+    "messageformat": "Aжурирај"
   },
   "icu:InstallScreenUpdateDialog--unsupported-os__title": {
     "messageformat": "Потребно е ажурирање"
@@ -5517,8 +5565,14 @@
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "Кликнете на <newCallButtonIcon></newCallButtonIcon> за да започнете нов гласовен или видео повик."
   },
+  "icu:CallsList__SearchInputPlaceholder--missed-calls": {
+    "messageformat": "Пребарајте пропуштени повици"
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Барај"
+  },
+  "icu:CallsList__FilteredByMissedHeader": {
+    "messageformat": "Филтрирани се пропуштените"
   },
   "icu:CallsList__ToggleFilterByMissedLabel": {
     "messageformat": "Филтрирај ги пропуштените повици"
@@ -5532,14 +5586,14 @@
   "icu:CallsList__EmptyState--noQuery__subtitle": {
     "messageformat": "Неодамнешните повици ќе се појават овде."
   },
-  "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "Нема пропуштени повици"
-  },
-  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Пропуштените повици ќе се појават овде."
-  },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "Не се пронајдени резултати за „{query}“"
+  },
+  "icu:CallsList__EmptyState--hasQueryAndMissedCalls": {
+    "messageformat": "Не се пронајдени резултати за „{query}“ во пропуштените повици"
+  },
+  "icu:CallsList__EmptyState--missedCalls": {
+    "messageformat": "Нема пропуштени повици"
   },
   "icu:CallsList__CreateCallLink": {
     "messageformat": "Создајте линк за повикот"
@@ -5710,19 +5764,13 @@
     "messageformat": "Mали подобрувања, решени багови и подобрувања на перформансот. Ви благодариме што користите Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.29--0": {
-    "messageformat": "Во оваа верзија е подобрена брзината на стартување за околу 5%."
+  "icu:WhatsNew__v7.35--0": {
+    "messageformat": "Новата икона за филтер до полето за пребарување ви го олеснува пронаоѓањето на непрочитаните разговори."
   },
-  "icu:WhatsNew__v7.30--header": {
-    "messageformat": "Introducing Call Links: The missing link for calendar invites and impromptu gatherings."
+  "icu:WhatsNew__v7.36--0": {
+    "messageformat": "This update fixes a bug on macOS Sonoma that prevented screen sharing from working correctly if permission to share the screen had previously been denied — so you no longer need to share your screen with an error message."
   },
-  "icu:WhatsNew__v7.30--0": {
-    "messageformat": "Now you can quickly create an easy link that anyone on Signal can use to join a group call without having to join a Signal group chat first."
-  },
-  "icu:WhatsNew__v7.30--1": {
-    "messageformat": "Call links are reusable and ideal for recurring phone dates with your best friends or weekly check-ins with your coworkers."
-  },
-  "icu:WhatsNew__v7.30--2": {
-    "messageformat": "You can manage your call links, control approval settings, and copy links from the calls tab for quick sharing."
+  "icu:WhatsNew__v7.36--1": {
+    "messageformat": "Filter by Unread now highlights the selected chat, and the list of unread chats will automatically update as new messages arrive or when you catch up in one chat and click on another."
   }
 }

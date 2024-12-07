@@ -1066,6 +1066,14 @@ ipc.on('show-window', () => {
   showWindow();
 });
 
+ipc.on('start-tracking-query-stats', () => {
+  sql.startTrackingQueryStats();
+});
+
+ipc.on('stop-tracking-query-stats', (_event, options) => {
+  sql.stopTrackingQueryStats(options);
+});
+
 ipc.on('title-bar-double-click', () => {
   if (!mainWindow) {
     return;
@@ -2109,7 +2117,7 @@ app.on('ready', async () => {
     innerLogger.info('Processed count:', processedCount);
     innerLogger.info('Messages per second:', messagesPerSec);
 
-    sql.stopTrackingQueryStats();
+    sql.stopTrackingQueryStats({ epochName: 'App Load' });
 
     event.sender.send('ci:event', 'app-loaded', {
       loadTime,
@@ -2821,6 +2829,8 @@ ipc.handle(
       app.getVersion(),
       os.version(),
       userAgent,
+      process.arch,
+      app.runningUnderARM64Translation,
       OS.getLinuxName()
     );
   }
@@ -3030,6 +3040,32 @@ ipc.handle('show-save-dialog', async (_event, { defaultPath }) => {
   const finalFilePath = join(finalDirname, `${finalBasename}${defaultExt}`);
 
   return { canceled: false, filePath: finalFilePath };
+});
+
+ipc.handle('show-save-multi-dialog', async _event => {
+  if (!mainWindow) {
+    getLogger().warn('show-save-multi-dialog: no main window');
+
+    return { canceled: true };
+  }
+  const { canceled, filePaths: selectedDirPaths } = await dialog.showOpenDialog(
+    mainWindow,
+    {
+      defaultPath: app.getPath('downloads'),
+      properties: ['openDirectory', 'createDirectory'],
+    }
+  );
+  if (canceled || selectedDirPaths.length === 0) {
+    return { canceled: true };
+  }
+
+  if (selectedDirPaths.length > 1) {
+    getLogger().warn('show-save-multi-dialog: multiple directories selected');
+
+    return { canceled: true };
+  }
+
+  return { canceled: false, dirPath: selectedDirPaths[0] };
 });
 
 ipc.handle('executeMenuRole', async ({ sender }, untypedRole) => {

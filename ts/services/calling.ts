@@ -7,6 +7,7 @@ import type {
   CallId,
   DeviceId,
   GroupCallObserver,
+  SpeechEvent,
   PeekInfo,
   UserId,
   VideoFrameSource,
@@ -88,10 +89,7 @@ import * as durations from '../util/durations';
 import { clearTimeoutIfNecessary } from '../util/clearTimeoutIfNecessary';
 import { fetchMembershipProof, getMembershipList } from '../groups';
 import type { ProcessedEnvelope } from '../textsecure/Types.d';
-import type {
-  GetIceServersResultType,
-  IceServerGroupType,
-} from '../textsecure/WebAPI';
+import type { GetIceServersResultType } from '../textsecure/WebAPI';
 import { missingCaseError } from '../util/missingCaseError';
 import { normalizeGroupCallTimestamp } from '../util/ringrtc/normalizeGroupCallTimestamp';
 import {
@@ -139,7 +137,7 @@ import {
 import { isNormalNumber } from '../util/isNormalNumber';
 import type { AciString, ServiceIdString } from '../types/ServiceId';
 import { isServiceIdString } from '../types/ServiceId';
-import { isInSystemContacts } from '../util/isInSystemContacts';
+import { isSignalConnection } from '../util/getSignalConnections';
 import { toAdminKeyBytes } from '../util/callLinks';
 import {
   getCallLinkAuthCredentialPresentation,
@@ -926,7 +924,7 @@ export class CallingClass {
     log.info(`${logId}: Sending profile key`);
     await conversationJobQueue.add({
       conversationId: conversation.id,
-      type: 'ProfileKey',
+      type: 'ProfileKeyForCall',
     });
 
     RingRTC.setOutgoingAudio(call.callId, hasLocalAudio);
@@ -1481,6 +1479,9 @@ export class CallingClass {
           endedReason,
         });
       },
+      onSpeechEvent: (_groupCall: GroupCall, _event: SpeechEvent) => {
+        // Implementation to come later
+      },
     };
   }
 
@@ -1544,7 +1545,7 @@ export class CallingClass {
       log.info(`${logId}: Sending profile key`);
       drop(
         conversationJobQueue.add({
-          type: conversationQueueJobEnum.enum.ProfileKey,
+          type: conversationQueueJobEnum.enum.ProfileKeyForCall,
           conversationId: conversation.id,
           isOneTimeSend: true,
         })
@@ -2953,6 +2954,19 @@ export class CallingClass {
       localCallEvent,
       'CallingClass.handleAutoEndedIncomingCallRequest'
     );
+
+    if (!this.reduxInterface) {
+      log.error(
+        'handleAutoEndedIncomingCallRequest: Unable to update redux for call'
+      );
+    }
+    this.reduxInterface?.callStateChange({
+      acceptedTime: null,
+      callEndedReason,
+      callState: CallState.Ended,
+      conversationId: conversation.id,
+    });
+
     await updateCallHistoryFromLocalEvent(
       callEvent,
       receivedAtCounter ?? null,
@@ -3148,32 +3162,24 @@ export class CallingClass {
     function iceServerConfigToList(
       iceServerConfig: GetIceServersResultType
     ): Array<IceServer> {
-      function mapConfig(
-        iceServerGroup: GetIceServersResultType | IceServerGroupType
-      ): Array<IceServer> {
-        if (!iceServerGroup.username || !iceServerGroup.password) {
-          return [];
-        }
-
-        return [
-          {
-            hostname: iceServerGroup.hostname ?? '',
-            username: iceServerGroup.username,
-            password: iceServerGroup.password,
-            urls: (iceServerGroup.urlsWithIps ?? []).slice(),
-          },
-          {
-            hostname: '',
-            username: iceServerGroup.username,
-            password: iceServerGroup.password,
-            urls: (iceServerGroup.urls ?? []).slice(),
-          },
-        ];
+      if (!iceServerConfig.relays) {
+        return [];
       }
 
-      return [iceServerConfig]
-        .concat(iceServerConfig.iceServers ?? [])
-        .flatMap(mapConfig);
+      return iceServerConfig.relays.flatMap(iceServerGroup => [
+        {
+          hostname: iceServerGroup.hostname ?? '',
+          username: iceServerGroup.username,
+          password: iceServerGroup.password,
+          urls: (iceServerGroup.urlsWithIps ?? []).slice(),
+        },
+        {
+          hostname: '',
+          username: iceServerGroup.username,
+          password: iceServerGroup.password,
+          urls: (iceServerGroup.urls ?? []).slice(),
+        },
+      ]);
     }
 
     if (!window.textsecure.messaging) {
@@ -3192,11 +3198,11 @@ export class CallingClass {
       return false;
     }
 
-    // If the peer is not in the user's system contacts, force IP hiding.
-    const isContactUntrusted = !isInSystemContacts(conversation.attributes);
+    // If the peer is not a Signal Connection, force IP hiding.
+    const isContactUntrusted = !isSignalConnection(conversation.attributes);
 
-    // proritize ice servers with IPs to avoid DNS
-    // only include hostname with urlsWithIps
+    // Prioritize ice servers with IPs to avoid DNS only include
+    // hostname with urlsWithIps.
     let iceServers = iceServerConfigToList(iceServerConfig);
 
     if (this._iceServerOverride) {

@@ -53,6 +53,15 @@
   "icu:appleSilicon": {
     "messageformat": "Apple silicon"
   },
+  "icu:About__AppEnvironment": {
+    "messageformat": "{appEnv}"
+  },
+  "icu:About__AppEnvironment--AppleSilicon": {
+    "messageformat": "{appEnv} (Apple silicon)"
+  },
+  "icu:About__AppEnvironment--AppleIntel": {
+    "messageformat": "{appEnv} (Intel)"
+  },
   "icu:copyErrorAndQuit": {
     "messageformat": "خاتالىقنى كۆچۈرۈش ۋە ئېتىش"
   },
@@ -575,14 +584,14 @@
   "icu:decryptionErrorToast": {
     "messageformat": "كومپيۇتېر {name}، ئۈسكۈنە «{deviceId}» دىن كەلگەن شىفىر يېشىش خاتالىقىغا يولۇقتى"
   },
-  "icu:decryptionErrorToastAction": {
-    "messageformat": "خاتىرىنى تاپشۇرۇش"
-  },
   "icu:Toast__ActionLabel--SubmitLog": {
     "messageformat": "خاتىرىنى تاپشۇرۇش"
   },
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
+  },
+  "icu:Toast--FailedToImportBackup": {
+    "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "رەسىم ۋە ۋىدېيولارنى ھۆججەتلەر بىلەن بىرلىكتە تاللىغىلى بولمايدۇ."
@@ -680,6 +689,9 @@
   "icu:search": {
     "messageformat": "ئىزدە"
   },
+  "icu:searchUnreadChats": {
+    "messageformat": "ئوقۇلمىغان پاراڭلارنى ئىزدەش"
+  },
   "icu:clearSearch": {
     "messageformat": "ئىزدەشنى تازىلاش"
   },
@@ -689,11 +701,26 @@
   "icu:noSearchResults": {
     "messageformat": "«{searchTerm}» ئۈچۈن ئىزدەش نەتىجىسى تېپىلمىدى"
   },
+  "icu:noSearchResultsWithUnreadFilter": {
+    "messageformat": "ئوقۇلمىغان پاراڭلاردا \"{searchTerm}\" نىڭ نەتىجىسى يوق"
+  },
+  "icu:noSearchResultsOnlyUnreadFilter": {
+    "messageformat": "ئوقۇلمىغان پاراڭ يوق"
+  },
   "icu:noSearchResults--sms-only": {
     "messageformat": "ئۈستەليۈزى نەشرىدە SMS/MMS ئالاقىداشلىرى ئىقتىدارىنى ئىشلەتكىلى بولمايدۇ."
   },
   "icu:noSearchResultsInConversation": {
     "messageformat": "«{conversationName}» دە «{searchTerm}» ئۈچۈن ئىزدەش نەتىجىسى تېپىلمىدى"
+  },
+  "icu:conversationsUnreadHeader": {
+    "messageformat": "ئوقۇلمىغانلارنى سۈزۈش"
+  },
+  "icu:filterByUnreadButtonLabel": {
+    "messageformat": "ئوقۇلمىغانلارنى سۈزۈش"
+  },
+  "icu:clearFilterButton": {
+    "messageformat": "سۈزگۈچلەرنى بىكار قىلىش"
   },
   "icu:conversationsHeader": {
     "messageformat": "پاراڭ"
@@ -788,11 +815,14 @@
   "icu:voiceNoteError": {
     "messageformat": "ئاۋازلىق ئۇچۇر خاتىرلىگۈچتە خاتالىق كۆرۈلدى."
   },
-  "icu:attachmentSaved": {
-    "messageformat": "يۈكلەنمە ساقلاندى."
+  "icu:attachmentSavedPlural": {
+    "messageformat": "{count, plural, other {{count,number} قوشۇمچە ھۆججەتلەر ساقلاندى}}"
   },
   "icu:attachmentSavedShow": {
     "messageformat": "ھۆججەت قىسقۇچتا كۆرسىتىش"
+  },
+  "icu:attachmentStillDownloading": {
+    "messageformat": "{count, plural, other {قوشۇمچە ھۆججەتلەرنى ساقلىغىلى بولمايدۇ ، چۈنكى {count,number} چۈشۈرۈلۈشنى تېخى تاماملىمىدى}}"
   },
   "icu:you": {
     "messageformat": "سىز"
@@ -992,17 +1022,17 @@
   "icu:MessageContextMenu__info": {
     "messageformat": "ئۇچۇر"
   },
-  "icu:deleteMessagesInConversation": {
-    "messageformat": "ئۇچۇر ئۆچۈرۈش"
+  "icu:deleteConversation": {
+    "messageformat": "ئۆچۈر"
   },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__title": {
-    "messageformat": "ئۇچۇرنى ئۆچۈرەمسىز؟"
+  "icu:ConversationHeader__DeleteConversationConfirmation__title": {
+    "messageformat": "سۆھبەتنى ئۆچۈرەمسىز؟"
   },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
-    "messageformat": "بۇ پاراڭدىكى بارلىق ئۇچۇرلار بۇ ئۈسكۈنىدىن ئۆچۈرۈلىدۇ. ئۇچۇرلارنى ئۆچۈرگەندىن كېيىنمۇ بۇ پاراڭنى يەنىلا تاپالايسىز."
+  "icu:ConversationHeader__DeleteConversationConfirmation__description": {
+    "messageformat": "بۇ پاراڭدىكى بارلىق ئۇچۇرلار بۇ ئۈسكۈنىدىن ئۆچۈرۈلىدۇ."
   },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
-    "messageformat": "بۇ پاراڭدىكى بارلىق ئۇچۇرلار ئۈسكۈنىڭىزنىڭ ھەممە يەرلىرىدىن ئۆچۈرۈلىدۇ. ئۇچۇرلارنى ئۆچۈرگەندىن كېيىنمۇ بۇ پاراڭنى يەنىلا تاپالايسىز."
+  "icu:ConversationHeader__DeleteConversationConfirmation__description-with-sync": {
+    "messageformat": "بۇ پاراڭدىكى بارلىق ئۇچۇرلار ئۈسكۈنىڭىزنىڭ ھەممە يەرلىرىدىن ئۆچۈرۈلىدۇ."
   },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "گۇرۇپپىدىن ئايرىلىش"
@@ -1372,6 +1402,9 @@
   },
   "icu:calling__pre-call-info--many-people-in-call": {
     "messageformat": "{others, plural, other {{first}، {second} ۋە {others,number} قاتارلىقلار بۇ چاقىرىقتا}}"
+  },
+  "icu:calling__pre-call-info--only-unknown-contacts-in-call": {
+    "messageformat": "{count, plural, other {{count,number} كىشى بۇ چاقىرىقتا}}"
   },
   "icu:calling__pre-call-info--will-ring-1": {
     "messageformat": "Signal {person} نى چاقىرىدۇ"
@@ -2693,6 +2726,9 @@
   "icu:incomingGroupCall__ringing-many": {
     "messageformat": "{remaining, plural, other {{ringer} سىزنى، {first} ، {second} ۋە {remaining,number} قاتارلىقلارنى چاقىرىۋاتىدۇ}}"
   },
+  "icu:outgoingCallConnecting": {
+    "messageformat": "Connecting..."
+  },
   "icu:outgoingCallRinging": {
     "messageformat": "جىرىڭلاۋاتىدۇ..."
   },
@@ -3540,7 +3576,7 @@
     "messageformat": "{totalSize} نىڭ {currentSize} تى چۈشۈۋاتىدۇ({fractionComplete,number,percent})..."
   },
   "icu:BackupImportScreen__progressbar-hint--processing": {
-    "messageformat": "Finalizing message transfer..."
+    "messageformat": "ئۇچۇر يۆتكەشنى ئاياغلاشتۇرۇش..."
   },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "چۈشۈرۈشكە تەييارلىق قىلىۋاتىدۇ..."
@@ -3550,6 +3586,9 @@
   },
   "icu:BackupImportScreen__cancel": {
     "messageformat": "يۆتكەشنى ئەمەلدىن قالدۇرۇڭ"
+  },
+  "icu:BackupImportScreen__security-description": {
+    "messageformat": "ئۇچۇر ۋە پاراڭ مەزمۇنلىرى ماس قەدەملىك جەرياننى ئۆز ئىچىگە ئالغان ئاخىرىغىچە شىفىرلىق مەخپىيلەشتۈرۈش ئارقىلىق قوغدىلىدۇ. <learnMoreLink>تەپسىلاتى</learnMoreLink>"
   },
   "icu:BackupImportScreen__cancel-confirmation__title": {
     "messageformat": "يۆتكەشنى ئەمەلدىن قالدۇرامسىز؟"
@@ -3589,6 +3628,12 @@
   },
   "icu:BackupMediaDownloadProgress__title-paused": {
     "messageformat": "توختاشنى ئەسلىگە كەلتۈرۈڭ"
+  },
+  "icu:BackupMediaDownloadProgress__title-idle": {
+    "messageformat": "{totalSize} نىڭ {currentSize} ئەسلىگە كەلتۈرۈلدى"
+  },
+  "icu:BackupMediaDownloadProgress__description-idle": {
+    "messageformat": "مېدىيا ئارقا سۇپىدا داۋاملىق چۈشۈرۈلىدۇ"
   },
   "icu:BackupMediaDownloadProgress__button-pause": {
     "messageformat": "يۆتكەشنى توختىتىڭ"
@@ -4472,12 +4517,6 @@
   "icu:ProfileEditorModal--error": {
     "messageformat": "ئارخىپىڭىزنى يېڭىلىغىلى بولمىدى. قايتا سىناڭ."
   },
-  "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "ئىناۋەتسىز بەلگىلەر"
-  },
-  "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "سىز كىرگۈزگەن بىر ياكى بىر قانچە بەلگىلەرنى ئىشلىتىشكە بولمايدۇ. قايتا سىناڭ."
-  },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "باشقۇرغۇچىغا ئۇچۇر يوللاڭ"
   },
@@ -4678,6 +4717,15 @@
   },
   "icu:DialogNetworkStatus__outage": {
     "messageformat": "Signal دا تېخنىكىلىق قىيىنچىلىق كۆرۈلدى. بىز ئامالنىڭ بارىچە تىرىشىپ ئىشلەپ مۇلازىمەتنى ئەڭ تېز سۈرئەتتە ئەسلىگە كەلتۈرىمىز."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__title": {
+    "messageformat": "يېڭىلاش كېرەك"
+  },
+  "icu:InstallScreenUpdateDialog--update-required__body": {
+    "messageformat": "ئۇچۇرلىرىڭىزنى ماسقەدەملەش ئۈچۈن ، سىگنال ئۈستەليۈزىنى ھازىرلا يېڭىلاڭ."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__action-update": {
+    "messageformat": "يېڭىلا"
   },
   "icu:InstallScreenUpdateDialog--unsupported-os__title": {
     "messageformat": "يېڭىلاش كېرەك"
@@ -5517,8 +5565,14 @@
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "<newCallButtonIcon></newCallButtonIcon>نى چېكىپ يېڭى ئاۋازلىق ياكى سىنلىق چاقىرىقنى باشلاڭ."
   },
+  "icu:CallsList__SearchInputPlaceholder--missed-calls": {
+    "messageformat": "ئېلىنمىغان تېلېفونلارنى ئىزدەش"
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "ئىزدە"
+  },
+  "icu:CallsList__FilteredByMissedHeader": {
+    "messageformat": "ئېلىنمىغانلارنى سۈزۈش"
   },
   "icu:CallsList__ToggleFilterByMissedLabel": {
     "messageformat": "يوقالغانلار بىلەن سۈزۈش"
@@ -5532,14 +5586,14 @@
   "icu:CallsList__EmptyState--noQuery__subtitle": {
     "messageformat": "يېقىنقى چاقىرىقلار بۇ يەردە كۆرۈنىدۇ."
   },
-  "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "ئېلىنمىغان چاقىرىق يوق"
-  },
-  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "ئېلىنمىغان چاقىرىقلار بۇ يەردە كۆرۈنىدۇ."
-  },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "{query} ئۈچۈن نەتىجە يوق"
+  },
+  "icu:CallsList__EmptyState--hasQueryAndMissedCalls": {
+    "messageformat": "ئېلىنمىغان تېلېفونلاردا {query} نىڭ نەتىجىسى يوق"
+  },
+  "icu:CallsList__EmptyState--missedCalls": {
+    "messageformat": "ئېلىنمىغان چاقىرىق يوق"
   },
   "icu:CallsList__CreateCallLink": {
     "messageformat": "چاقىرىق ئۇلانمىسى قۇرۇش"
@@ -5710,19 +5764,13 @@
     "messageformat": "كىچىك ئۆزگەرتىشلەر كىرگۈزۈلدى، كاشىلا ھەل قىلىندى ۋە ئىقتىدار ئەلالاشتۇرۇلدى. Signal نى ئىشلەتكەنلىكىڭىزگە رەھمەت!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.29--0": {
-    "messageformat": "بۇ يېڭىلاش قوزغىلىش سۈرئىتىنى%5 ئەتراپىدا ياخشىلايدۇ."
+  "icu:WhatsNew__v7.35--0": {
+    "messageformat": "ئىزدەش رامكىسىنىڭ يېنىدىكى يېڭى سۈزگۈچ سىنبەلگىسى ئوقۇلمىغان پاراڭلارنى تېز تېپىشنى ئاسانلاشتۇرىدۇ."
   },
-  "icu:WhatsNew__v7.30--header": {
-    "messageformat": "Introducing Call Links: The missing link for calendar invites and impromptu gatherings."
+  "icu:WhatsNew__v7.36--0": {
+    "messageformat": "This update fixes a bug on macOS Sonoma that prevented screen sharing from working correctly if permission to share the screen had previously been denied — so you no longer need to share your screen with an error message."
   },
-  "icu:WhatsNew__v7.30--0": {
-    "messageformat": "Now you can quickly create an easy link that anyone on Signal can use to join a group call without having to join a Signal group chat first."
-  },
-  "icu:WhatsNew__v7.30--1": {
-    "messageformat": "Call links are reusable and ideal for recurring phone dates with your best friends or weekly check-ins with your coworkers."
-  },
-  "icu:WhatsNew__v7.30--2": {
-    "messageformat": "You can manage your call links, control approval settings, and copy links from the calls tab for quick sharing."
+  "icu:WhatsNew__v7.36--1": {
+    "messageformat": "Filter by Unread now highlights the selected chat, and the list of unread chats will automatically update as new messages arrive or when you catch up in one chat and click on another."
   }
 }

@@ -53,6 +53,15 @@
   "icu:appleSilicon": {
     "messageformat": "Apple silicon"
   },
+  "icu:About__AppEnvironment": {
+    "messageformat": "{appEnv}"
+  },
+  "icu:About__AppEnvironment--AppleSilicon": {
+    "messageformat": "{appEnv} (Apple silicon)"
+  },
+  "icu:About__AppEnvironment--AppleIntel": {
+    "messageformat": "{appEnv} (Intel)"
+  },
   "icu:copyErrorAndQuit": {
     "messageformat": "Xətanı kopyala və çıx"
   },
@@ -575,14 +584,14 @@
   "icu:decryptionErrorToast": {
     "messageformat": "Masaüstü, {name}, {deviceId} cihazından bir şifrə açma xətası ilə qarşılaşdı"
   },
-  "icu:decryptionErrorToastAction": {
-    "messageformat": "Jurnalı göndər"
-  },
   "icu:Toast__ActionLabel--SubmitLog": {
     "messageformat": "Jurnalı göndər"
   },
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
+  },
+  "icu:Toast--FailedToImportBackup": {
+    "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "Fayllarla birgə foto və videolar da seçə bilməzsiniz."
@@ -680,6 +689,9 @@
   "icu:search": {
     "messageformat": "Axtar"
   },
+  "icu:searchUnreadChats": {
+    "messageformat": "Oxunmamış çatları axtar"
+  },
   "icu:clearSearch": {
     "messageformat": "Axtarışı təmizlə"
   },
@@ -689,11 +701,26 @@
   "icu:noSearchResults": {
     "messageformat": "\"{searchTerm}\" üçün nəticə yoxdur"
   },
+  "icu:noSearchResultsWithUnreadFilter": {
+    "messageformat": "Oxunmamış çatlarda \"{searchTerm}\" üçün heç bir nəticə tapılmadı"
+  },
+  "icu:noSearchResultsOnlyUnreadFilter": {
+    "messageformat": "Oxunmamış çatlar yoxdur"
+  },
   "icu:noSearchResults--sms-only": {
     "messageformat": "SMS/MMS əlaqələri Masaüstündə əlçatmazdır."
   },
   "icu:noSearchResultsInConversation": {
     "messageformat": "{conversationName} danışığında \"{searchTerm}\" üçün nəticə yoxdur"
+  },
+  "icu:conversationsUnreadHeader": {
+    "messageformat": "Oxunmamışlara görə filtrlənib"
+  },
+  "icu:filterByUnreadButtonLabel": {
+    "messageformat": "Oxunmamışlara görə filtrlə"
+  },
+  "icu:clearFilterButton": {
+    "messageformat": "Filtri təmizlə"
   },
   "icu:conversationsHeader": {
     "messageformat": "Çatlar"
@@ -788,11 +815,14 @@
   "icu:voiceNoteError": {
     "messageformat": "Səsyazanda bir xəta baş verdi."
   },
-  "icu:attachmentSaved": {
-    "messageformat": "Qoşma yaddaşda saxlanıldı."
+  "icu:attachmentSavedPlural": {
+    "messageformat": "{count, plural, one {Qoşma yadda saxlanıldı} other {{count,number} qoşma yadda saxlanıldı}}"
   },
   "icu:attachmentSavedShow": {
     "messageformat": "Qovluqda göstər"
+  },
+  "icu:attachmentStillDownloading": {
+    "messageformat": "{count, plural, one {Endirmə tamamlanmadığı üçün qoşmanı yadda saxlamaq mümkün deyil} other {{count,number} qoşmanın endirilməsi tamamlanmadığı üçün onları yadda saxlamaq mümkün deyil}}"
   },
   "icu:you": {
     "messageformat": "Siz"
@@ -992,17 +1022,17 @@
   "icu:MessageContextMenu__info": {
     "messageformat": "Məlumat"
   },
-  "icu:deleteMessagesInConversation": {
-    "messageformat": "Mesajları sil"
+  "icu:deleteConversation": {
+    "messageformat": "Sil"
   },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__title": {
-    "messageformat": "Mesajlar silinsin?"
+  "icu:ConversationHeader__DeleteConversationConfirmation__title": {
+    "messageformat": "Çat silinsin?"
   },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
-    "messageformat": "Bu çatda olan bütün mesajlar bu cihazdan silinəcək. Mesajları sildikdən sonra da bu çata daxil ola bilərsiniz."
+  "icu:ConversationHeader__DeleteConversationConfirmation__description": {
+    "messageformat": "Bu çatda olan bütün mesajlar bu cihazdan silinəcək."
   },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
-    "messageformat": "Bu çatdakı bütün mesajlar bütün cihazlarınızdan silinəcək. Mesajları sildikdən sonra da bu çata daxil ola bilərsiniz."
+  "icu:ConversationHeader__DeleteConversationConfirmation__description-with-sync": {
+    "messageformat": "Bu çatdakı bütün mesajlar bütün cihazlarınızdan silinəcək."
   },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "Qrupu tərk et"
@@ -1372,6 +1402,9 @@
   },
   "icu:calling__pre-call-info--many-people-in-call": {
     "messageformat": "{others, plural, one {{first}, {second} və digər {others,number} nəfər bu zəngdədir} other {{first}, {second} və digər {others,number} nəfər bu zəngdədir}}"
+  },
+  "icu:calling__pre-call-info--only-unknown-contacts-in-call": {
+    "messageformat": "{count, plural, one {bu zəngdə {count,number} nəfər var} other {Bu zəngdə {count,number} nəfər var}}"
   },
   "icu:calling__pre-call-info--will-ring-1": {
     "messageformat": "Signal, {person} çağırır"
@@ -2693,6 +2726,9 @@
   "icu:incomingGroupCall__ringing-many": {
     "messageformat": "{remaining, plural, one {{ringer}, sizə, {first}, {second} və digər {remaining,number} nəfərə zəng edir} other {{ringer}, sizə, {first}, {second} və digər {remaining,number} nəfərə zəng edir}}"
   },
+  "icu:outgoingCallConnecting": {
+    "messageformat": "Connecting..."
+  },
   "icu:outgoingCallRinging": {
     "messageformat": "Zəng çalır..."
   },
@@ -3540,7 +3576,7 @@
     "messageformat": "{currentSize} / {totalSize} endirilir ({fractionComplete,number,percent})..."
   },
   "icu:BackupImportScreen__progressbar-hint--processing": {
-    "messageformat": "Finalizing message transfer..."
+    "messageformat": "Mesaj köçürmə yekunlaşdırılır..."
   },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "Endirməyə hazırlaşır..."
@@ -3550,6 +3586,9 @@
   },
   "icu:BackupImportScreen__cancel": {
     "messageformat": "Köçürməni ləğv et"
+  },
+  "icu:BackupImportScreen__security-description": {
+    "messageformat": "Mesajlar və çat məlumatı sinxronlaşdırma prosesi daxil, tam şifrələmə ilə qorunur. <learnMoreLink>Daha ətraflı</learnMoreLink>"
   },
   "icu:BackupImportScreen__cancel-confirmation__title": {
     "messageformat": "Köçürmə ləğv edilsin?"
@@ -3589,6 +3628,12 @@
   },
   "icu:BackupMediaDownloadProgress__title-paused": {
     "messageformat": "Bərpaetmə dayandırıldı"
+  },
+  "icu:BackupMediaDownloadProgress__title-idle": {
+    "messageformat": "{currentSize} / {totalSize} bərpa edildi"
+  },
+  "icu:BackupMediaDownloadProgress__description-idle": {
+    "messageformat": "Media faylı ehtiyat nüsxədə endirilməyə davam edəcək"
   },
   "icu:BackupMediaDownloadProgress__button-pause": {
     "messageformat": "Köçürməyə fasilə ver"
@@ -4472,12 +4517,6 @@
   "icu:ProfileEditorModal--error": {
     "messageformat": "Profiliniz yenilənə bilmir. Zəhmət olmasa yenidən sınayın."
   },
-  "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "Səhv simvollar"
-  },
-  "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "Daxil etdiyiniz bir və ya daha çox simvol istifadə oluna bilmir. Yenidən cəhd edin."
-  },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "Bir adminə mesaj yazın"
   },
@@ -4678,6 +4717,15 @@
   },
   "icu:DialogNetworkStatus__outage": {
     "messageformat": "Signal, hal-hazırda texniki çətinliklər yaşayır. Xidməti mümkün olan ən qısa vaxtda bərpa etmək üçün əlimizdən gələni edirik."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__title": {
+    "messageformat": "Yeniləmə tələb olunur"
+  },
+  "icu:InstallScreenUpdateDialog--update-required__body": {
+    "messageformat": "Mesajların sinxronlaşdırılmasını tamamlamaq üçün Signal Desktop-u indi yeniləyin."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__action-update": {
+    "messageformat": "Yenilə"
   },
   "icu:InstallScreenUpdateDialog--unsupported-os__title": {
     "messageformat": "Yeniləmə tələb olunur"
@@ -5517,8 +5565,14 @@
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "Yeni bir audio və ya video zəng başlamaq üçün <newCallButtonIcon></newCallButtonIcon> üzərinə klikləyin."
   },
+  "icu:CallsList__SearchInputPlaceholder--missed-calls": {
+    "messageformat": "Buraxılmış zəngləri axtar"
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Axtar"
+  },
+  "icu:CallsList__FilteredByMissedHeader": {
+    "messageformat": "Cavabsızlara görə filtrlənib"
   },
   "icu:CallsList__ToggleFilterByMissedLabel": {
     "messageformat": "Buraxılmışlara görə filtrlə"
@@ -5532,14 +5586,14 @@
   "icu:CallsList__EmptyState--noQuery__subtitle": {
     "messageformat": "Son zənglər burada görünəcək."
   },
-  "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "Buraxılmış zəng yoxdur"
-  },
-  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Buraxılmış zənglər burada görünəcək."
-  },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "“{query}” üçün heç bir nəticə yoxdur"
+  },
+  "icu:CallsList__EmptyState--hasQueryAndMissedCalls": {
+    "messageformat": "Buraxılmış zənglərdə “{query}” sorğusu üçün heç bir nəticə tapılmadı"
+  },
+  "icu:CallsList__EmptyState--missedCalls": {
+    "messageformat": "Buraxılmış zəng yoxdur"
   },
   "icu:CallsList__CreateCallLink": {
     "messageformat": "Zəng Keçidi yarat"
@@ -5710,19 +5764,13 @@
     "messageformat": "Kiçik spesifik tənzimləmələr, xəta düzəlişləri və məhsuldarlığın artırılması. Signal istifadə etdiyiniz üçün təşəkkürlər!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.29--0": {
-    "messageformat": "Bu yeniləmə başlanğıc sürətini təxminən 5% artırır, buna görə də digər işləriniz üçün rahat vaxtınız qalır."
+  "icu:WhatsNew__v7.35--0": {
+    "messageformat": "Axtarış qutusunun yanındakı yeni filtr piktoqramı oxunmamış çatların vaxt itirmədən tapılmasını asanlaşdırır, lakin onların dediklərini gördükdən sonra onları oxuyub-oxumamaq barədə qərar verməkdən çəkinməyin."
   },
-  "icu:WhatsNew__v7.30--header": {
-    "messageformat": "Introducing Call Links: The missing link for calendar invites and impromptu gatherings."
+  "icu:WhatsNew__v7.36--0": {
+    "messageformat": "This update fixes a bug on macOS Sonoma that prevented screen sharing from working correctly if permission to share the screen had previously been denied — so you no longer need to share your screen with an error message."
   },
-  "icu:WhatsNew__v7.30--0": {
-    "messageformat": "Now you can quickly create an easy link that anyone on Signal can use to join a group call without having to join a Signal group chat first."
-  },
-  "icu:WhatsNew__v7.30--1": {
-    "messageformat": "Call links are reusable and ideal for recurring phone dates with your best friends or weekly check-ins with your coworkers."
-  },
-  "icu:WhatsNew__v7.30--2": {
-    "messageformat": "You can manage your call links, control approval settings, and copy links from the calls tab for quick sharing."
+  "icu:WhatsNew__v7.36--1": {
+    "messageformat": "Filter by Unread now highlights the selected chat, and the list of unread chats will automatically update as new messages arrive or when you catch up in one chat and click on another."
   }
 }

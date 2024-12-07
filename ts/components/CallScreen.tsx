@@ -365,6 +365,7 @@ export function CallScreen({
 
   let isRinging: boolean;
   let hasCallStarted: boolean;
+  let isConnecting: boolean;
   let isConnected: boolean;
   let participantCount: number;
   let conversationsByDemuxId: ConversationsByDemuxIdType;
@@ -372,10 +373,11 @@ export function CallScreen({
 
   switch (activeCall.callMode) {
     case CallMode.Direct: {
-      isRinging =
-        activeCall.callState === CallState.Prering ||
-        activeCall.callState === CallState.Ringing;
-      hasCallStarted = !isRinging;
+      isConnecting = activeCall.callState === CallState.Prering;
+      isRinging = activeCall.callState === CallState.Ringing;
+      hasCallStarted =
+        activeCall.callState !== CallState.Prering &&
+        activeCall.callState !== CallState.Ringing;
       isConnected = activeCall.callState === CallState.Accepted;
       participantCount = isConnected ? 2 : 0;
       conversationsByDemuxId = new Map();
@@ -394,6 +396,8 @@ export function CallScreen({
 
       isConnected =
         activeCall.connectionState === GroupCallConnectionState.Connected;
+      isConnecting =
+        activeCall.connectionState === GroupCallConnectionState.Connecting;
       break;
     default:
       throw missingCaseError(activeCall);
@@ -644,6 +648,9 @@ export function CallScreen({
   const raisedHandsCount: number = raisedHands?.size ?? 0;
 
   const callStatus: ReactNode | string = React.useMemo(() => {
+    if (isConnecting) {
+      return i18n('icu:outgoingCallConnecting');
+    }
     if (isRinging) {
       return i18n('icu:outgoingCallRinging');
     }
@@ -660,8 +667,7 @@ export function CallScreen({
         />
       );
     }
-    // joinedAt is only available for direct calls
-    if (isConnected) {
+    if (isConnected && activeCall.callMode === CallMode.Direct) {
       return <CallDuration joinedAt={activeCall.joinedAt} />;
     }
     if (hasLocalVideo) {
@@ -673,6 +679,7 @@ export function CallScreen({
     return null;
   }, [
     i18n,
+    isConnecting,
     isRinging,
     isConnected,
     activeCall.callMode,
@@ -713,6 +720,7 @@ export function CallScreen({
           getGroupCallVideoFrameSource={getGroupCallVideoFrameSource}
           imageDataCache={imageDataCache}
           i18n={i18n}
+          joinedAt={activeCall.joinedAt}
           remoteParticipants={activeCall.remoteParticipants}
           setGroupCallVideoRequest={setGroupCallVideoRequest}
           remoteAudioLevels={activeCall.remoteAudioLevels}

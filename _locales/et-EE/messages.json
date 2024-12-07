@@ -53,6 +53,15 @@
   "icu:appleSilicon": {
     "messageformat": "Apple Silicon"
   },
+  "icu:About__AppEnvironment": {
+    "messageformat": "{appEnv}"
+  },
+  "icu:About__AppEnvironment--AppleSilicon": {
+    "messageformat": "{appEnv} (Apple silicon)"
+  },
+  "icu:About__AppEnvironment--AppleIntel": {
+    "messageformat": "{appEnv} (Intel)"
+  },
   "icu:copyErrorAndQuit": {
     "messageformat": "Kopeeri tõrke tekst ja välju"
   },
@@ -575,14 +584,14 @@
   "icu:decryptionErrorToast": {
     "messageformat": "Desktopil tekkis dekrüptimistõrge {name}, seade{deviceId}"
   },
-  "icu:decryptionErrorToastAction": {
-    "messageformat": "Postita logi"
-  },
   "icu:Toast__ActionLabel--SubmitLog": {
     "messageformat": "Postita logi"
   },
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
+  },
+  "icu:Toast--FailedToImportBackup": {
+    "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "Sa ei saa fotosid ja videoid koos failidega valida."
@@ -680,6 +689,9 @@
   "icu:search": {
     "messageformat": "Otsi"
   },
+  "icu:searchUnreadChats": {
+    "messageformat": "Otsi lugemata vestluste hulgast"
+  },
   "icu:clearSearch": {
     "messageformat": "Tühjenda otsing"
   },
@@ -689,11 +701,26 @@
   "icu:noSearchResults": {
     "messageformat": "Tulemusi pole: \"{searchTerm}\""
   },
+  "icu:noSearchResultsWithUnreadFilter": {
+    "messageformat": "Lugemata vestluste hulgast ei leitud vasteid otsingule „{searchTerm}“"
+  },
+  "icu:noSearchResultsOnlyUnreadFilter": {
+    "messageformat": "Lugemata vestlusi ei ole"
+  },
   "icu:noSearchResults--sms-only": {
     "messageformat": "SMS/MMS kontaktid pole Signal Desktopis saadaval."
   },
   "icu:noSearchResultsInConversation": {
     "messageformat": "Vestlusest {conversationName} ei leitud \"{searchTerm}\""
+  },
+  "icu:conversationsUnreadHeader": {
+    "messageformat": "Filtreeritud lugemata sõnumite alusel"
+  },
+  "icu:filterByUnreadButtonLabel": {
+    "messageformat": "Filtreeri lugemata sõnumite alusel"
+  },
+  "icu:clearFilterButton": {
+    "messageformat": "Eemalda filter"
   },
   "icu:conversationsHeader": {
     "messageformat": "Vestlused"
@@ -788,11 +815,14 @@
   "icu:voiceNoteError": {
     "messageformat": "Häälesalvestajal tekkis tõrge."
   },
-  "icu:attachmentSaved": {
-    "messageformat": "Manus salvestatud."
+  "icu:attachmentSavedPlural": {
+    "messageformat": "{count, plural, one {Manus salvestatud} other {{count,number} manust salvestatud}}"
   },
   "icu:attachmentSavedShow": {
     "messageformat": "Näita kaustas"
+  },
+  "icu:attachmentStillDownloading": {
+    "messageformat": "{count, plural, one {Manust ei saa salvestada, sest see ei ole veel lõpuni alla laetud} other {Manuseid ei saa salvestada, sest {count,number} ei ole veel lõpuni alla laetud}}"
   },
   "icu:you": {
     "messageformat": "Sina"
@@ -992,17 +1022,17 @@
   "icu:MessageContextMenu__info": {
     "messageformat": "Teave"
   },
-  "icu:deleteMessagesInConversation": {
-    "messageformat": "Kustuta sõnumid"
+  "icu:deleteConversation": {
+    "messageformat": "Kustuta"
   },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__title": {
-    "messageformat": "Kas kustutada sõnumid?"
+  "icu:ConversationHeader__DeleteConversationConfirmation__title": {
+    "messageformat": "Kas kustutada vestlus?"
   },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
-    "messageformat": "Kõik selle vestluse sõnumid kustutatakse sellest seadmest. Saad pärast sõnumite kustutamist endiselt seda vestlust otsida."
+  "icu:ConversationHeader__DeleteConversationConfirmation__description": {
+    "messageformat": "Kõik selle vestluse sõnumid kustutatakse sellest seadmest."
   },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
-    "messageformat": "Kõik selle vestluse sõnumid kustutatakse kõigist sinu seadmetest. Saad pärast sõnumite kustutamist endiselt seda vestlust otsida."
+  "icu:ConversationHeader__DeleteConversationConfirmation__description-with-sync": {
+    "messageformat": "Kõik selle vestluse sõnumid kustutatakse kõigist sinu seadmetest."
   },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "Lahku grupist"
@@ -1372,6 +1402,9 @@
   },
   "icu:calling__pre-call-info--many-people-in-call": {
     "messageformat": "{others, plural, one {{first}, {second} ja {others,number} teine on selles kõnes} other {{first}, {second} ja {others,number} teist on selles kõnes}}"
+  },
+  "icu:calling__pre-call-info--only-unknown-contacts-in-call": {
+    "messageformat": "{count, plural, one {Selles kõnes on {count,number} inimene} other {Selles kõnes on {count,number} inimest}}"
   },
   "icu:calling__pre-call-info--will-ring-1": {
     "messageformat": "Signal helistab isikule {person}"
@@ -2693,6 +2726,9 @@
   "icu:incomingGroupCall__ringing-many": {
     "messageformat": "{remaining, plural, one {{ringer} helistab sulle, kasutajatele {first}, {second} ja {remaining,number} teisele} other {{ringer} helistab sulle, kasutajatele {first}, {second} ja {remaining,number} teisele}}"
   },
+  "icu:outgoingCallConnecting": {
+    "messageformat": "Connecting..."
+  },
   "icu:outgoingCallRinging": {
     "messageformat": "Helisemine…"
   },
@@ -3540,7 +3576,7 @@
     "messageformat": "Allalaadimine: {currentSize} kogumahust {totalSize} ({fractionComplete,number,percent}) …"
   },
   "icu:BackupImportScreen__progressbar-hint--processing": {
-    "messageformat": "Finalizing message transfer..."
+    "messageformat": "Sõnumiedastuse lõpuleviimine …"
   },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "Allalaadimise ettevalmistamine …"
@@ -3550,6 +3586,9 @@
   },
   "icu:BackupImportScreen__cancel": {
     "messageformat": "Tühista edastus"
+  },
+  "icu:BackupImportScreen__security-description": {
+    "messageformat": "Sõnumid ja vestluste info on kaitstud kõigis seadmetes otspunktkrüpteeringuga, sh sünkroniseerimisprotsess. <learnMoreLink>Rohkem teavet</learnMoreLink>"
   },
   "icu:BackupImportScreen__cancel-confirmation__title": {
     "messageformat": "Kas tühistada edastus?"
@@ -3589,6 +3628,12 @@
   },
   "icu:BackupMediaDownloadProgress__title-paused": {
     "messageformat": "Taastamine peatatud"
+  },
+  "icu:BackupMediaDownloadProgress__title-idle": {
+    "messageformat": "Taastatud {currentSize} kogumahust {totalSize}"
+  },
+  "icu:BackupMediaDownloadProgress__description-idle": {
+    "messageformat": "Meedia allalaadimine jätkub taustal"
   },
   "icu:BackupMediaDownloadProgress__button-pause": {
     "messageformat": "Peata edastus"
@@ -4472,12 +4517,6 @@
   "icu:ProfileEditorModal--error": {
     "messageformat": "Sinu profiili uuendamine ei õnnestunud. Palun proovi uuesti."
   },
-  "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "Kehtetud tähemärgid"
-  },
-  "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "Üks või rohkem tähemärke, mille sisestasid, ei ole kasutatavad. Proovi uuesti."
-  },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "Sõnum administraatorile"
   },
@@ -4678,6 +4717,15 @@
   },
   "icu:DialogNetworkStatus__outage": {
     "messageformat": "Signalil on tehnilisi raskusi. Pingutame selle nimel, et teenus võimalikult kiiresti taastada."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__title": {
+    "messageformat": "Vajalik uuendus"
+  },
+  "icu:InstallScreenUpdateDialog--update-required__body": {
+    "messageformat": "Selleks, et sõnumite sünkroniseerimine lõpule viia, uuenda kohe Signali töölauaversiooni."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__action-update": {
+    "messageformat": "Uuenda"
   },
   "icu:InstallScreenUpdateDialog--unsupported-os__title": {
     "messageformat": "Vajalik uuendus"
@@ -5517,8 +5565,14 @@
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "Uue hääl- või videokõne alustamiseks klõpsa <newCallButtonIcon></newCallButtonIcon>."
   },
+  "icu:CallsList__SearchInputPlaceholder--missed-calls": {
+    "messageformat": "Otsi vastamata kõnesid"
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Otsi"
+  },
+  "icu:CallsList__FilteredByMissedHeader": {
+    "messageformat": "Filtreeritud vastamata kõnede alusel"
   },
   "icu:CallsList__ToggleFilterByMissedLabel": {
     "messageformat": "Filtreeri vastamata kõnede alusel"
@@ -5532,14 +5586,14 @@
   "icu:CallsList__EmptyState--noQuery__subtitle": {
     "messageformat": "Hiljutised kõned ilmuvad siin."
   },
-  "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "Vastamata kõnesid ei ole"
-  },
-  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Vastamata kõned kuvatakse siin."
-  },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "„{query}“ ei andnud otsingutulemusi"
+  },
+  "icu:CallsList__EmptyState--hasQueryAndMissedCalls": {
+    "messageformat": "Vastamata kõnede hulgast ei leitud vasteid otsingule „{query}“"
+  },
+  "icu:CallsList__EmptyState--missedCalls": {
+    "messageformat": "Vastamata kõnesid ei ole"
   },
   "icu:CallsList__CreateCallLink": {
     "messageformat": "Loo kõnelink"
@@ -5710,19 +5764,13 @@
     "messageformat": "Väikesed muudatused, vigade parandused ja jõudluse täiustused. Aitäh, et kasutad Signalit!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.29--0": {
-    "messageformat": "See uuendus muudab käivitumise umbes 5% kiiremaks."
+  "icu:WhatsNew__v7.35--0": {
+    "messageformat": "Otsingukasti kõrval olev uus filtri ikoon muudab lugemata vestluste leidmise kiireks ja lihtsaks."
   },
-  "icu:WhatsNew__v7.30--header": {
-    "messageformat": "Introducing Call Links: The missing link for calendar invites and impromptu gatherings."
+  "icu:WhatsNew__v7.36--0": {
+    "messageformat": "This update fixes a bug on macOS Sonoma that prevented screen sharing from working correctly if permission to share the screen had previously been denied — so you no longer need to share your screen with an error message."
   },
-  "icu:WhatsNew__v7.30--0": {
-    "messageformat": "Now you can quickly create an easy link that anyone on Signal can use to join a group call without having to join a Signal group chat first."
-  },
-  "icu:WhatsNew__v7.30--1": {
-    "messageformat": "Call links are reusable and ideal for recurring phone dates with your best friends or weekly check-ins with your coworkers."
-  },
-  "icu:WhatsNew__v7.30--2": {
-    "messageformat": "You can manage your call links, control approval settings, and copy links from the calls tab for quick sharing."
+  "icu:WhatsNew__v7.36--1": {
+    "messageformat": "Filter by Unread now highlights the selected chat, and the list of unread chats will automatically update as new messages arrive or when you catch up in one chat and click on another."
   }
 }
