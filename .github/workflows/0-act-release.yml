@@ -1,7 +1,7 @@
 # Copyright 2020 Signal Messenger, LLC
 # SPDX-License-Identifier: AGPL-3.0-only
 
-# 2024-12-14 17:30
+# 2024-12-14 20:30
 # get version from package.json
 # node_version: ${{ env.NODE_VERSION }}
 # 
@@ -15,6 +15,12 @@ on:
 #      - '[0-9]+.[0-9]+.x'
 #  pull_request:
   workflow_dispatch:
+    inputs:
+      archive_ALL:
+        description: Archive ALL
+        type: boolean
+        default: false
+        required: true
 
 env:
   PRG_NAME:    "Signal-Desktop"
@@ -45,7 +51,7 @@ jobs:
         uname -a
 
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: deep-soft/checkout@v4
 
     - name: Get ref, set build version
       shell: bash
@@ -73,7 +79,7 @@ jobs:
         echo "${{ env.TAG_NAME }}-${{ env.TAG_VERSION }}-${{ env.TAG_BUILD }}" > ${{ env.PRG_NAME }}-${{ env.PRG_VERSION }}.txt
 
     - name: Setup node
-      uses: actions/setup-node@v4
+      uses: deep-soft/setup-node@v4
       with:
         # node-version: ${{ env.NODE_VERSION }}
         node-version-file: '.nvmrc'
@@ -85,7 +91,7 @@ jobs:
         # npm install -g yarn@${{ env.YARN_VERSION }} npm@${{ env.NPM_VERSION }}
 
     - name: Restore cached .eslintcache and tsconfig.tsbuildinfo
-      uses: actions/cache/restore@v4
+      uses: deep-soft/cache/restore@v4
       id: cache-lint
       with:
         path: |
@@ -95,7 +101,7 @@ jobs:
 
     - name: Cache Desktop node_modules
       id: cache-desktop-modules
-      uses: actions/cache@v4
+      uses: deep-soft/cache@v4
       with:
         path: node_modules
         key: ${{ runner.os }}-${{ hashFiles('package.json', 'package-lock.json', 'patches/**') }}
@@ -120,7 +126,7 @@ jobs:
     - run: git diff --exit-code
 
     - name: Update cached .eslintcache and tsconfig.tsbuildinfo
-      uses: actions/cache/save@v4
+      uses: deep-soft/cache/save@v4
       if: github.ref == 'refs/heads/main'
       with:
         path: |
@@ -137,7 +143,7 @@ jobs:
     steps:
     - run: uname -a
 
-    - uses: actions/checkout@v4
+    - uses: deep-soft/checkout@v4
 
     - name: Get ref, set build version
       shell: bash
@@ -164,7 +170,7 @@ jobs:
         echo "${{ env.TAG_NAME }}-${{ env.TAG_VERSION }}-${{ env.TAG_BUILD }}" > _tag_name_.txt
         echo "${{ env.TAG_NAME }}-${{ env.TAG_VERSION }}-${{ env.TAG_BUILD }}" > ${{ env.PRG_NAME }}-${{ env.PRG_VERSION }}.txt
 
-    - uses: actions/setup-node@v4
+    - uses: deep-soft/setup-node@v4
       with:
         node-version-file: '.nvmrc'
 
@@ -182,7 +188,7 @@ jobs:
 
     - name: Cache Desktop node_modules
       id: cache-desktop-modules
-      uses: actions/cache@v4
+      uses: deep-soft/cache@v4
       with:
         path: node_modules
         key: ${{ runner.os }}-${{ hashFiles('package.json', 'package-lock.json', 'patches/**') }}
@@ -232,7 +238,7 @@ jobs:
 
     - name: Upload artifacts on failure
       if: failure()
-      uses: actions/upload-artifact@v4
+      uses: deep-soft/upload-artifact@v4
       with:
         path: artifacts
 
@@ -244,13 +250,29 @@ jobs:
     - name: Upload artifacts on failure
       continue-on-error: true
       if: failure()
-      uses: actions/upload-artifact@v4
+      uses: deep-soft/upload-artifact@v4
       with:
         path: artifacts
+
+    - name: Publish version build - Release
+      continue-on-error: true
+      uses: deep-soft/action-gh-release@v2.1
+      with:
+        draft: true
+        tag_name: ${{ env.TAG_VERSION }}${{ env.TAG_BUILD }}
+        files: |
+          ./release/*.dmg
+          ./release/*.deb
+          ./release/*.exe
+          ./release/*.sha256
+          ${{ env.SHA_SUMS }}
+          _tag_name_.txt
+          ${{ env.PRG_NAME }}-${{ env.PRG_VERSION }}.txt
 
 ###
 # arc-all begin
     - name: Create arc-all archive
+      if: ${{ inputs.archive_ALL}}
 #        if: ${{ env.BUILD_FAILED }}
       continue-on-error: true
       shell: bash
@@ -269,6 +291,7 @@ jobs:
         fi
 
     - name: Publish arc-all archive
+      if: ${{ inputs.archive_ALL}}
 #        if: ${{ env.BUILD_FAILED }}
       continue-on-error: true
       uses: deep-soft/action-gh-release@v2.1
@@ -289,7 +312,7 @@ jobs:
 
     - run: uname -a
 
-    - uses: actions/checkout@v4
+    - uses: deep-soft/checkout@v4
 
     - name: Get ref, set build version
       shell: bash
@@ -316,7 +339,7 @@ jobs:
         echo "${{ env.TAG_NAME }}-${{ env.TAG_VERSION }}-${{ env.TAG_BUILD }}" > _tag_name_.txt
         echo "${{ env.TAG_NAME }}-${{ env.TAG_VERSION }}-${{ env.TAG_BUILD }}" > ${{ env.PRG_NAME }}-${{ env.PRG_VERSION }}.txt
 
-    - uses: actions/setup-node@v4
+    - uses: deep-soft/setup-node@v4
       with:
         node-version-file: '.nvmrc'
 
@@ -326,7 +349,7 @@ jobs:
 
     - name: Cache Desktop node_modules
       id: cache-desktop-modules
-      uses: actions/cache@v4
+      uses: deep-soft/cache@v4
       with:
         path: node_modules
         key: ${{ runner.os }}-${{ hashFiles('package.json', 'package-lock.json', 'patches/**') }}
@@ -367,7 +390,7 @@ jobs:
     - run: xvfb-run --auto-servernum npm run test-node
 
     - name: Clone backup integration tests
-      uses: actions/checkout@v4
+      uses: deep-soft/checkout@v4
       with:
         repository: 'signalapp/Signal-Message-Backup-Tests'
         ref: 'a920df75ba02e011f6c56c59c6bb20571162a961'
@@ -386,7 +409,7 @@ jobs:
 
     - name: Upload artifacts on failure
       if: failure()
-      uses: actions/upload-artifact@v4
+      uses: deep-soft/upload-artifact@v4
       with:
         path: artifacts
 
@@ -395,9 +418,25 @@ jobs:
         echo " dir release/"
         ls -lR release/
 
+    - name: Publish version build - Release
+      continue-on-error: true
+      uses: deep-soft/action-gh-release@v2.1
+      with:
+        draft: true
+        tag_name: ${{ env.TAG_VERSION }}${{ env.TAG_BUILD }}
+        files: |
+          ./release/*.dmg
+          ./release/*.deb
+          ./release/*.exe
+          ./release/*.sha256
+          ${{ env.SHA_SUMS }}
+          _tag_name_.txt
+          ${{ env.PRG_NAME }}-${{ env.PRG_VERSION }}.txt
+
 ###
 # arc-all begin
     - name: Create arc-all archive
+      if: ${{ inputs.archive_ALL}}
 #        if: ${{ env.BUILD_FAILED }}
       continue-on-error: true
       shell: bash
@@ -416,6 +455,7 @@ jobs:
         fi
 
     - name: Publish arc-all archive
+      if: ${{ inputs.archive_ALL}}
 #        if: ${{ env.BUILD_FAILED }}
       continue-on-error: true
       uses: deep-soft/action-gh-release@v2.1
@@ -442,7 +482,7 @@ jobs:
 
     - run: git config --global core.eol lf
 
-    - uses: actions/checkout@v4
+    - uses: deep-soft/checkout@v4
 
     - name: Get ref, set build version
       shell: bash
@@ -470,7 +510,7 @@ jobs:
         echo "${{ env.TAG_NAME }}-${{ env.TAG_VERSION }}-${{ env.TAG_BUILD }}" > ${{ env.PRG_NAME }}-${{ env.PRG_VERSION }}.txt
 
     - name: Setup node.js
-      uses: actions/setup-node@v4
+      uses: deep-soft/setup-node@v4
       with:
         node-version-file: '.nvmrc'
 
@@ -485,7 +525,7 @@ jobs:
 
     - name: Cache Desktop node_modules
       id: cache-desktop-modules
-      uses: actions/cache@v4
+      uses: deep-soft/cache@v4
       with:
         path: node_modules
         key: ${{ runner.os }}-${{ hashFiles('package.json', 'package-lock.json', 'patches/**') }}
@@ -540,7 +580,7 @@ jobs:
 
     - name: Upload artifacts on failure
       if: failure()
-      uses: actions/upload-artifact@v4
+      uses: deep-soft/upload-artifact@v4
       with:
         path: artifacts
 
@@ -550,9 +590,25 @@ jobs:
         echo " dir release\"
         dir -Recurse release\
 
+    - name: Publish version build - Release
+      continue-on-error: true
+      uses: deep-soft/action-gh-release@v2.1
+      with:
+        draft: true
+        tag_name: ${{ env.TAG_VERSION }}${{ env.TAG_BUILD }}
+        files: |
+          ./release/*.dmg
+          ./release/*.deb
+          ./release/*.exe
+          ./release/*.sha256
+          ${{ env.SHA_SUMS }}
+          _tag_name_.txt
+          ${{ env.PRG_NAME }}-${{ env.PRG_VERSION }}.txt
+
 ###
 # arc-all begin
     - name: Create arc-all archive
+      if: ${{ inputs.archive_ALL}}
 #        if: ${{ env.BUILD_FAILED }}
       continue-on-error: true
       shell: bash
@@ -571,6 +627,7 @@ jobs:
         fi
 
     - name: Publish arc-all archive
+      if: ${{ inputs.archive_ALL}}
 #        if: ${{ env.BUILD_FAILED }}
       continue-on-error: true
       uses: deep-soft/action-gh-release@v2.1
@@ -580,7 +637,6 @@ jobs:
         files: |
           ${{ env.ASSET_ARC_ALL }}
 # arc-all end
-
 
   sticker-creator:
     name: Sticker Creator
@@ -593,10 +649,10 @@ jobs:
         working-directory: sticker-creator
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: deep-soft/checkout@v4
 
     - name: Setup node.js
-      uses: actions/setup-node@v4
+      uses: deep-soft/setup-node@v4
       with:
         node-version-file: '.nvmrc'
         cache: 'npm'
@@ -633,10 +689,10 @@ jobs:
       run: uname -a
 
     - name: Clone Desktop repo
-      uses: actions/checkout@v4
+      uses: deep-soft/checkout@v4
 
     - name: Setup node.js
-      uses: actions/setup-node@v4
+      uses: deep-soft/setup-node@v4
       with:
         node-version-file: '.nvmrc'
     - name: Install global dependencies
@@ -647,7 +703,7 @@ jobs:
 
     - name: Cache Desktop node_modules
       id: cache-desktop-modules
-      uses: actions/cache@v4
+      uses: deep-soft/cache@v4
       with:
         path: node_modules
         key: ${{ runner.os }}-${{ hashFiles('package.json', 'package-lock.json', 'patches/**') }}
@@ -679,7 +735,7 @@ jobs:
 
     - name: Upload mock server test logs on failure
       if: failure()
-      uses: actions/upload-artifact@v4
+      uses: deep-soft/upload-artifact@v4
       with:
         name: logs
         path: artifacts
