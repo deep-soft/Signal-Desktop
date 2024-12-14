@@ -180,12 +180,6 @@ jobs:
         # npm install -g npm@10.2.5
         # npm install -g yarn@${{ env.YARN_VERSION }} npm@${{ env.NPM_VERSION }}
 
-    - run: python3 -m pip install setuptools
-      continue-on-error: true
-
-    - run: python3 -m pip install setuptools distutils
-      continue-on-error: true
-
     - name: Cache Desktop node_modules
       id: cache-desktop-modules
       uses: deep-soft/cache@v4
