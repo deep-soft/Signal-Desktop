@@ -27,7 +27,7 @@ env:
   PRG_VERSION: "1.0.0"
   TAG_NAME:    "Signal-Desktop"
   TAG_VERSION: 'v1.0.0'
-  TAG_BUILD:   "-b"
+  TAG_BUILD:   "b"
   TAG_REF:     "0000000"
   DEBUG_LS: true
   NODE_VERSION:    '20.9.0'
@@ -253,7 +253,7 @@ jobs:
       uses: deep-soft/action-gh-release@v2.1
       with:
         draft: true
-        tag_name: ${{ env.TAG_VERSION }}${{ env.TAG_BUILD }}
+        tag_name: ${{ env.TAG_NAME }}-${{ env.TAG_VERSION }}-${{ env.TAG_BUILD }}
         files: |
           ./release/*.dmg
           ./release/*.deb
@@ -417,7 +417,7 @@ jobs:
       uses: deep-soft/action-gh-release@v2.1
       with:
         draft: true
-        tag_name: ${{ env.TAG_VERSION }}${{ env.TAG_BUILD }}
+        tag_name: ${{ env.TAG_NAME }}-${{ env.TAG_VERSION }}-${{ env.TAG_BUILD }}
         files: |
           ./release/*.dmg
           ./release/*.deb
@@ -589,7 +589,7 @@ jobs:
       uses: deep-soft/action-gh-release@v2.1
       with:
         draft: true
-        tag_name: ${{ env.TAG_VERSION }}${{ env.TAG_BUILD }}
+        tag_name: ${{ env.TAG_NAME }}-${{ env.TAG_VERSION }}-${{ env.TAG_BUILD }}
         files: |
           ./release/*.dmg
           ./release/*.deb
