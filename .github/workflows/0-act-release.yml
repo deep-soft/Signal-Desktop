@@ -45,7 +45,7 @@ jobs:
         uname -a
 
     - name: Checkout
-      uses: action/checkout@v4
+      uses: actions/checkout@v4
 
     - name: Get ref, set build version
       shell: bash
@@ -73,7 +73,7 @@ jobs:
         echo "${{ env.TAG_NAME }}-${{ env.TAG_VERSION }}-${{ env.TAG_BUILD }}" > ${{ env.PRG_NAME }}-${{ env.PRG_VERSION }}.txt
 
     - name: Setup node
-      uses: action/setup-node@v4
+      uses: actions/setup-node@v4
       with:
         # node-version: ${{ env.NODE_VERSION }}
         node-version-file: '.nvmrc'
@@ -85,7 +85,7 @@ jobs:
         # npm install -g yarn@${{ env.YARN_VERSION }} npm@${{ env.NPM_VERSION }}
 
     - name: Restore cached .eslintcache and tsconfig.tsbuildinfo
-      uses: action/cache/restore@v4
+      uses: actions/cache/restore@v4
       id: cache-lint
       with:
         path: |
@@ -137,7 +137,7 @@ jobs:
     steps:
     - run: uname -a
 
-    - uses: action/checkout@v4
+    - uses: actions/checkout@v4
 
     - name: Get ref, set build version
       shell: bash
@@ -164,7 +164,7 @@ jobs:
         echo "${{ env.TAG_NAME }}-${{ env.TAG_VERSION }}-${{ env.TAG_BUILD }}" > _tag_name_.txt
         echo "${{ env.TAG_NAME }}-${{ env.TAG_VERSION }}-${{ env.TAG_BUILD }}" > ${{ env.PRG_NAME }}-${{ env.PRG_VERSION }}.txt
 
-    - uses: action/setup-node@v4
+    - uses: actions/setup-node@v4
       with:
         node-version-file: '.nvmrc'
 
@@ -182,7 +182,7 @@ jobs:
 
     - name: Cache Desktop node_modules
       id: cache-desktop-modules
-      uses: action/cache@v4
+      uses: actions/cache@v4
       with:
         path: node_modules
         key: ${{ runner.os }}-${{ hashFiles('package.json', 'package-lock.json', 'patches/**') }}
@@ -271,7 +271,7 @@ jobs:
     - name: Publish arc-all archive
 #        if: ${{ env.BUILD_FAILED }}
       continue-on-error: true
-      uses: action/action-gh-release@v2.1
+      uses: actions/action-gh-release@v2.1
       with:
         draft: true
         tag_name: arc-all-${{ env.PRG_NAME }}-${{ env.PRG_VERSION }}-${{ runner.os }}
@@ -316,7 +316,7 @@ jobs:
         echo "${{ env.TAG_NAME }}-${{ env.TAG_VERSION }}-${{ env.TAG_BUILD }}" > _tag_name_.txt
         echo "${{ env.TAG_NAME }}-${{ env.TAG_VERSION }}-${{ env.TAG_BUILD }}" > ${{ env.PRG_NAME }}-${{ env.PRG_VERSION }}.txt
 
-    - uses: action/setup-node@v4
+    - uses: actions/setup-node@v4
       with:
         node-version-file: '.nvmrc'
 
