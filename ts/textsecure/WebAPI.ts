@@ -862,6 +862,19 @@ export type GetAccountForUsernameResultType = z.infer<
   typeof getAccountForUsernameResultZod
 >;
 
+const getDevicesResultZod = z.object({
+  devices: z.array(
+    z.object({
+      id: z.number(),
+      name: z.string().nullish(), // primary devices may not have a name
+      lastSeen: z.number().nullish(),
+      created: z.number().nullish(),
+    })
+  ),
+});
+
+export type GetDevicesResultType = z.infer<typeof getDevicesResultZod>;
+
 export type GetIceServersResultType = Readonly<{
   relays?: ReadonlyArray<IceServerGroupType>;
 }>;
@@ -873,15 +886,6 @@ export type IceServerGroupType = Readonly<{
   urlsWithIps?: ReadonlyArray<string>;
   hostname?: string;
 }>;
-
-export type GetDevicesResultType = ReadonlyArray<
-  Readonly<{
-    id: number;
-    name: string;
-    lastSeen: number;
-    created: number;
-  }>
->;
 
 export type GetSenderCertificateResultType = Readonly<{ certificate: string }>;
 
@@ -1285,10 +1289,18 @@ const StickerPackUploadFormSchema = z.object({
   stickers: z.array(StickerPackUploadAttributesSchema),
 });
 
-const TransferArchiveSchema = z.object({
-  cdn: z.number(),
-  key: z.string(),
-});
+const TransferArchiveSchema = z.union([
+  z.object({
+    cdn: z.number(),
+    key: z.string(),
+  }),
+  z.object({
+    error: z.union([
+      z.literal('RELINK_REQUESTED'),
+      z.literal('CONTINUE_WITHOUT_UPLOAD'),
+    ]),
+  }),
+]);
 
 export type TransferArchiveType = z.infer<typeof TransferArchiveSchema>;
 
@@ -1324,6 +1336,7 @@ export type WebAPIType = {
       disableRetries?: boolean;
       timeout?: number;
       downloadOffset?: number;
+      abortSignal: AbortSignal;
     };
   }) => Promise<Readable>;
   getAttachment: (args: {
@@ -1333,6 +1346,7 @@ export type WebAPIType = {
       disableRetries?: boolean;
       timeout?: number;
       downloadOffset?: number;
+      abortSignal?: AbortSignal;
     };
   }) => Promise<Readable>;
   getAttachmentUploadForm: () => Promise<AttachmentUploadFormResponseType>;
@@ -1376,6 +1390,7 @@ export type WebAPIType = {
   getAccountForUsername: (
     options: GetAccountForUsernameOptionsType
   ) => Promise<GetAccountForUsernameResultType>;
+  getDevices: () => Promise<GetDevicesResultType>;
   getProfileUnauth: (
     serviceId: ServiceIdString,
     options: ProfileFetchUnauthRequestOptions
@@ -1847,6 +1862,7 @@ export function initialize({
       getBackupUploadForm,
       getBadgeImageFile,
       getConfig,
+      getDevices,
       getGroup,
       getGroupAvatar,
       getGroupCredentials,
@@ -2373,7 +2389,7 @@ export function initialize({
         });
 
         if (response.status === 200) {
-          return TransferArchiveSchema.parse(data);
+          return parseUnknown(TransferArchiveSchema, data);
         }
 
         strictAssert(
@@ -2933,6 +2949,15 @@ export function initialize({
         httpType: 'DELETE',
         urlParameters: `/${deviceId}`,
       });
+    }
+
+    async function getDevices() {
+      const result = await _ajax({
+        call: 'devices',
+        httpType: 'GET',
+        responseType: 'json',
+      });
+      return parseUnknown(getDevicesResultZod, result);
     }
 
     async function updateDeviceName(deviceName: string) {
@@ -3769,6 +3794,7 @@ export function initialize({
         disableRetries?: boolean;
         timeout?: number;
         downloadOffset?: number;
+        abortSignal?: AbortSignal;
       };
     }) {
       return _getAttachment({

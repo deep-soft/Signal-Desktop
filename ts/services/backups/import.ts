@@ -55,7 +55,10 @@ import type {
   QuotedMessageType,
 } from '../../model-types.d';
 import { assertDev, strictAssert } from '../../util/assert';
-import { getTimestampFromLong } from '../../util/timestampLongUtils';
+import {
+  getTimestampFromLong,
+  getTimestampOrUndefinedFromLong,
+} from '../../util/timestampLongUtils';
 import { DurationInSeconds, SECOND } from '../../util/durations';
 import { calculateExpirationTimestamp } from '../../util/expirationTimer';
 import { dropNull } from '../../util/dropNull';
@@ -86,7 +89,7 @@ import type { GroupV2ChangeDetailType } from '../../groups';
 import { queueAttachmentDownloads } from '../../util/queueAttachmentDownloads';
 import { isNotNil } from '../../util/isNotNil';
 import { isGroup } from '../../util/whatTypeOfConversation';
-import { rgbToHSL } from '../../util/rgbToHSL';
+import { rgbIntToHSL } from '../../util/rgbToHSL';
 import {
   convertBackupMessageAttachmentToAttachment,
   convertFilePointerToAttachment,
@@ -119,6 +122,7 @@ import { hasAttachmentDownloads } from '../../util/hasAttachmentDownloads';
 import { isNightly } from '../../util/version';
 import { ToastType } from '../../types/Toast';
 import { isConversationAccepted } from '../../util/isConversationAccepted';
+import { saveBackupsSubscriberData } from '../../util/backupSubscriptionData';
 
 const MAX_CONCURRENCY = 10;
 
@@ -258,6 +262,11 @@ export class BackupImportStream extends Writable {
         if (Bytes.isEmpty(info.mediaRootBackupKey)) {
           throw new Error('Missing mediaRootBackupKey');
         }
+
+        await window.storage.put(
+          'restoredBackupFirstAppVersion',
+          info.firstAppVersion
+        );
 
         const theirKey = info.mediaRootBackupKey;
         const ourKey = getBackupMediaRootKey().serialize();
@@ -655,22 +664,8 @@ export class BackupImportStream extends Writable {
         );
       }
     }
-    if (backupsSubscriberData != null) {
-      const { subscriberId, currencyCode, manuallyCancelled } =
-        backupsSubscriberData;
-      if (Bytes.isNotEmpty(subscriberId)) {
-        await storage.put('backupsSubscriberId', subscriberId);
-      }
-      if (currencyCode != null) {
-        await storage.put('backupsSubscriberCurrencyCode', currencyCode);
-      }
-      if (manuallyCancelled != null) {
-        await storage.put(
-          'backupsSubscriptionManuallyCancelled',
-          manuallyCancelled
-        );
-      }
-    }
+
+    await saveBackupsSubscriberData(backupsSubscriberData);
 
     await storage.put(
       'read-receipt-setting',
@@ -872,7 +867,9 @@ export class BackupImportStream extends Writable {
     }
 
     if (contact.notRegistered) {
-      const timestamp = contact.notRegistered.unregisteredTimestamp?.toNumber();
+      const timestamp = getTimestampOrUndefinedFromLong(
+        contact.notRegistered.unregisteredTimestamp
+      );
       attrs.discoveredUnregisteredAt = timestamp || this.now;
       attrs.firstUnregisteredAt = timestamp || undefined;
     } else {
@@ -1174,7 +1171,7 @@ export class BackupImportStream extends Writable {
       name,
       restrictions: fromCallLinkRestrictionsProto(restrictions),
       revoked: false,
-      expiration: expirationMs?.toNumber() || null,
+      expiration: getTimestampFromLong(expirationMs) || null,
       storageNeedsSync: false,
     };
 
@@ -1208,6 +1205,7 @@ export class BackupImportStream extends Writable {
     if (conversation.active_at == null) {
       conversation.active_at = Math.max(chat.id.toNumber(), 1);
     }
+
     conversation.isArchived = chat.archived === true;
     conversation.isPinned = (chat.pinnedOrder || 0) !== 0;
 
@@ -1216,10 +1214,9 @@ export class BackupImportStream extends Writable {
         ? DurationInSeconds.fromMillis(chat.expirationTimerMs.toNumber())
         : undefined;
     conversation.expireTimerVersion = chat.expireTimerVersion || 1;
-    conversation.muteExpiresAt =
-      chat.muteUntilMs && !chat.muteUntilMs.isZero()
-        ? getTimestampFromLong(chat.muteUntilMs)
-        : undefined;
+    conversation.muteExpiresAt = getTimestampOrUndefinedFromLong(
+      chat.muteUntilMs
+    );
     conversation.markedUnread = chat.markedUnread === true;
     conversation.dontNotifyForMentionsIfMuted =
       chat.dontNotifyForMentionsIfMuted === true;
@@ -1298,10 +1295,9 @@ export class BackupImportStream extends Writable {
       chatConvo.unreadCount = (chatConvo.unreadCount ?? 0) + 1;
     }
 
-    const expirationStartTimestamp =
-      item.expireStartDate && !item.expireStartDate.isZero()
-        ? getTimestampFromLong(item.expireStartDate)
-        : undefined;
+    const expirationStartTimestamp = getTimestampOrUndefinedFromLong(
+      item.expireStartDate
+    );
     const expireTimer =
       item.expiresInMs && !item.expiresInMs.isZero()
         ? DurationInSeconds.fromMillis(item.expiresInMs.toNumber())
@@ -2198,7 +2194,7 @@ export class BackupImportStream extends Writable {
         peerId: groupId,
         direction: isRingerMe ? CallDirection.Outgoing : CallDirection.Incoming,
         timestamp: startedCallTimestamp.toNumber(),
-        endedTimestamp: endedCallTimestamp?.toNumber() || null,
+        endedTimestamp: getTimestampFromLong(endedCallTimestamp) || null,
       };
 
       await this.saveCallHistory(callHistory);
@@ -3058,7 +3054,7 @@ export class BackupImportStream extends Writable {
 
       if (color.solid) {
         value = {
-          start: rgbIntToHSL(color.solid),
+          start: rgbIntToDesktopHSL(color.solid),
         };
       } else {
         strictAssert(color.gradient != null, 'Either solid or gradient');
@@ -3073,8 +3069,8 @@ export class BackupImportStream extends Writable {
         strictAssert(deg != null, 'Missing angle');
 
         value = {
-          start: rgbIntToHSL(start),
-          end: rgbIntToHSL(end),
+          start: rgbIntToDesktopHSL(start),
+          end: rgbIntToDesktopHSL(end),
           deg,
         };
       }
@@ -3223,20 +3219,15 @@ export class BackupImportStream extends Writable {
   }
 }
 
-function rgbIntToHSL(intValue: number): {
+function rgbIntToDesktopHSL(intValue: number): {
   hue: number;
   saturation: number;
-  luminance: number;
+  lightness: number;
 } {
-  // eslint-disable-next-line no-bitwise
-  const r = (intValue >>> 16) & 0xff;
-  // eslint-disable-next-line no-bitwise
-  const g = (intValue >>> 8) & 0xff;
-  // eslint-disable-next-line no-bitwise
-  const b = intValue & 0xff;
-  const { h: hue, s: saturation, l: luminance } = rgbToHSL(r, g, b);
+  const { h: hue, s: saturation, l: lightness } = rgbIntToHSL(intValue);
 
-  return { hue, saturation, luminance };
+  // Desktop stores saturation not as 0.123 (0 to 1.0) but 12.3 (percentage)
+  return { hue, saturation: saturation * 100, lightness };
 }
 
 function fromGroupCallStateProto(

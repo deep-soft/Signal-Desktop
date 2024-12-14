@@ -110,7 +110,7 @@ import {
   AdhocCallStatus,
 } from '../../types/CallDisposition';
 import { isAciString } from '../../util/isAciString';
-import { hslToRGB } from '../../util/hslToRGB';
+import { hslToRGBInt } from '../../util/hslToRGB';
 import type { AboutMe, LocalChatStyle } from './types';
 import { BackupType } from './types';
 import { messageHasPaymentEvent } from '../../messages/helpers';
@@ -139,6 +139,7 @@ import { getRoomIdFromRootKey } from '../../util/callLinksRingrtc';
 import { SeenStatus } from '../../MessageSeenStatus';
 import { migrateAllMessages } from '../../messages/migrateMessageData';
 import { trimBody } from '../../util/longAttachment';
+import { generateBackupsSubscriberData } from '../../util/backupSubscriptionData';
 
 const MAX_CONCURRENCY = 10;
 
@@ -258,6 +259,8 @@ export class BackupExportStream extends Readable {
         version: Long.fromNumber(BACKUP_VERSION),
         backupTimeMs: this.backupTimeMs,
         mediaRootBackupKey: getBackupMediaRootKey().serialize(),
+        firstAppVersion: window.storage.get('restoredBackupFirstAppVersion'),
+        currentAppVersion: `Desktop ${window.getVersion()}`,
       }).finish()
     );
 
@@ -398,7 +401,7 @@ export class BackupExportStream extends Readable {
             name,
             restrictions: toCallLinkRestrictionsProto(restrictions),
             expirationMs: isNumber(expiration)
-              ? Long.fromNumber(expiration)
+              ? getSafeLongFromTimestamp(expiration)
               : null,
           },
         },
@@ -660,7 +663,8 @@ export class BackupExportStream extends Readable {
     const usernameLink = storage.get('usernameLink');
 
     const subscriberId = storage.get('subscriberId');
-    const backupsSubscriberId = storage.get('backupsSubscriberId');
+
+    const backupsSubscriberData = generateBackupsSubscriberData();
 
     return {
       profileKey: storage.get('profileKey'),
@@ -676,16 +680,7 @@ export class BackupExportStream extends Readable {
       givenName: me.get('profileName'),
       familyName: me.get('profileFamilyName'),
       avatarUrlPath: storage.get('avatarUrl'),
-      backupsSubscriberData: Bytes.isNotEmpty(backupsSubscriberId)
-        ? {
-            subscriberId: backupsSubscriberId,
-            currencyCode: storage.get('backupsSubscriberCurrencyCode'),
-            manuallyCancelled: storage.get(
-              'backupsSubscriptionManuallyCancelled',
-              false
-            ),
-          }
-        : null,
+      backupsSubscriberData,
       donationSubscriberData: Bytes.isNotEmpty(subscriberId)
         ? {
             subscriberId,
@@ -848,7 +843,7 @@ export class BackupExportStream extends Readable {
           ? {
               notRegistered: {
                 unregisteredTimestamp: convo.firstUnregisteredAt
-                  ? Long.fromNumber(convo.firstUnregisteredAt)
+                  ? getSafeLongFromTimestamp(convo.firstUnregisteredAt)
                   : null,
               },
             }
@@ -1323,7 +1318,7 @@ export class BackupExportStream extends Readable {
         groupCall.state = toGroupCallStateProto(callHistory.status);
         groupCall.startedCallTimestamp = Long.fromNumber(callHistory.timestamp);
         if (callHistory.endedTimestamp != null) {
-          groupCall.endedCallTimestamp = Long.fromNumber(
+          groupCall.endedCallTimestamp = getSafeLongFromTimestamp(
             callHistory.endedTimestamp
           );
         }
@@ -2588,10 +2583,10 @@ export class BackupExportStream extends Readable {
       const id = Long.fromNumber(result.length + 1);
       this.customColorIdByUuid.set(uuid, id);
 
-      const start = hslToRGBInt(
+      const start = desktopHslToRgbInt(
         color.start.hue,
         color.start.saturation,
-        color.start.luminance
+        color.start.lightness
       );
 
       if (color.end == null) {
@@ -2600,10 +2595,10 @@ export class BackupExportStream extends Readable {
           solid: start,
         });
       } else {
-        const end = hslToRGBInt(
+        const end = desktopHslToRgbInt(
           color.end.hue,
           color.end.saturation,
-          color.end.luminance
+          color.end.lightness
         );
 
         result.push({
@@ -2776,10 +2771,13 @@ function checkServiceIdEquivalence(
   return leftConvo && rightConvo && leftConvo === rightConvo;
 }
 
-function hslToRGBInt(hue: number, saturation: number, luminance = 1): number {
-  const { r, g, b } = hslToRGB(hue, saturation, luminance);
-  // eslint-disable-next-line no-bitwise
-  return ((0xff << 24) | (r << 16) | (g << 8) | b) >>> 0;
+function desktopHslToRgbInt(
+  hue: number,
+  saturation: number,
+  lightness = 1
+): number {
+  // Desktop stores saturation not as 0.123 (0 to 1.0) but 12.3 (percentage)
+  return hslToRGBInt(hue, saturation / 100, lightness);
 }
 
 function toGroupCallStateProto(state: CallStatus): Backups.GroupCall.State {
