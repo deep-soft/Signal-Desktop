@@ -24,7 +24,7 @@ import {
 import { concat, filter, map, repeat, zipObject, find } from './iterables';
 import { getConversationIdForLogging } from './idForLogging';
 import { isQuoteAMatch } from '../messages/helpers';
-import { __DEPRECATED$getMessageById } from '../messages/getMessageById';
+import { getMessageById } from '../messages/getMessageById';
 import { handleEditMessage } from './handleEditMessage';
 import { incrementMessageCounter } from './incrementMessageCounter';
 import { isGroupV1 } from './whatTypeOfConversation';
@@ -65,10 +65,7 @@ export async function sendEditedMessage(
     conversation.attributes
   )})`;
 
-  const targetMessage = await __DEPRECATED$getMessageById(
-    targetMessageId,
-    'sendEditedMessage'
-  );
+  const targetMessage = await getMessageById(targetMessageId);
   strictAssert(targetMessage, 'could not find message to edit');
 
   if (isGroupV1(conversation.attributes)) {
@@ -226,9 +223,8 @@ export async function sendEditedMessage(
           log.info(
             `${idLog}: saving message ${targetMessageId} and job ${jobToInsert.id}`
           );
-          await DataWriter.saveMessage(targetMessage.attributes, {
+          await window.MessageCache.saveMessage(targetMessage.attributes, {
             jobToInsert,
-            ourAci: window.textsecure.storage.user.getCheckedAci(),
           });
         }
       ),

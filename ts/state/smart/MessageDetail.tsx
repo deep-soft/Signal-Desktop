@@ -55,11 +55,16 @@ export const SmartMessageDetail = memo(
       showConversation,
       showExpiredIncomingTapToViewToast,
       showExpiredOutgoingTapToViewToast,
+      showMediaNoLongerAvailableToast,
       showSpoiler,
       startConversation,
     } = useConversationsActions();
-    const { showContactModal, showEditHistoryModal, toggleSafetyNumberModal } =
-      useGlobalModalActions();
+    const {
+      showAttachmentNotAvailableModal,
+      showContactModal,
+      showEditHistoryModal,
+      toggleSafetyNumberModal,
+    } = useGlobalModalActions();
     const { showLightbox, showLightboxForViewOnceMedia } = useLightboxActions();
     const { viewStory } = useStoriesActions();
 
@@ -111,10 +116,12 @@ export const SmartMessageDetail = memo(
         showAttachmentDownloadStillInProgressToast={
           showAttachmentDownloadStillInProgressToast
         }
+        showAttachmentNotAvailableModal={showAttachmentNotAvailableModal}
         showExpiredIncomingTapToViewToast={showExpiredIncomingTapToViewToast}
         showExpiredOutgoingTapToViewToast={showExpiredOutgoingTapToViewToast}
         showLightbox={showLightbox}
         showLightboxForViewOnceMedia={showLightboxForViewOnceMedia}
+        showMediaNoLongerAvailableToast={showMediaNoLongerAvailableToast}
         showSpoiler={showSpoiler}
         startConversation={startConversation}
         theme={theme}

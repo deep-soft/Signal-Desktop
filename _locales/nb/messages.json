@@ -15,7 +15,7 @@
     "messageformat": "Søk"
   },
   "icu:AddUserToAnotherGroupModal__toast--user-added-to-group": {
-    "messageformat": "{contact} ble lagt til {group}"
+    "messageformat": "{contact} ble lagt til i {group}"
   },
   "icu:AddUserToAnotherGroupModal__toast--adding-user-to-group": {
     "messageformat": "Legger til {contact} …"
@@ -587,6 +587,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--InvalidStorageServiceHeaders": {
+    "messageformat": "Received invalid response from storage service. Please share your logs."
+  },
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
@@ -1121,26 +1124,74 @@
   "icu:lightboxImageAlt": {
     "messageformat": "Bilde sendt i samtale"
   },
+  "icu:lightBoxDownloading": {
+    "messageformat": "Laster ned {downloaded} av {total}"
+  },
   "icu:imageCaptionIconAlt": {
     "messageformat": "Ikon som viser at bildet har bildetekst"
   },
   "icu:imageOpenAlt": {
-    "messageformat": "Open this attachment in a larger view"
+    "messageformat": "Åpne dette vedlegget i en større visning"
   },
   "icu:startDownload": {
-    "messageformat": "Start download"
+    "messageformat": "Start nedlastingen"
   },
   "icu:cancelDownload": {
-    "messageformat": "Cancel download"
-  },
-  "icu:retryDownload": {
-    "messageformat": "Retry download"
-  },
-  "icu:retryDownloadShort": {
-    "messageformat": "Retry"
+    "messageformat": "Avbryt nedlastingen"
   },
   "icu:downloadNItems": {
-    "messageformat": "{count, plural, one {{count,number} item} other {{count,number} items}}"
+    "messageformat": "{count, plural, one {{count,number} element} other {{count,number} elementer}}"
+  },
+  "icu:mediaNotAvailable": {
+    "messageformat": "Mediefilen er ikke tilgjengelig"
+  },
+  "icu:mediaNotAvailable--short": {
+    "messageformat": "Mediefilen er ikke tilgjengelig"
+  },
+  "icu:attachmentNoLongerAvailable__learnMore": {
+    "messageformat": "Les mer"
+  },
+  "icu:attachmentNotAvailable__file": {
+    "messageformat": "Filen er ikke tilgjengelig"
+  },
+  "icu:attachmentNotAvailable__longMessage": {
+    "messageformat": "Denne meldingen er ufullstendig"
+  },
+  "icu:attachmentNotAvailable__sticker": {
+    "messageformat": "Klistremerket er ikke tilgjengelig"
+  },
+  "icu:attachmentNotAvailable__voice": {
+    "messageformat": "Talemeldingen er ikke tilgjengelig"
+  },
+  "icu:AttachmentNotAvailableModal__title--file": {
+    "messageformat": "Filen er ikke tilgjengelig"
+  },
+  "icu:AttachmentNotAvailableModal__title--long-text": {
+    "messageformat": "Resten av meldingen er ikke tilgjengelig"
+  },
+  "icu:AttachmentNotAvailableModal__title--media": {
+    "messageformat": "Mediefilen er ikke tilgjengelig"
+  },
+  "icu:AttachmentNotAvailableModal__title--sticker": {
+    "messageformat": "Klistremerket er ikke tilgjengelig"
+  },
+  "icu:AttachmentNotAvailableModal__title--voice-message": {
+    "messageformat": "Talemeldingen er ikke tilgjengelig"
+  },
+  "icu:AttachmentNotAvailableModal__body--file": {
+    "messageformat": "Denne filen ble ikke overført fra telefonen din da du koblet til denne enheten. Det er ikke mulig å synkronisere mediefiler og andre filer som er mer enn 45 dager gamle, når enheten kobles til."
+  },
+  "icu:AttachmentNotAvailableModal__body--long-text": {
+    "messageformat": "Resten av denne meldingen ble ikke overført fra telefonen din da du koblet til denne enheten. Det er ikke mulig å synkronisere lange meldinger som er mer enn 45 dager gamle, når enheten kobles til."
+  },
+  "icu:AttachmentNotAvailableModal__body--media": {
+    "messageformat": "Denne mediefilen ble ikke overført fra telefonen din da du koblet til denne enheten. Det er ikke mulig å synkronisere mediefiler som er mer enn 45 dager gamle, når enheten kobles til."
+  },
+  "icu:AttachmentNotAvailableModal__body--sticker": {
+    "messageformat": "Dette klistremerket ble ikke overført fra telefonen din da du koblet til denne enheten. Det er ikke mulig å synkronisere mediefiler og andre filer som er mer enn 45 dager gamle, når enheten kobles til."
+  },
+  "icu:AttachmentNotAvailableModal__body--voice-message": {
+    "messageformat": "Denne talemeldingen ble ikke overført fra telefonen din da du koblet til denne enheten. Det er ikke mulig å synkronisere mediefiler og andre filer som er mer enn 45 dager gamle, når enheten kobles til."
   },
   "icu:save": {
     "messageformat": "Lagre"
@@ -1184,6 +1235,9 @@
   "icu:Install__qr-failed-load__retry": {
     "messageformat": "Prøv på nytt"
   },
+  "icu:Install__qr-max-rotations__retry": {
+    "messageformat": "Last inn koden igjen"
+  },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "Få hjelp"
   },
@@ -1201,6 +1255,9 @@
   },
   "icu:Preferences--device-name": {
     "messageformat": "Enhetsnavn"
+  },
+  "icu:Preferences--device-name__description": {
+    "messageformat": "For å endre navnet på denne enheten må du åpne Signal på telefonen din og gå til Innstillinger > Tilkoblede enheter."
   },
   "icu:chooseDeviceName": {
     "messageformat": "Skriv inn et navn for enheten"
@@ -1578,10 +1635,10 @@
     "messageformat": "Vil du slette alle dataene?"
   },
   "icu:deleteAllDataBody": {
-    "messageformat": "Vil du slette alle dataene og meldingene fra denne Signal Desktop-versjonen? Du kan koble til skrivebordet på nytt, men meldingene kan ikke gjenopprettes. Signal-kontoen og dataene du har på mobilen og andre tilkoblede enheter, slettes ikke."
+    "messageformat": "Vil du slette alle dataene og meldingene fra denne Signal Desktop-versjonen? Signal-kontoen og dataene du har på mobilen og andre tilkoblede enheter, slettes ikke."
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "Kobler fra og sletter alle data"
+    "messageformat": "Kobler fra og sletter alle data …"
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "Du har foreldede data fra en tidligere installasjon av Signal Desktop. Hvis du velger å fortsette, blir den slettet, og du vil starte med blank konfigurasjon."
@@ -2789,6 +2846,12 @@
   "icu:CallControls__MutedToast--unmuted": {
     "messageformat": "Mikrofon på"
   },
+  "icu:CallControls__LowerHandSuggestionToast": {
+    "messageformat": "Vil du ta ned hånden?"
+  },
+  "icu:CallControls__LowerHandSuggestionToast--button": {
+    "messageformat": "Ta ned"
+  },
   "icu:CallControls__RingingToast--ringing-on": {
     "messageformat": "Ringing på"
   },
@@ -3566,6 +3629,9 @@
   "icu:next": {
     "messageformat": "Neste"
   },
+  "icu:ClearingData__description": {
+    "messageformat": "Dette kan ta noen minutter"
+  },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "Donér til Signal"
   },
@@ -3593,29 +3659,32 @@
   "icu:BackupImportScreen__progressbar-hint--processing": {
     "messageformat": "Ferdigstiller meldingsoverføringen …"
   },
+  "icu:BackupImportScreen__progressbar-hint--canceling": {
+    "messageformat": "Avbryter …"
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "Gjør klart for nedlasting …"
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "Dette kan ta et par minutter, avhengig av størrelsen på sikkerhetskopien"
+    "messageformat": "Dette kan ta noen minutter"
   },
   "icu:BackupImportScreen__cancel": {
-    "messageformat": "Avbryt overføring"
+    "messageformat": "Avbryt"
   },
   "icu:BackupImportScreen__security-description": {
     "messageformat": "Meldinger og samtaleinnhold beskyttes av ende-til-ende-kryptering. Dette inkluderer også synkroniseringen. <learnMoreLink>Les mer</learnMoreLink>"
   },
   "icu:BackupImportScreen__cancel-confirmation__title": {
-    "messageformat": "Vil du avbryte overføringen?"
+    "messageformat": "Vil du avbryte tilkoblingen?"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "Meldingene og mediefilene har ikke blitt gjenopprettet. Dersom du avbryter overføringen, kan du starte den igjen via innstillingene."
+    "messageformat": "Dersom du avbryter tilkoblingen, blir ikke filene og meldingene dine overført til denne enheten."
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
-    "messageformat": "Fortsett overføring"
+    "messageformat": "Fortsett"
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
-    "messageformat": "Avbryt overføring"
+    "messageformat": "Avbryt"
   },
   "icu:BackupImportScreen__error__title": {
     "messageformat": "Kunne ikke overføre meldingene"
@@ -3624,7 +3693,7 @@
     "messageformat": "Meldingene dine kunne ikke overføres. Sjekk internettilkoblingen og prøv igjen."
   },
   "icu:BackupImportScreen__error-fatal__body": {
-    "messageformat": "Your messages could not be transferred due to an error. Try again by re-linking this desktop."
+    "messageformat": "Meldingene dine kunne ikke overføres på grunn av en feil. Prøv igjen ved å koble dekstopen til på nytt."
   },
   "icu:BackupImportScreen__error__confirm": {
     "messageformat": "Prøv på nytt"
@@ -4230,7 +4299,7 @@
     "messageformat": "Tilbakestill alle samtalefarger"
   },
   "icu:ChatColorPicker__confirm-reset-default": {
-    "messageformat": "Tilbakestill standardfarge"
+    "messageformat": "Tilbakestill standardfarger"
   },
   "icu:ChatColorPicker__confirm-reset": {
     "messageformat": "Tilbakestill"
@@ -4279,6 +4348,9 @@
   },
   "icu:GradientDial__knob-end": {
     "messageformat": "Slutt på gradering"
+  },
+  "icu:GIF--download": {
+    "messageformat": "Download GIF attachment"
   },
   "icu:customDisappearingTimeOption": {
     "messageformat": "Selvvalgt tid…"
@@ -4549,6 +4621,12 @@
   },
   "icu:AvatarColorPicker--choose": {
     "messageformat": "Velg en farge"
+  },
+  "icu:AttachmentDetailPill__retryDownload": {
+    "messageformat": "Prøv å laste ned på nytt"
+  },
+  "icu:AttachmentDetailPill__retryDownloadShort": {
+    "messageformat": "Prøv på nytt"
   },
   "icu:LeftPaneSetGroupMetadataHelper__avatar-modal-title": {
     "messageformat": "Gruppeikon"
@@ -5782,13 +5860,10 @@
     "messageformat": "Noen små justeringer, feilrettinger og ytelsesforbedringer. Takk for at du bruker Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.36--0": {
-    "messageformat": "I denne oppdateringen har vi rettet opp i en feil med skjermdeling i macOS Sonoma."
+  "icu:WhatsNew__v7.44--0": {
+    "messageformat": "Vi har ordnet opp i en liten animasjonsfeil i gruppesamtaler."
   },
-  "icu:WhatsNew__v7.36--1": {
-    "messageformat": "Når du velger «Filtrer etter ulest», fremheves den valgte samtalen, og samtalene oppdateres ettersom du mottar og åpner meldinger."
-  },
-  "icu:WhatsNew__v7.37--0": {
-    "messageformat": "Now you can easily see the progress of attachment downloads. You can also stop and restart in-progress downloads too. So if a transfer is slowed because you're on the road (in airplane mode?) or the mediocre hotel WiFi is about to implode, you can wait to reload when more available bandwidth is bestowed."
+  "icu:WhatsNew__v7.45--0": {
+    "messageformat": "Stickers should feel sticky, not stuck, so now you can click on a sticker on a newly linked Signal Desktop and that sticker download will automatically get prioritized even when other attachments are downloading too."
   }
 }

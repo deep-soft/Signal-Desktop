@@ -3,6 +3,7 @@
 
 import { createReadStream, createWriteStream } from 'fs';
 import { open, unlink, stat } from 'fs/promises';
+import type { FileHandle } from 'fs/promises';
 import { createCipheriv, createHash, createHmac, randomBytes } from 'crypto';
 import type { Hash } from 'crypto';
 import { PassThrough, Transform, type Writable, Readable } from 'stream';
@@ -18,6 +19,7 @@ import {
   ValidatingPassThrough,
 } from '@signalapp/libsignal-client/dist/incremental_mac';
 import type { ChunkSizeChoice } from '@signalapp/libsignal-client/dist/incremental_mac';
+import { isAbsolute } from 'path';
 
 import * as log from './logging/log';
 import {
@@ -36,7 +38,7 @@ import { finalStream } from './util/finalStream';
 import { getIvAndDecipher } from './util/getIvAndDecipher';
 import { getMacAndUpdateHmac } from './util/getMacAndUpdateHmac';
 import { trimPadding } from './util/trimPadding';
-import { strictAssert } from './util/assert';
+import { assertDev, strictAssert } from './util/assert';
 import * as Errors from './types/errors';
 import { isNotNil } from './util/isNotNil';
 import { missingCaseError } from './util/missingCaseError';
@@ -301,7 +303,6 @@ export async function encryptAttachmentV2({
 
 type DecryptAttachmentToSinkOptionsType = Readonly<
   {
-    ciphertextPath: string;
     idForLogging: string;
     size: number;
     outerEncryption?: {
@@ -310,18 +311,26 @@ type DecryptAttachmentToSinkOptionsType = Readonly<
     };
   } & (
     | {
-        type: 'standard';
-        theirDigest: Readonly<Uint8Array>;
-        theirIncrementalMac: Readonly<Uint8Array> | undefined;
-        theirChunkSize: number | undefined;
+        ciphertextPath: string;
       }
     | {
-        // No need to check integrity for locally reencrypted attachments, or for backup
-        // thumbnails (since we created it)
-        type: 'local' | 'backupThumbnail';
-        theirDigest?: undefined;
+        ciphertextStream: Readable;
       }
   ) &
+    (
+      | {
+          type: 'standard';
+          theirDigest: Readonly<Uint8Array>;
+          theirIncrementalMac: Readonly<Uint8Array> | undefined;
+          theirChunkSize: number | undefined;
+        }
+      | {
+          // No need to check integrity for locally reencrypted attachments, or for backup
+          // thumbnails (since we created it)
+          type: 'local' | 'backupThumbnail';
+          theirDigest?: undefined;
+        }
+    ) &
     (
       | {
           aesKey: Readonly<Uint8Array>;
@@ -383,7 +392,7 @@ export async function decryptAttachmentV2ToSink(
   options: DecryptAttachmentToSinkOptionsType,
   sink: Writable
 ): Promise<Omit<DecryptedAttachmentV2, 'path'>> {
-  const { ciphertextPath, idForLogging, outerEncryption } = options;
+  const { idForLogging, outerEncryption } = options;
 
   let aesKey: Uint8Array;
   let macKey: Uint8Array;
@@ -434,19 +443,27 @@ export async function decryptAttachmentV2ToSink(
     : undefined;
 
   let isPaddingAllZeros = false;
-  let readFd;
+  let readFd: FileHandle | undefined;
   let iv: Uint8Array | undefined;
+  let ciphertextStream: Readable;
 
   try {
-    try {
-      readFd = await open(ciphertextPath, 'r');
-    } catch (cause) {
-      throw new Error(`${logId}: Read path doesn't exist`, { cause });
+    if ('ciphertextPath' in options) {
+      try {
+        readFd = await open(options.ciphertextPath, 'r');
+        ciphertextStream = readFd.createReadStream();
+      } catch (cause) {
+        throw new Error(`${logId}: Read path doesn't exist`, { cause });
+      }
+    } else if ('ciphertextStream' in options) {
+      ciphertextStream = options.ciphertextStream;
+    } else {
+      throw missingCaseError(options);
     }
 
     await pipeline(
       [
-        readFd.createReadStream(),
+        ciphertextStream,
         maybeOuterEncryptionGetMacAndUpdateMac,
         maybeOuterEncryptionGetIvAndDecipher,
         peekAndUpdateHash(digest),
@@ -717,11 +734,17 @@ export function getPlaintextHashForInMemoryAttachment(
  * Unlinks a file without throwing an error if it doesn't exist.
  * Throws an error if it fails to unlink for any other reason.
  */
-export async function safeUnlink(filePath: string): Promise<void> {
+export async function safeUnlink(absoluteFilePath: string): Promise<void> {
+  assertDev(
+    isAbsolute(absoluteFilePath),
+    'safeUnlink: a relative path was passed instead of an absolute one'
+  );
+
   try {
-    await unlink(filePath);
+    await unlink(absoluteFilePath);
   } catch (error) {
     // Ignore if file doesn't exist
+
     if (error.code !== 'ENOENT') {
       log.error('Failed to unlink', error);
       throw error;

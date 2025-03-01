@@ -23,7 +23,7 @@ import type { ServiceIdString } from '../../types/ServiceId';
 import type { StoryDistributionIdString } from '../../types/StoryDistributionId';
 import * as Errors from '../../types/errors';
 import type { StoryMessageRecipientsType } from '../../types/Stories';
-import { DataReader, DataWriter } from '../../sql/Client';
+import { DataReader } from '../../sql/Client';
 import { SignalService as Proto } from '../../protobuf';
 import { getMessagesById } from '../../messages/getMessagesById';
 import {
@@ -39,6 +39,12 @@ import { distributionListToSendTarget } from '../../util/distributionListToSendT
 import { uploadAttachment } from '../../util/uploadAttachment';
 import { SendMessageChallengeError } from '../../textsecure/Errors';
 import type { OutgoingTextAttachmentType } from '../../textsecure/SendMessage';
+import {
+  markFailed,
+  notifyStorySendFailed,
+  saveErrorsOnMessage,
+} from '../../test-node/util/messageFailures';
+import { send } from '../../messages/send';
 
 export async function sendStory(
   conversation: ConversationModel,
@@ -71,40 +77,40 @@ export async function sendStory(
   }
 
   const notFound = new Set(messageIds);
-  const messages = (await getMessagesById(messageIds, 'sendStory')).filter(
-    message => {
-      notFound.delete(message.id);
+  const messages = (await getMessagesById(messageIds)).filter(message => {
+    notFound.delete(message.id);
 
-      const distributionId = message.get('storyDistributionListId');
-      const logId = `stories.sendStory(${timestamp}/${distributionId})`;
+    const distributionId = message.get('storyDistributionListId');
+    const logId = `stories.sendStory(${timestamp}/${distributionId})`;
 
-      const messageConversation = message.getConversation();
-      if (messageConversation !== conversation) {
-        log.error(
-          `${logId}: Message conversation ` +
-            `'${messageConversation?.idForLogging()}' does not match job ` +
-            `conversation ${conversation.idForLogging()}`
-        );
-        return false;
-      }
-
-      if (message.get('timestamp') !== timestamp) {
-        log.error(
-          `${logId}: Message timestamp ${message.get(
-            'timestamp'
-          )} does not match job timestamp`
-        );
-        return false;
-      }
-
-      if (message.isErased() || message.get('deletedForEveryone')) {
-        log.info(`${logId}: message was erased. Giving up on sending it`);
-        return false;
-      }
-
-      return true;
+    const messageConversation = window.ConversationController.get(
+      message.get('conversationId')
+    );
+    if (messageConversation !== conversation) {
+      log.error(
+        `${logId}: Message conversation ` +
+          `'${messageConversation?.idForLogging()}' does not match job ` +
+          `conversation ${conversation.idForLogging()}`
+      );
+      return false;
     }
-  );
+
+    if (message.get('timestamp') !== timestamp) {
+      log.error(
+        `${logId}: Message timestamp ${message.get(
+          'timestamp'
+        )} does not match job timestamp`
+      );
+      return false;
+    }
+
+    if (message.get('isErased') || message.get('deletedForEveryone')) {
+      log.info(`${logId}: message was erased. Giving up on sending it`);
+      return false;
+    }
+
+    return true;
+  });
 
   for (const messageId of notFound) {
     log.info(
@@ -367,7 +373,7 @@ export async function sendStory(
         // eslint-disable-next-line no-param-reassign
         message.doNotSendSyncMessage = true;
 
-        const messageSendPromise = message.send({
+        const messageSendPromise = send(message, {
           promise: handleMessageSend(innerPromise, {
             messageIds: [message.id],
             sendType: 'story',
@@ -535,17 +541,15 @@ export async function sendStory(
       }, {} as SendStateByConversationId);
 
       if (hasFailedSends) {
-        message.notifyStorySendFailed();
+        notifyStorySendFailed(message);
       }
 
       if (isEqual(oldSendStateByConversationId, newSendStateByConversationId)) {
         return;
       }
 
-      message.set('sendStateByConversationId', newSendStateByConversationId);
-      return DataWriter.saveMessage(message.attributes, {
-        ourAci: window.textsecure.storage.user.getCheckedAci(),
-      });
+      message.set({ sendStateByConversationId: newSendStateByConversationId });
+      return window.MessageCache.saveMessage(message.attributes);
     })
   );
 
@@ -579,7 +583,7 @@ export async function sendStory(
 
     await messaging.sendSyncMessage({
       // Note: these two fields will be undefined if we're sending to a group
-      destination: conversation.get('e164'),
+      destinationE164: conversation.get('e164'),
       destinationServiceId: conversation.getServiceId(),
       storyMessage: originalStoryMessage,
       storyMessageRecipients,
@@ -688,10 +692,9 @@ async function markMessageFailed(
   message: MessageModel,
   errors: Array<Error>
 ): Promise<void> {
-  message.markFailed();
-  void message.saveErrors(errors, { skipSave: true });
-  await DataWriter.saveMessage(message.attributes, {
-    ourAci: window.textsecure.storage.user.getCheckedAci(),
+  markFailed(message);
+  await saveErrorsOnMessage(message, errors, {
+    skipSave: false,
   });
 }
 

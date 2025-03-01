@@ -101,10 +101,12 @@ export type PropsReduxActions = Pick<
   | 'showConversation'
   | 'showEditHistoryModal'
   | 'showAttachmentDownloadStillInProgressToast'
+  | 'showAttachmentNotAvailableModal'
   | 'showExpiredIncomingTapToViewToast'
   | 'showExpiredOutgoingTapToViewToast'
   | 'showLightbox'
   | 'showLightboxForViewOnceMedia'
+  | 'showMediaNoLongerAvailableToast'
   | 'showSpoiler'
   | 'startConversation'
   | 'viewStory'
@@ -148,10 +150,12 @@ export function MessageDetail({
   showConversation,
   showEditHistoryModal,
   showAttachmentDownloadStillInProgressToast,
+  showAttachmentNotAvailableModal,
   showExpiredIncomingTapToViewToast,
   showExpiredOutgoingTapToViewToast,
   showLightbox,
   showLightboxForViewOnceMedia,
+  showMediaNoLongerAvailableToast,
   showSpoiler,
   startConversation,
   theme,
@@ -368,6 +372,7 @@ export function MessageDetail({
             showAttachmentDownloadStillInProgressToast={
               showAttachmentDownloadStillInProgressToast
             }
+            showAttachmentNotAvailableModal={showAttachmentNotAvailableModal}
             showExpiredIncomingTapToViewToast={
               showExpiredIncomingTapToViewToast
             }
@@ -375,6 +380,7 @@ export function MessageDetail({
               showExpiredOutgoingTapToViewToast
             }
             showLightbox={showLightbox}
+            showMediaNoLongerAvailableToast={showMediaNoLongerAvailableToast}
             startConversation={startConversation}
             theme={theme}
             viewStory={viewStory}

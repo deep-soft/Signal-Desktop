@@ -587,6 +587,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--InvalidStorageServiceHeaders": {
+    "messageformat": "Received invalid response from storage service. Please share your logs."
+  },
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
@@ -1121,26 +1124,74 @@
   "icu:lightboxImageAlt": {
     "messageformat": "Изображение, отправленное в чате"
   },
+  "icu:lightBoxDownloading": {
+    "messageformat": "Загрузка {downloaded} из {total}"
+  },
   "icu:imageCaptionIconAlt": {
     "messageformat": "Значок, показывающий, что у этого изображения есть подпись"
   },
   "icu:imageOpenAlt": {
-    "messageformat": "Open this attachment in a larger view"
+    "messageformat": "Открыть это вложение в увеличенном масштабе"
   },
   "icu:startDownload": {
-    "messageformat": "Start download"
+    "messageformat": "Начать загрузку"
   },
   "icu:cancelDownload": {
-    "messageformat": "Cancel download"
-  },
-  "icu:retryDownload": {
-    "messageformat": "Retry download"
-  },
-  "icu:retryDownloadShort": {
-    "messageformat": "Retry"
+    "messageformat": "Отменить загрузку"
   },
   "icu:downloadNItems": {
-    "messageformat": "{count, plural, one {{count,number} item} other {{count,number} items}}"
+    "messageformat": "{count, plural, one {{count,number} элемент} few {{count,number} элемента} many {{count,number} элементов} other {{count,number} элемента}}"
+  },
+  "icu:mediaNotAvailable": {
+    "messageformat": "Этот медиафайл недоступен"
+  },
+  "icu:mediaNotAvailable--short": {
+    "messageformat": "Медиафайл недоступен"
+  },
+  "icu:attachmentNoLongerAvailable__learnMore": {
+    "messageformat": "Узнать больше"
+  },
+  "icu:attachmentNotAvailable__file": {
+    "messageformat": "Файл недоступен"
+  },
+  "icu:attachmentNotAvailable__longMessage": {
+    "messageformat": "Это сообщение не завершено"
+  },
+  "icu:attachmentNotAvailable__sticker": {
+    "messageformat": "Стикер недоступен"
+  },
+  "icu:attachmentNotAvailable__voice": {
+    "messageformat": "Голосовое сообщение недоступно"
+  },
+  "icu:AttachmentNotAvailableModal__title--file": {
+    "messageformat": "Файл недоступен"
+  },
+  "icu:AttachmentNotAvailableModal__title--long-text": {
+    "messageformat": "Полное сообщение недоступно"
+  },
+  "icu:AttachmentNotAvailableModal__title--media": {
+    "messageformat": "Медиафайл недоступен"
+  },
+  "icu:AttachmentNotAvailableModal__title--sticker": {
+    "messageformat": "Стикер недоступен"
+  },
+  "icu:AttachmentNotAvailableModal__title--voice-message": {
+    "messageformat": "Голосовое сообщение недоступно"
+  },
+  "icu:AttachmentNotAvailableModal__body--file": {
+    "messageformat": "Этот файл не был перенесён с вашего телефона при привязке этого устройства. Медиафайлы и файлы, срок создания которых на момент привязки устройства превышал 45 дней, не могут быть синхронизированы."
+  },
+  "icu:AttachmentNotAvailableModal__body--long-text": {
+    "messageformat": "Полный текст этого сообщения не был перенесён с вашего телефона при привязке этого устройства. Длинные текстовые сообщения, срок создания которых на момент привязки устройства превышал 45 дней, не могут быть синхронизированы."
+  },
+  "icu:AttachmentNotAvailableModal__body--media": {
+    "messageformat": "Этот медиафайл не был перенесён с вашего телефона при привязке этого устройства. Медиафайлы, срок создания которых на момент привязки устройства превышал 45 дней, не могут быть синхронизированы."
+  },
+  "icu:AttachmentNotAvailableModal__body--sticker": {
+    "messageformat": "Этот стикер не был перенесён с вашего телефона при привязке этого устройства. Медиафайлы и файлы, срок создания которых на момент привязки устройства превышал 45 дней, не могут быть синхронизированы."
+  },
+  "icu:AttachmentNotAvailableModal__body--voice-message": {
+    "messageformat": "Это голосовое сообщение не было перенесено с вашего телефона при привязке этого устройства. Медиафайлы и файлы, срок создания которых на момент привязки устройства превышал 45 дней, не могут быть синхронизированы."
   },
   "icu:save": {
     "messageformat": "Сохранить"
@@ -1184,6 +1235,9 @@
   "icu:Install__qr-failed-load__retry": {
     "messageformat": "Повторить попытку"
   },
+  "icu:Install__qr-max-rotations__retry": {
+    "messageformat": "Обновить код"
+  },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "Получить помощь"
   },
@@ -1201,6 +1255,9 @@
   },
   "icu:Preferences--device-name": {
     "messageformat": "Имя устройства"
+  },
+  "icu:Preferences--device-name__description": {
+    "messageformat": "Чтобы изменить имя это устройства, откройте Signal на своем телефоне и перейдите в Настройки > Связанные устройства"
   },
   "icu:chooseDeviceName": {
     "messageformat": "Выберите имя этого устройства"
@@ -1578,10 +1635,10 @@
     "messageformat": "Удалить все данные?"
   },
   "icu:deleteAllDataBody": {
-    "messageformat": "Удалить все данные и сообщения из этой версии Signal Desktop? Вы всегда можете переподключить ваш ПК к Signal Desktop, но ваши сообщения не восстановятся. Ваша учётная запись Signal и данные на вашем телефоне или других подключенных устройствах не будут удалены."
+    "messageformat": "Удалить все данные и сообщения из этой версии Signal Desktop? Ваша учётная запись Signal и данные на вашем телефоне или других подключенных устройствах не будут удалены."
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "Отключается и удаляет все данные"
+    "messageformat": "Отключается и удаляет все данные…"
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "У вас есть устаревшие данные из предыдущей установки Signal Desktop. Если вы решите продолжить, они будут удалены, и вы начнете с нуля."
@@ -2789,6 +2846,12 @@
   "icu:CallControls__MutedToast--unmuted": {
     "messageformat": "Микрофон включён"
   },
+  "icu:CallControls__LowerHandSuggestionToast": {
+    "messageformat": "Опустить руку?"
+  },
+  "icu:CallControls__LowerHandSuggestionToast--button": {
+    "messageformat": "Опустить"
+  },
   "icu:CallControls__RingingToast--ringing-on": {
     "messageformat": "Звонки включены"
   },
@@ -3566,6 +3629,9 @@
   "icu:next": {
     "messageformat": "следующее"
   },
+  "icu:ClearingData__description": {
+    "messageformat": "Это может занять несколько минут"
+  },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "Поддержать Signal"
   },
@@ -3593,29 +3659,32 @@
   "icu:BackupImportScreen__progressbar-hint--processing": {
     "messageformat": "Завершение переноса сообщений..."
   },
+  "icu:BackupImportScreen__progressbar-hint--canceling": {
+    "messageformat": "Отменяем…"
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "Готовимся к загрузке..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "Это может занять несколько минут в зависимости от размера резервной копии"
+    "messageformat": "Это может занять несколько минут"
   },
   "icu:BackupImportScreen__cancel": {
-    "messageformat": "Отменить трансфер"
+    "messageformat": "Отменить"
   },
   "icu:BackupImportScreen__security-description": {
     "messageformat": "Сообщения и информация о чате защищены сквозным шифрованием, включая процесс синхронизации. <learnMoreLink>Узнать больше</learnMoreLink>"
   },
   "icu:BackupImportScreen__cancel-confirmation__title": {
-    "messageformat": "Отменить трансфер?"
+    "messageformat": "Отменить привязку устройства?"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "Восстановление сообщений и медиафайлов не завершено. Если вы решите отменить трансфер, то сможете снова запустить его в настройках."
+    "messageformat": "Если вы решите отменить, это устройство не будет привязано и сообщения или медиафайлы перенесены не будут."
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
-    "messageformat": "Продолжить трансфер"
+    "messageformat": "Продолжить привязку"
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
-    "messageformat": "Отменить трансфер"
+    "messageformat": "Отменить привязку"
   },
   "icu:BackupImportScreen__error__title": {
     "messageformat": "Ошибка при переносе сообщений"
@@ -3624,7 +3693,7 @@
     "messageformat": "Не удалось перенести ваши сообщения. Проверьте ваше подключение к интернету и попробуйте ещё раз."
   },
   "icu:BackupImportScreen__error-fatal__body": {
-    "messageformat": "Your messages could not be transferred due to an error. Try again by re-linking this desktop."
+    "messageformat": "Ваши сообщения не могут быть перенесены из-за ошибки. Повторите попытку, снова привязав этот ПК."
   },
   "icu:BackupImportScreen__error__confirm": {
     "messageformat": "Повторить попытку"
@@ -4230,7 +4299,7 @@
     "messageformat": "Сбросить цвета всех чатов"
   },
   "icu:ChatColorPicker__confirm-reset-default": {
-    "messageformat": "Сбросить цвет по умолчанию"
+    "messageformat": "Сбросить цвета по умолчанию"
   },
   "icu:ChatColorPicker__confirm-reset": {
     "messageformat": "Сбросить"
@@ -4279,6 +4348,9 @@
   },
   "icu:GradientDial__knob-end": {
     "messageformat": "Конец градиента"
+  },
+  "icu:GIF--download": {
+    "messageformat": "Download GIF attachment"
   },
   "icu:customDisappearingTimeOption": {
     "messageformat": "Пользовательское время…"
@@ -4549,6 +4621,12 @@
   },
   "icu:AvatarColorPicker--choose": {
     "messageformat": "Выберите цвет"
+  },
+  "icu:AttachmentDetailPill__retryDownload": {
+    "messageformat": "Повторить загрузку"
+  },
+  "icu:AttachmentDetailPill__retryDownloadShort": {
+    "messageformat": "Повторить попытку"
   },
   "icu:LeftPaneSetGroupMetadataHelper__avatar-modal-title": {
     "messageformat": "Аватар группы"
@@ -5782,13 +5860,10 @@
     "messageformat": "Небольшие изменения, исправления ошибок и улучшения производительности. Спасибо за то, что пользуетесь Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.36--0": {
-    "messageformat": "В этом обновлении исправлена ошибка в macOS Sonoma, из-за которой общий доступ к экрану не обеспечивался должным образом, если до этого в демонстрации экрана было отказано. Теперь вам больше не нужно делиться экраном, на котором лишь сообщение об ошибке."
+  "icu:WhatsNew__v7.44--0": {
+    "messageformat": "Мы исправили небольшую ошибку анимации во время групповых звонков. Заранее приносим извинения, если самой увлекательным моментом вашего дня было переключение на сетку во время совещания в попытке поймать момент, когда квадраты с видео опоздавших частично перекрывали презентацию вашего начальника."
   },
-  "icu:WhatsNew__v7.36--1": {
-    "messageformat": "Фильтр по непрочитанным теперь выделяет выбранный чат, а список непрочитанных чатов будет автоматически обновляться по мере поступления новых сообщений или когда вы прочтёте один чат и перейдёте в другой."
-  },
-  "icu:WhatsNew__v7.37--0": {
-    "messageformat": "Now you can easily see the progress of attachment downloads. You can also stop and restart in-progress downloads too. So if a transfer is slowed because you're on the road (in airplane mode?) or the mediocre hotel WiFi is about to implode, you can wait to reload when more available bandwidth is bestowed."
+  "icu:WhatsNew__v7.45--0": {
+    "messageformat": "Stickers should feel sticky, not stuck, so now you can click on a sticker on a newly linked Signal Desktop and that sticker download will automatically get prioritized even when other attachments are downloading too."
   }
 }

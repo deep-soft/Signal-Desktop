@@ -16,6 +16,7 @@ import type { AnyToast } from '../types/Toast';
 import { ToastType } from '../types/Toast';
 import type { AnyActionableMegaphone } from '../types/Megaphone';
 import { MegaphoneType } from '../types/Megaphone';
+import { AttachmentNotAvailableModalType } from './AttachmentNotAvailableModal';
 
 export type PropsType = {
   hideToast: () => unknown;
@@ -27,6 +28,9 @@ export type PropsType = {
     conversationId: string,
     options?: { wasPinned?: boolean }
   ) => unknown;
+  showAttachmentNotAvailableModal: (
+    type: AttachmentNotAvailableModalType
+  ) => void;
   toast?: AnyToast;
   megaphone?: AnyActionableMegaphone;
   centerToast?: boolean;
@@ -43,6 +47,7 @@ export function renderToast({
   openFileInFolder,
   onShowDebugLog,
   onUndoArchive,
+  showAttachmentNotAvailableModal,
   OS,
   toast,
 }: PropsType): JSX.Element | null {
@@ -323,6 +328,20 @@ export function renderToast({
     );
   }
 
+  if (toastType === ToastType.InvalidStorageServiceHeaders) {
+    return (
+      <Toast
+        onClose={hideToast}
+        toastAction={{
+          label: i18n('icu:Toast__ActionLabel--SubmitLog'),
+          onClick: onShowDebugLog,
+        }}
+      >
+        {i18n('icu:Toast--InvalidStorageServiceHeaders')}
+      </Toast>
+    );
+  }
+
   if (toastType === ToastType.FileSaved) {
     return (
       <Toast
@@ -405,6 +424,23 @@ export function renderToast({
 
   if (toastType === ToastType.MaxAttachments) {
     return <Toast onClose={hideToast}>{i18n('icu:maximumAttachments')}</Toast>;
+  }
+
+  if (toastType === ToastType.MediaNoLongerAvailable) {
+    return (
+      <Toast
+        onClose={hideToast}
+        toastAction={{
+          label: i18n('icu:attachmentNoLongerAvailable__learnMore'),
+          onClick: () =>
+            showAttachmentNotAvailableModal(
+              AttachmentNotAvailableModalType.VisualMedia
+            ),
+        }}
+      >
+        {i18n('icu:mediaNotAvailable')}
+      </Toast>
+    );
   }
 
   if (toastType === ToastType.MessageBodyTooLong) {

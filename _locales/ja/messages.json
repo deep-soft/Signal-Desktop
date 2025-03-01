@@ -587,6 +587,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--InvalidStorageServiceHeaders": {
+    "messageformat": "Received invalid response from storage service. Please share your logs."
+  },
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
@@ -1121,26 +1124,74 @@
   "icu:lightboxImageAlt": {
     "messageformat": "チャットに送られた画像"
   },
+  "icu:lightBoxDownloading": {
+    "messageformat": "{total} のうち {downloaded} をダウンロード中"
+  },
   "icu:imageCaptionIconAlt": {
     "messageformat": "この画像にキャプションがついていることを示すアイコン"
   },
   "icu:imageOpenAlt": {
-    "messageformat": "Open this attachment in a larger view"
+    "messageformat": "この添付ファイルを拡大表示で開く"
   },
   "icu:startDownload": {
-    "messageformat": "Start download"
+    "messageformat": "ダウンロードを開始する"
   },
   "icu:cancelDownload": {
-    "messageformat": "Cancel download"
-  },
-  "icu:retryDownload": {
-    "messageformat": "Retry download"
-  },
-  "icu:retryDownloadShort": {
-    "messageformat": "Retry"
+    "messageformat": "ダウンロードをキャンセルする"
   },
   "icu:downloadNItems": {
-    "messageformat": "{count, plural, one {{count,number} item} other {{count,number} items}}"
+    "messageformat": "{count, plural, other {{count,number}個}}"
+  },
+  "icu:mediaNotAvailable": {
+    "messageformat": "このメディアはダウンロードできません"
+  },
+  "icu:mediaNotAvailable--short": {
+    "messageformat": "メディアはご利用になれません"
+  },
+  "icu:attachmentNoLongerAvailable__learnMore": {
+    "messageformat": "さらに詳しく"
+  },
+  "icu:attachmentNotAvailable__file": {
+    "messageformat": "ファイルがダウンロードできません"
+  },
+  "icu:attachmentNotAvailable__longMessage": {
+    "messageformat": "このメッセージは不完全です"
+  },
+  "icu:attachmentNotAvailable__sticker": {
+    "messageformat": "ステッカーはご利用になれません"
+  },
+  "icu:attachmentNotAvailable__voice": {
+    "messageformat": "ボイスメッセージはご利用になれません"
+  },
+  "icu:AttachmentNotAvailableModal__title--file": {
+    "messageformat": "ファイルがダウンロードできません"
+  },
+  "icu:AttachmentNotAvailableModal__title--long-text": {
+    "messageformat": "完全なメッセージがダウンロードできません"
+  },
+  "icu:AttachmentNotAvailableModal__title--media": {
+    "messageformat": "メディアはご利用になれません"
+  },
+  "icu:AttachmentNotAvailableModal__title--sticker": {
+    "messageformat": "ステッカーはご利用になれません"
+  },
+  "icu:AttachmentNotAvailableModal__title--voice-message": {
+    "messageformat": "ボイスメッセージはご利用になれません"
+  },
+  "icu:AttachmentNotAvailableModal__body--file": {
+    "messageformat": "この端末をリンクしたとき、このファイルはスマートフォンから移行されませんでした。端末をリンクした時点で45日以上経過したメディアやファイルは同期できません。"
+  },
+  "icu:AttachmentNotAvailableModal__body--long-text": {
+    "messageformat": "この端末をリンクしたとき、このメッセージの完全なテキストはスマートフォンから移行されませんでした。端末をリンクした時点で45日以上経過した長いテキストメッセージは同期できません。"
+  },
+  "icu:AttachmentNotAvailableModal__body--media": {
+    "messageformat": "この端末をリンクしたとき、このメディアはスマートフォンから移行されませんでした。端末をリンクした時点で45日以上経過したメディアは同期できません。"
+  },
+  "icu:AttachmentNotAvailableModal__body--sticker": {
+    "messageformat": "この端末をリンクしたとき、このステッカーはスマートフォンから移行されませんでした。端末をリンクした時点で45日以上経過したメディアやファイルは同期できません。"
+  },
+  "icu:AttachmentNotAvailableModal__body--voice-message": {
+    "messageformat": "この端末をリンクしたときにこのボイスメッセージはスマートフォンから移行されませんでした。端末をリンクした時点で45日以上経過したメディアやファイルは同期できません。"
   },
   "icu:save": {
     "messageformat": "保存"
@@ -1184,6 +1235,9 @@
   "icu:Install__qr-failed-load__retry": {
     "messageformat": "再試行"
   },
+  "icu:Install__qr-max-rotations__retry": {
+    "messageformat": "コードを更新する"
+  },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "ヘルプを表示する"
   },
@@ -1201,6 +1255,9 @@
   },
   "icu:Preferences--device-name": {
     "messageformat": "端末名"
+  },
+  "icu:Preferences--device-name__description": {
+    "messageformat": "この端末の名前を変更するには、スマートフォンでSignalを開き、「設定」 > 「リンク済み端末」に移動します。"
   },
   "icu:chooseDeviceName": {
     "messageformat": "この端末の名前を設定してください"
@@ -1578,10 +1635,10 @@
     "messageformat": "すべてのデータを消去しますか？"
   },
   "icu:deleteAllDataBody": {
-    "messageformat": "Signal Desktopからすべてのデータとメッセージを消去しますか？Signal Desktopにはいつでも再リンクできますが、消去したメッセージは復元されません。Signalアカウントやスマートフォンのデータ、その他のリンク済み端末のデータは消去されません。"
+    "messageformat": "Signal Desktopからすべてのデータとメッセージを消去しますか？Signalアカウントやスマートフォンのデータ、その他のリンク済み端末のデータは消去されません。"
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "接続を切って全データを削除しています"
+    "messageformat": "接続を切って全データを消去しています…"
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "以前のバージョンの Signal Desktop で利用していた、すでに利用できなくなっているデータが残っています。続行するとこのデータは消去され、フレッシュな状態で改めて利用を始めることになります。"
@@ -2789,6 +2846,12 @@
   "icu:CallControls__MutedToast--unmuted": {
     "messageformat": "マイクオン"
   },
+  "icu:CallControls__LowerHandSuggestionToast": {
+    "messageformat": "手をおろしますか？"
+  },
+  "icu:CallControls__LowerHandSuggestionToast--button": {
+    "messageformat": "手を降ろす"
+  },
   "icu:CallControls__RingingToast--ringing-on": {
     "messageformat": "呼び出し音が鳴っています"
   },
@@ -3566,6 +3629,9 @@
   "icu:next": {
     "messageformat": "次へ"
   },
+  "icu:ClearingData__description": {
+    "messageformat": "これには数分かかる場合があります"
+  },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "Signalへの寄付"
   },
@@ -3593,29 +3659,32 @@
   "icu:BackupImportScreen__progressbar-hint--processing": {
     "messageformat": "メッセージの移行が間もなく完了します…"
   },
+  "icu:BackupImportScreen__progressbar-hint--canceling": {
+    "messageformat": "キャンセルしています…"
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "ダウンロード中..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "バックアップのサイズによっては、数分かかる場合があります"
+    "messageformat": "これには数分かかる場合があります"
   },
   "icu:BackupImportScreen__cancel": {
-    "messageformat": "転送をキャンセルする"
+    "messageformat": "キャンセル"
   },
   "icu:BackupImportScreen__security-description": {
     "messageformat": "同期のプロセスも含め、メッセージ情報とチャット情報はエンドツーエンドの暗号化で保護されています。<learnMoreLink>さらに詳しく</learnMoreLink>"
   },
   "icu:BackupImportScreen__cancel-confirmation__title": {
-    "messageformat": "転送をキャンセルしますか？"
+    "messageformat": "端末へのリンク付けをキャンセルしますか？"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "メッセージとメディアの復元が完了していません。キャンセルした場合は、設定からもう一度転送できます。"
+    "messageformat": "キャンセルを選択するとこの端末はリンクされず、メッセージやメディアは移行されません。"
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
-    "messageformat": "転送を続行する"
+    "messageformat": "リンク付けを続行する"
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
-    "messageformat": "転送をキャンセルする"
+    "messageformat": "リンク付けをキャンセルする"
   },
   "icu:BackupImportScreen__error__title": {
     "messageformat": "メッセージの移行中にエラーが発生しました"
@@ -3624,7 +3693,7 @@
     "messageformat": "メッセージを移行できませんでした。インターネット接続を確認して再度試してください。"
   },
   "icu:BackupImportScreen__error-fatal__body": {
-    "messageformat": "Your messages could not be transferred due to an error. Try again by re-linking this desktop."
+    "messageformat": "エラーが発生したため、メッセージを移行できませんでした。このDesktopを再リンクして、もう一度お試しください。"
   },
   "icu:BackupImportScreen__error__confirm": {
     "messageformat": "再試行"
@@ -4230,7 +4299,7 @@
     "messageformat": "すべてのチャットの色をリセットする"
   },
   "icu:ChatColorPicker__confirm-reset-default": {
-    "messageformat": "既定の色をリセット"
+    "messageformat": "既定の色をリセットする"
   },
   "icu:ChatColorPicker__confirm-reset": {
     "messageformat": "リセットする"
@@ -4279,6 +4348,9 @@
   },
   "icu:GradientDial__knob-end": {
     "messageformat": "グラデーション終了"
+  },
+  "icu:GIF--download": {
+    "messageformat": "Download GIF attachment"
   },
   "icu:customDisappearingTimeOption": {
     "messageformat": "カスタム時間…"
@@ -4549,6 +4621,12 @@
   },
   "icu:AvatarColorPicker--choose": {
     "messageformat": "色を選択してください"
+  },
+  "icu:AttachmentDetailPill__retryDownload": {
+    "messageformat": "もう一度ダウンロードする"
+  },
+  "icu:AttachmentDetailPill__retryDownloadShort": {
+    "messageformat": "再試行"
   },
   "icu:LeftPaneSetGroupMetadataHelper__avatar-modal-title": {
     "messageformat": "グループアバター"
@@ -5782,13 +5860,10 @@
     "messageformat": "細かな微調整、バグ修正、パフォーマンスの向上。 Signalをご利用いただきありがとうございます。",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.36--0": {
-    "messageformat": "今回のアップデートで、macOS Sonomaで画面共有する際のバグを修正しています。"
+  "icu:WhatsNew__v7.44--0": {
+    "messageformat": "グループ通話中の、軽微な画面表示のバグを修正しました。"
   },
-  "icu:WhatsNew__v7.36--1": {
-    "messageformat": "「未読でフィルタリング」内で、選択されたチャットをハイライトしたり、メッセージを読んだときまたは受信したりときには未読チャットが更新されるようになりました。"
-  },
-  "icu:WhatsNew__v7.37--0": {
-    "messageformat": "Now you can easily see the progress of attachment downloads. You can also stop and restart in-progress downloads too. So if a transfer is slowed because you're on the road (in airplane mode?) or the mediocre hotel WiFi is about to implode, you can wait to reload when more available bandwidth is bestowed."
+  "icu:WhatsNew__v7.45--0": {
+    "messageformat": "Stickers should feel sticky, not stuck, so now you can click on a sticker on a newly linked Signal Desktop and that sticker download will automatically get prioritized even when other attachments are downloading too."
   }
 }

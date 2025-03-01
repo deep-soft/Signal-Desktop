@@ -11,12 +11,11 @@ import type {
   BackupMediaItemType,
   BackupMediaBatchResponseType,
   BackupListMediaResponseType,
+  TransferArchiveType,
 } from '../../textsecure/WebAPI';
 import type { BackupCredentials } from './credentials';
 import { BackupCredentialType } from '../../types/backups';
 import { uploadFile } from '../../util/uploadAttachment';
-import { ContinueWithoutSyncingError, RelinkRequestedError } from './errors';
-import { missingCaseError } from '../../util/missingCaseError';
 
 export type DownloadOptionsType = Readonly<{
   downloadOffset: number;
@@ -24,8 +23,16 @@ export type DownloadOptionsType = Readonly<{
   abortSignal?: AbortSignal;
 }>;
 
+export type EphemeralDownloadOptionsType = Readonly<{
+  archive: Readonly<{
+    cdn: number;
+    key: string;
+  }>;
+}> &
+  DownloadOptionsType;
+
 export class BackupAPI {
-  private cachedBackupInfo = new Map<
+  #cachedBackupInfo = new Map<
     BackupCredentialType,
     GetBackupInfoResponseType
   >();
@@ -38,23 +45,23 @@ export class BackupAPI {
         this.credentials.getHeadersForToday(type)
       )
     );
-    await Promise.all(headers.map(h => this.server.refreshBackup(h)));
+    await Promise.all(headers.map(h => this.#server.refreshBackup(h)));
   }
 
   public async getInfo(
     credentialType: BackupCredentialType
   ): Promise<GetBackupInfoResponseType> {
-    const backupInfo = await this.server.getBackupInfo(
+    const backupInfo = await this.#server.getBackupInfo(
       await this.credentials.getHeadersForToday(credentialType)
     );
-    this.cachedBackupInfo.set(credentialType, backupInfo);
+    this.#cachedBackupInfo.set(credentialType, backupInfo);
     return backupInfo;
   }
 
-  private async getCachedInfo(
+  async #getCachedInfo(
     credentialType: BackupCredentialType
   ): Promise<GetBackupInfoResponseType> {
-    const cached = this.cachedBackupInfo.get(credentialType);
+    const cached = this.#cachedBackupInfo.get(credentialType);
     if (cached) {
       return cached;
     }
@@ -63,15 +70,15 @@ export class BackupAPI {
   }
 
   public async getMediaDir(): Promise<string> {
-    return (await this.getCachedInfo(BackupCredentialType.Media)).mediaDir;
+    return (await this.#getCachedInfo(BackupCredentialType.Media)).mediaDir;
   }
 
   public async getBackupDir(): Promise<string> {
-    return (await this.getCachedInfo(BackupCredentialType.Media))?.backupDir;
+    return (await this.#getCachedInfo(BackupCredentialType.Media))?.backupDir;
   }
 
   public async upload(filePath: string, fileSize: number): Promise<void> {
-    const form = await this.server.getBackupUploadForm(
+    const form = await this.#server.getBackupUploadForm(
       await this.credentials.getHeadersForToday(BackupCredentialType.Messages)
     );
 
@@ -95,7 +102,7 @@ export class BackupAPI {
       BackupCredentialType.Messages
     );
 
-    return this.server.getBackupStream({
+    return this.#server.getBackupStream({
       cdn,
       backupDir,
       backupName,
@@ -106,31 +113,23 @@ export class BackupAPI {
     });
   }
 
+  public async getTransferArchive(
+    abortSignal: AbortSignal
+  ): Promise<TransferArchiveType> {
+    return this.#server.getTransferArchive({
+      abortSignal,
+    });
+  }
+
   public async downloadEphemeral({
+    archive,
     downloadOffset,
     onProgress,
     abortSignal,
-  }: DownloadOptionsType): Promise<Readable> {
-    const response = await this.server.getTransferArchive({
-      abortSignal,
-    });
-
-    if ('error' in response) {
-      switch (response.error) {
-        case 'RELINK_REQUESTED':
-          throw new RelinkRequestedError();
-        case 'CONTINUE_WITHOUT_UPLOAD':
-          throw new ContinueWithoutSyncingError();
-        default:
-          throw missingCaseError(response.error);
-      }
-    }
-
-    const { cdn, key } = response;
-
-    return this.server.getEphemeralBackupStream({
-      cdn,
-      key,
+  }: EphemeralDownloadOptionsType): Promise<Readable> {
+    return this.#server.getEphemeralBackupStream({
+      cdn: archive.cdn,
+      key: archive.key,
       downloadOffset,
       onProgress,
       abortSignal,
@@ -138,7 +137,7 @@ export class BackupAPI {
   }
 
   public async getMediaUploadForm(): Promise<AttachmentUploadFormResponseType> {
-    return this.server.getBackupMediaUploadForm(
+    return this.#server.getBackupMediaUploadForm(
       await this.credentials.getHeadersForToday(BackupCredentialType.Media)
     );
   }
@@ -146,7 +145,7 @@ export class BackupAPI {
   public async backupMediaBatch(
     items: ReadonlyArray<BackupMediaItemType>
   ): Promise<BackupMediaBatchResponseType> {
-    return this.server.backupMediaBatch({
+    return this.#server.backupMediaBatch({
       headers: await this.credentials.getHeadersForToday(
         BackupCredentialType.Media
       ),
@@ -161,7 +160,7 @@ export class BackupAPI {
     cursor?: string;
     limit: number;
   }): Promise<BackupListMediaResponseType> {
-    return this.server.backupListMedia({
+    return this.#server.backupListMedia({
       headers: await this.credentials.getHeadersForToday(
         BackupCredentialType.Media
       ),
@@ -171,10 +170,10 @@ export class BackupAPI {
   }
 
   public clearCache(): void {
-    this.cachedBackupInfo.clear();
+    this.#cachedBackupInfo.clear();
   }
 
-  private get server(): WebAPIType {
+  get #server(): WebAPIType {
     const { server } = window.textsecure;
     strictAssert(server, 'server not available');
 

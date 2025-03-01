@@ -345,12 +345,14 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
   showAttachmentDownloadStillInProgressToast: action(
     'showAttachmentDownloadStillInProgressToast'
   ),
+  showAttachmentNotAvailableModal: action('showAttachmentNotAvailableModal'),
   showExpiredIncomingTapToViewToast: action(
     'showExpiredIncomingTapToViewToast'
   ),
   showExpiredOutgoingTapToViewToast: action(
     'showExpiredOutgoingTapToViewToast'
   ),
+  showMediaNoLongerAvailableToast: action('showMediaNoLongerAvailableToast'),
   toggleDeleteMessagesModal: action('toggleDeleteMessagesModal'),
   toggleForwardMessagesModal: action('toggleForwardMessagesModal'),
   showLightbox: action('showLightbox'),
@@ -844,10 +846,24 @@ CanDeleteForEveryone.args = {
   direction: 'outgoing',
 };
 
+const bigAttachment = {
+  contentType: stringToMIMEType('text/plain'),
+  fileName: 'why-i-love-birds.txt',
+  size: 100000000000,
+  width: undefined,
+  height: undefined,
+  path: undefined,
+  key: undefined,
+  id: undefined,
+  error: true,
+  wasTooBig: true,
+};
+
 export function AttachmentTooBig(): JSX.Element {
   const propsSent = createProps({
     conversationType: 'direct',
     attachmentDroppedDueToSize: true,
+    attachments: [bigAttachment],
   });
 
   return <>{renderBothDirections(propsSent)}</>;
@@ -857,6 +873,37 @@ export function AttachmentTooBigWithText(): JSX.Element {
   const propsSent = createProps({
     conversationType: 'direct',
     attachmentDroppedDueToSize: true,
+    attachments: [bigAttachment],
+    text: 'Check out this file!',
+  });
+
+  return <>{renderBothDirections(propsSent)}</>;
+}
+
+const bigImageAttachment = {
+  ...bigAttachment,
+  contentType: IMAGE_JPEG,
+  fileName: 'bird.jpg',
+  blurHash: 'LDA,FDBnm+I=p{tkIUI;~UkpELV]',
+  width: 1000,
+  height: 1000,
+};
+
+export function AttachmentTooBigImage(): JSX.Element {
+  const propsSent = createProps({
+    conversationType: 'direct',
+    attachmentDroppedDueToSize: true,
+    attachments: [bigImageAttachment],
+  });
+
+  return <>{renderBothDirections(propsSent)}</>;
+}
+
+export function AttachmentTooBigImageWithText(): JSX.Element {
+  const propsSent = createProps({
+    conversationType: 'direct',
+    attachmentDroppedDueToSize: true,
+    attachments: [bigImageAttachment],
     text: 'Check out this file!',
   });
 
@@ -906,6 +953,31 @@ LinkPreviewInGroup.args = {
       title: 'Signal',
       description:
         'Say "hello" to a different messaging experience. An unexpected focus on privacy, combined with all of the features you expect.',
+      url: 'https://www.signal.org',
+      date: new Date(2020, 2, 10).valueOf(),
+    },
+  ],
+  status: 'sent',
+  text: 'Be sure to look at https://www.signal.org',
+  conversationType: 'group',
+};
+
+export const LinkPreviewWithLongWord = Template.bind({});
+LinkPreviewWithLongWord.args = {
+  previews: [
+    {
+      domain: 'signal.org',
+      image: fakeAttachment({
+        contentType: IMAGE_PNG,
+        fileName: 'the-sax.png',
+        height: 240,
+        url: pngUrl,
+        width: 320,
+      }),
+      isStickerPack: false,
+      isCallLink: false,
+      title: 'Signal',
+      description: `Say "hello" to a ${'Different'.repeat(10)} messaging experience.`,
       url: 'https://www.signal.org',
       date: new Date(2020, 2, 10).valueOf(),
     },
@@ -2197,4 +2269,232 @@ export function MultiSelect(): JSX.Element {
 
 MultiSelect.args = {
   name: 'Multi Select',
+};
+
+export function PermanentlyUndownloadableAttachments(): JSX.Element {
+  const imageProps = createProps({
+    attachments: [
+      fakeAttachment({
+        contentType: IMAGE_JPEG,
+        fileName: 'bird.jpg',
+        blurHash: 'LDA,FDBnm+I=p{tkIUI;~UkpELV]',
+        width: 296,
+        height: 394,
+        path: undefined,
+        key: undefined,
+        id: undefined,
+        error: true,
+      }),
+    ],
+    status: 'sent',
+  });
+  const multipleImagesProps = createProps({
+    attachments: [
+      fakeAttachment({
+        contentType: IMAGE_JPEG,
+        fileName: 'bird.jpg',
+        blurHash: 'LDA,FDBnm+I=p{tkIUI;~UkpELV]',
+        width: 296,
+        height: 394,
+        path: undefined,
+        key: undefined,
+        id: undefined,
+        error: true,
+      }),
+      fakeAttachment({
+        contentType: IMAGE_JPEG,
+        fileName: 'bird.jpg',
+        blurHash: 'LDA,FDBnm+I=p{tkIUI;~UkpELV]',
+        width: 296,
+        height: 394,
+        path: undefined,
+        key: undefined,
+        id: undefined,
+        error: true,
+      }),
+    ],
+    status: 'sent',
+  });
+  const gifProps = createProps({
+    attachments: [
+      fakeAttachment({
+        contentType: VIDEO_MP4,
+        flags: SignalService.AttachmentPointer.Flags.GIF,
+        fileName: 'bird.gif',
+        blurHash: 'LDA,FDBnm+I=p{tkIUI;~UkpELV]',
+        width: 296,
+        height: 394,
+        path: undefined,
+        key: undefined,
+        id: undefined,
+        error: true,
+      }),
+    ],
+    status: 'sent',
+    text: 'cool gif',
+  });
+  const videoProps = createProps({
+    attachments: [
+      fakeAttachment({
+        contentType: VIDEO_MP4,
+        fileName: 'bird.mp4',
+        width: 720,
+        height: 480,
+        path: undefined,
+        key: undefined,
+        id: undefined,
+        error: true,
+      }),
+    ],
+    status: 'sent',
+  });
+  const audioProps = createProps({
+    attachments: [
+      fakeAttachment({
+        contentType: AUDIO_MP3,
+        fileName: 'bird.mp3',
+        width: undefined,
+        height: undefined,
+        path: undefined,
+        key: undefined,
+        id: undefined,
+        error: true,
+      }),
+    ],
+    status: 'sent',
+  });
+  const audioWithCaptionProps = {
+    ...audioProps,
+    text: "Here's that file",
+  };
+  const textFileProps = createProps({
+    attachments: [
+      fakeAttachment({
+        contentType: stringToMIMEType('text/plain'),
+        fileName: 'why-i-love-birds.txt',
+        width: undefined,
+        height: undefined,
+        path: undefined,
+        key: undefined,
+        id: undefined,
+        error: true,
+      }),
+    ],
+    status: 'sent',
+  });
+  const textFileWithCaptionProps = {
+    ...textFileProps,
+    text: "Here's that file",
+  };
+  const stickerProps = createProps({
+    attachments: [
+      fakeAttachment({
+        fileName: '512x515-thumbs-up-lincoln.webp',
+        contentType: IMAGE_WEBP,
+        width: 128,
+        height: 128,
+        error: true,
+      }),
+    ],
+    isSticker: true,
+    status: 'sent',
+  });
+  const longMessageProps = createProps({
+    text: 'Hello there from a pal! I am sending a long message so that it will wrap a bit, since I like that look.',
+    textAttachment: {
+      contentType: LONG_MESSAGE,
+      size: 123,
+      pending: false,
+      key: undefined,
+      error: true,
+    },
+  });
+
+  const outgoingAuthor = {
+    ...imageProps.author,
+    id: getDefaultConversation().id,
+  };
+
+  return (
+    <>
+      <TimelineMessage {...imageProps} shouldCollapseAbove />
+      <TimelineMessage {...gifProps} />
+      <TimelineMessage {...videoProps} />
+      <TimelineMessage {...multipleImagesProps} />
+      <TimelineMessage {...stickerProps} />
+      <TimelineMessage {...textFileProps} />
+      <TimelineMessage {...textFileWithCaptionProps} />
+      <TimelineMessage {...longMessageProps} />
+      <TimelineMessage {...audioProps} />
+      <TimelineMessage {...audioWithCaptionProps} shouldCollapseBelow />
+      <TimelineMessage
+        {...imageProps}
+        author={outgoingAuthor}
+        direction="outgoing"
+        shouldCollapseAbove
+      />
+      <TimelineMessage
+        {...gifProps}
+        author={outgoingAuthor}
+        direction="outgoing"
+      />
+      <TimelineMessage
+        {...videoProps}
+        author={outgoingAuthor}
+        direction="outgoing"
+      />
+      <TimelineMessage
+        {...multipleImagesProps}
+        author={outgoingAuthor}
+        direction="outgoing"
+      />
+      <TimelineMessage
+        {...textFileProps}
+        author={outgoingAuthor}
+        direction="outgoing"
+      />
+      <TimelineMessage
+        {...stickerProps}
+        author={outgoingAuthor}
+        direction="outgoing"
+      />
+      <TimelineMessage
+        {...textFileWithCaptionProps}
+        author={outgoingAuthor}
+        direction="outgoing"
+      />
+      <TimelineMessage
+        {...longMessageProps}
+        author={outgoingAuthor}
+        direction="outgoing"
+      />
+      <TimelineMessage
+        {...audioProps}
+        author={outgoingAuthor}
+        direction="outgoing"
+      />
+      <TimelineMessage
+        {...audioWithCaptionProps}
+        author={outgoingAuthor}
+        direction="outgoing"
+        shouldCollapseBelow
+      />
+    </>
+  );
+}
+
+export const AttachmentWithError = Template.bind({});
+AttachmentWithError.args = {
+  attachments: [
+    fakeAttachment({
+      contentType: IMAGE_PNG,
+      fileName: 'test.png',
+      blurHash: 'LDA,FDBnm+I=p{tkIUI;~UkpELV]',
+      width: 296,
+      height: 394,
+      path: undefined,
+      error: true,
+    }),
+  ],
+  status: 'sent',
 };

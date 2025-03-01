@@ -587,6 +587,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--InvalidStorageServiceHeaders": {
+    "messageformat": "Received invalid response from storage service. Please share your logs."
+  },
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
@@ -1121,26 +1124,74 @@
   "icu:lightboxImageAlt": {
     "messageformat": "תמונה נשלחה בצ'אט"
   },
+  "icu:lightBoxDownloading": {
+    "messageformat": "בהורדה: {downloaded} מתוך {total}"
+  },
   "icu:imageCaptionIconAlt": {
     "messageformat": "ראות איקון שיש לתמונה זו כיתוב"
   },
   "icu:imageOpenAlt": {
-    "messageformat": "Open this attachment in a larger view"
+    "messageformat": "פתיחת הקובץ המצורף הזה בתצוגה גדולה יותר"
   },
   "icu:startDownload": {
-    "messageformat": "Start download"
+    "messageformat": "התחלת הורדה"
   },
   "icu:cancelDownload": {
-    "messageformat": "Cancel download"
-  },
-  "icu:retryDownload": {
-    "messageformat": "Retry download"
-  },
-  "icu:retryDownloadShort": {
-    "messageformat": "Retry"
+    "messageformat": "ביטול הורדה"
   },
   "icu:downloadNItems": {
-    "messageformat": "{count, plural, one {{count,number} item} other {{count,number} items}}"
+    "messageformat": "{count, plural, one {פריט {count,number}} two {{count,number} פריטים} many {{count,number} פריטים} other {{count,number} פריטים}}"
+  },
+  "icu:mediaNotAvailable": {
+    "messageformat": "מדיה זו אינה זמינה"
+  },
+  "icu:mediaNotAvailable--short": {
+    "messageformat": "מדיה לא זמינה"
+  },
+  "icu:attachmentNoLongerAvailable__learnMore": {
+    "messageformat": "למידע נוסף"
+  },
+  "icu:attachmentNotAvailable__file": {
+    "messageformat": "קובץ לא זמין"
+  },
+  "icu:attachmentNotAvailable__longMessage": {
+    "messageformat": "הודעה זו אינה שלמה"
+  },
+  "icu:attachmentNotAvailable__sticker": {
+    "messageformat": "סטיקר לא זמין"
+  },
+  "icu:attachmentNotAvailable__voice": {
+    "messageformat": "הודעה קולית לא זמינה"
+  },
+  "icu:AttachmentNotAvailableModal__title--file": {
+    "messageformat": "קובץ לא זמין"
+  },
+  "icu:AttachmentNotAvailableModal__title--long-text": {
+    "messageformat": "הודעה מלאה לא זמינה"
+  },
+  "icu:AttachmentNotAvailableModal__title--media": {
+    "messageformat": "מדיה לא זמינה"
+  },
+  "icu:AttachmentNotAvailableModal__title--sticker": {
+    "messageformat": "סטיקר לא זמין"
+  },
+  "icu:AttachmentNotAvailableModal__title--voice-message": {
+    "messageformat": "הודעה קולית לא זמינה"
+  },
+  "icu:AttachmentNotAvailableModal__body--file": {
+    "messageformat": "הקובץ הזה לא הועבר מהטלפון שלך כשהמכשיר הזה קושר. לא ניתן לסנכרן קבצים ומדיה שיותר ישנים מ–45 ימים בזמן קישור המכשיר."
+  },
+  "icu:AttachmentNotAvailableModal__body--long-text": {
+    "messageformat": "הטקסט המלא בהודעה זו לא הועבר מהטלפון שלך כשהמכשיר הזה קושר. לא ניתן לסנכרן הודעות טקסט ארוכות שיותר ישנות מ–45 ימים בזמן קישור המכשיר."
+  },
+  "icu:AttachmentNotAvailableModal__body--media": {
+    "messageformat": "המדיה הזו לא הועברה מהטלפון שלך כשהמכשיר הזה קושר. לא ניתן לסנכרן מדיה ישנה יותר מ–45 ימים בזמן קישור המכשיר."
+  },
+  "icu:AttachmentNotAvailableModal__body--sticker": {
+    "messageformat": "הסטיקר הזה לא הועבר מהטלפון שלך כשהמכשיר הזה קושר. לא ניתן לסנכרן קבצים ומדיה שיותר ישנים מ–45 ימים בזמן קישור המכשיר."
+  },
+  "icu:AttachmentNotAvailableModal__body--voice-message": {
+    "messageformat": "ההודעה הקולית הזו לא הועברה מהטלפון שלך כשהמכשיר הזה קושר. לא ניתן לסנכרן קבצים ומדיה שיותר ישנים מ–45 ימים בזמן קישור המכשיר."
   },
   "icu:save": {
     "messageformat": "שמור"
@@ -1184,6 +1235,9 @@
   "icu:Install__qr-failed-load__retry": {
     "messageformat": "נסה שוב"
   },
+  "icu:Install__qr-max-rotations__retry": {
+    "messageformat": "רענון קוד"
+  },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "לעזרה"
   },
@@ -1201,6 +1255,9 @@
   },
   "icu:Preferences--device-name": {
     "messageformat": "שם מכשיר"
+  },
+  "icu:Preferences--device-name__description": {
+    "messageformat": "כדי לשנות את שם המכשיר הזה, יש לפתוח את Signal בטלפון ולנווט אל הגדרות > מכשירים מקושרים"
   },
   "icu:chooseDeviceName": {
     "messageformat": "בחר שם של מכשיר זה"
@@ -1578,10 +1635,10 @@
     "messageformat": "למחוק את כל הנתונים?"
   },
   "icu:deleteAllDataBody": {
-    "messageformat": "למחוק את כל הנתונים וההודעות מגרסה זו של Signal לשולחן העבודה? תמיד אפשר לקשר מחדש את שולחן העבודה הזה, אבל ההודעות שלך לא ישוחזרו. חשבון Signal שלך והנתונים בטלפון שלך או במכשירים מקושרים אחרים לא יימחקו."
+    "messageformat": "למחוק את כל הנתונים וההודעות מגרסה זו של Signal לשולחן העבודה? חשבון Signal שלך והנתונים בטלפון שלך או במכשירים מקושרים אחרים לא יימחקו."
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "מתנתק ומוחק את כל הנתונים"
+    "messageformat": "התנתקות ומחיקת כל הנתונים בתהליך…"
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "יש לך נתונים מיושנים מהתקנה קודמת של Signal Desktop. אם בא לך להמשיך, הם יימחקו ו–Signal תתחיל מאפס."
@@ -2789,6 +2846,12 @@
   "icu:CallControls__MutedToast--unmuted": {
     "messageformat": "מיקרופון מופעל"
   },
+  "icu:CallControls__LowerHandSuggestionToast": {
+    "messageformat": "להוריד את היד?"
+  },
+  "icu:CallControls__LowerHandSuggestionToast--button": {
+    "messageformat": "הורדה"
+  },
   "icu:CallControls__RingingToast--ringing-on": {
     "messageformat": "צלצול מופעל"
   },
@@ -3566,6 +3629,9 @@
   "icu:next": {
     "messageformat": "הבא"
   },
+  "icu:ClearingData__description": {
+    "messageformat": "זה עשוי לקחת כמה דקות"
+  },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "תרום אל Signal"
   },
@@ -3593,29 +3659,32 @@
   "icu:BackupImportScreen__progressbar-hint--processing": {
     "messageformat": "משלימים את העברת ההודעות…"
   },
+  "icu:BackupImportScreen__progressbar-hint--canceling": {
+    "messageformat": "מתבצע ביטול…"
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "מתכוננים להורדה…"
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "זה עשוי לקחת מספר דקות בהתאם לגודל הגיבוי שלך"
+    "messageformat": "זה עשוי לקחת כמה דקות"
   },
   "icu:BackupImportScreen__cancel": {
-    "messageformat": "ביטול העברה"
+    "messageformat": "ביטול"
   },
   "icu:BackupImportScreen__security-description": {
     "messageformat": "הודעות ופרטי צ׳אט מוגנים באמצעות הצפנה מקצה לקצה, כולל תהליך הסנכרון. <learnMoreLink>למידע נוסף</learnMoreLink>"
   },
   "icu:BackupImportScreen__cancel-confirmation__title": {
-    "messageformat": "לבטל העברה?"
+    "messageformat": "לבטל את הקישור למכשיר?"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "שחזור ההודעות והמדיה שלך לא הושלם. אם תבחר/י לבטל, אפשר לבצע העברה שוב מתוך ההגדרות."
+    "messageformat": "אם תבחר/י לבטל, המכשיר הזה לא יקושר ולא יועברו הודעות או מדיה."
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
-    "messageformat": "המשך העברה"
+    "messageformat": "המשך קישור"
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
-    "messageformat": "ביטול העברה"
+    "messageformat": "ביטול קישור"
   },
   "icu:BackupImportScreen__error__title": {
     "messageformat": "שגיאה בהעברת ההודעות שלך"
@@ -3624,7 +3693,7 @@
     "messageformat": "לא היה ניתן להעביר את ההודעות שלך. יש לבדוק את חיבור האינטרנט שלך ולנסות שוב."
   },
   "icu:BackupImportScreen__error-fatal__body": {
-    "messageformat": "Your messages could not be transferred due to an error. Try again by re-linking this desktop."
+    "messageformat": "לא ניתן היה להעביר את ההודעות שלך עקב שגיאה. יש לנסות שוב באמצעות קישור מחדש של שולחן העבודה הזה."
   },
   "icu:BackupImportScreen__error__confirm": {
     "messageformat": "נסה שוב"
@@ -4230,7 +4299,7 @@
     "messageformat": "איפוס כל צבעי הצ'אט"
   },
   "icu:ChatColorPicker__confirm-reset-default": {
-    "messageformat": "אפס ברירת מחדל"
+    "messageformat": "איפוס צבעי ברירת מחדל"
   },
   "icu:ChatColorPicker__confirm-reset": {
     "messageformat": "אפס"
@@ -4279,6 +4348,9 @@
   },
   "icu:GradientDial__knob-end": {
     "messageformat": "סוף גרדיאנט"
+  },
+  "icu:GIF--download": {
+    "messageformat": "Download GIF attachment"
   },
   "icu:customDisappearingTimeOption": {
     "messageformat": "זמן מותאם אישית…"
@@ -4549,6 +4621,12 @@
   },
   "icu:AvatarColorPicker--choose": {
     "messageformat": "בחר צבע"
+  },
+  "icu:AttachmentDetailPill__retryDownload": {
+    "messageformat": "ניסיון הורדה חוזר"
+  },
+  "icu:AttachmentDetailPill__retryDownloadShort": {
+    "messageformat": "נסה שוב"
   },
   "icu:LeftPaneSetGroupMetadataHelper__avatar-modal-title": {
     "messageformat": "יצגן קבוצה"
@@ -5782,13 +5860,10 @@
     "messageformat": "התאמות קטנות, תיקוני באגים ושיפורי ביצועים. תודה על השימוש ב-Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.36--0": {
-    "messageformat": "העדכון הזה מתקן באג שיתוף מסך ב–macOS Sonoma."
+  "icu:WhatsNew__v7.44--0": {
+    "messageformat": "תיקנו באג אנימציה קל שהתרחש במהלך שיחות קבוצתיות."
   },
-  "icu:WhatsNew__v7.36--1": {
-    "messageformat": "סינון לפי ׳לא נקרא׳ מדגיש כעת את הצ׳אט הנבחר ומתעדכן כשהודעות נקראות ומתקבלות."
-  },
-  "icu:WhatsNew__v7.37--0": {
-    "messageformat": "Now you can easily see the progress of attachment downloads. You can also stop and restart in-progress downloads too. So if a transfer is slowed because you're on the road (in airplane mode?) or the mediocre hotel WiFi is about to implode, you can wait to reload when more available bandwidth is bestowed."
+  "icu:WhatsNew__v7.45--0": {
+    "messageformat": "Stickers should feel sticky, not stuck, so now you can click on a sticker on a newly linked Signal Desktop and that sticker download will automatically get prioritized even when other attachments are downloading too."
   }
 }

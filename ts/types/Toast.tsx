@@ -40,10 +40,12 @@ export enum ToastType {
   FileSize = 'FileSize',
   GroupLinkCopied = 'GroupLinkCopied',
   InvalidConversation = 'InvalidConversation',
+  InvalidStorageServiceHeaders = 'InvalidStorageServiceHeaders',
   LeftGroup = 'LeftGroup',
   LinkCopied = 'LinkCopied',
   LoadingFullLogs = 'LoadingFullLogs',
   MaxAttachments = 'MaxAttachments',
+  MediaNoLongerAvailable = 'MediaNoLongerAvailable',
   MessageBodyTooLong = 'MessageBodyTooLong',
   MessageLoop = 'MessageLoop',
   OriginalMessageNotFound = 'OriginalMessageNotFound',
@@ -132,10 +134,12 @@ export type AnyToast =
       };
     }
   | { toastType: ToastType.InvalidConversation }
+  | { toastType: ToastType.InvalidStorageServiceHeaders }
   | { toastType: ToastType.LeftGroup }
   | { toastType: ToastType.LinkCopied }
   | { toastType: ToastType.LoadingFullLogs }
   | { toastType: ToastType.MaxAttachments }
+  | { toastType: ToastType.MediaNoLongerAvailable }
   | { toastType: ToastType.MessageBodyTooLong }
   | { toastType: ToastType.MessageLoop }
   | { toastType: ToastType.OriginalMessageNotFound }

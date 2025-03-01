@@ -587,6 +587,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--InvalidStorageServiceHeaders": {
+    "messageformat": "Received invalid response from storage service. Please share your logs."
+  },
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
@@ -1121,26 +1124,74 @@
   "icu:lightboxImageAlt": {
     "messageformat": "Image na sinend sa chat"
   },
+  "icu:lightBoxDownloading": {
+    "messageformat": "Dina-download ang {downloaded} ng {total}"
+  },
   "icu:imageCaptionIconAlt": {
     "messageformat": "Icon showing na may caption ang image na ito"
   },
   "icu:imageOpenAlt": {
-    "messageformat": "Open this attachment in a larger view"
+    "messageformat": "Buksan ang attachment na ito sa mas malaking view"
   },
   "icu:startDownload": {
-    "messageformat": "Start download"
+    "messageformat": "Simulan ang pag-download"
   },
   "icu:cancelDownload": {
-    "messageformat": "Cancel download"
-  },
-  "icu:retryDownload": {
-    "messageformat": "Retry download"
-  },
-  "icu:retryDownloadShort": {
-    "messageformat": "Retry"
+    "messageformat": "Kanselahin ang pag-download"
   },
   "icu:downloadNItems": {
-    "messageformat": "{count, plural, one {{count,number} item} other {{count,number} items}}"
+    "messageformat": "{count, plural, one {{count,number} na item} other {{count,number} Item}}"
+  },
+  "icu:mediaNotAvailable": {
+    "messageformat": "Hindi available ang media na ito"
+  },
+  "icu:mediaNotAvailable--short": {
+    "messageformat": "Hindi available ang media"
+  },
+  "icu:attachmentNoLongerAvailable__learnMore": {
+    "messageformat": "Matuto pa"
+  },
+  "icu:attachmentNotAvailable__file": {
+    "messageformat": "Hindi available ang file"
+  },
+  "icu:attachmentNotAvailable__longMessage": {
+    "messageformat": "Hindi kumpleto ang message na ito"
+  },
+  "icu:attachmentNotAvailable__sticker": {
+    "messageformat": "Hindi available ang sticker"
+  },
+  "icu:attachmentNotAvailable__voice": {
+    "messageformat": "Hindi available ang voice message"
+  },
+  "icu:AttachmentNotAvailableModal__title--file": {
+    "messageformat": "Hindi available ang file"
+  },
+  "icu:AttachmentNotAvailableModal__title--long-text": {
+    "messageformat": "Hindi available ang kumpletong message"
+  },
+  "icu:AttachmentNotAvailableModal__title--media": {
+    "messageformat": "Hindi available ang media"
+  },
+  "icu:AttachmentNotAvailableModal__title--sticker": {
+    "messageformat": "Hindi available ang sticker"
+  },
+  "icu:AttachmentNotAvailableModal__title--voice-message": {
+    "messageformat": "Hindi available ang voice message"
+  },
+  "icu:AttachmentNotAvailableModal__body--file": {
+    "messageformat": "Hindi nalipat ang file na ito mula sa phone mo noong ni-link ang device na ito. Ang media at files na higit sa 45 araw noong ni-link ang device ay hindi masy-sync."
+  },
+  "icu:AttachmentNotAvailableModal__body--long-text": {
+    "messageformat": "Ang kumpletong text sa message na ito ay hindi nalipat mula sa phone mo noong ni-link ang device na ito. Ang mahabang text messages na higit sa 45 araw noong ni-link ang device ay hindi masy-sync."
+  },
+  "icu:AttachmentNotAvailableModal__body--media": {
+    "messageformat": "Ang media na ito ay hindi nalipat mula sa phone mo noong ni-link ang device na ito. Ang media na higit sa 45 araw noong ni-link ang device ay hindi masy-sync."
+  },
+  "icu:AttachmentNotAvailableModal__body--sticker": {
+    "messageformat": "Ang sticker na ito ay hindi nalipat mula sa phone mo noong ni-link ang device na ito. Ang media at files na higit sa 45 araw noong ni-link ang device ay hindi masy-sync."
+  },
+  "icu:AttachmentNotAvailableModal__body--voice-message": {
+    "messageformat": "Ang voice message na ito ay hindi nalipat mula sa phone mo noong ni-link ang device na ito. Ang media at files na higit sa 45 araw noong ni-link ang device ay hindi masy-sync."
   },
   "icu:save": {
     "messageformat": "I-save"
@@ -1184,6 +1235,9 @@
   "icu:Install__qr-failed-load__retry": {
     "messageformat": "Subukang muli"
   },
+  "icu:Install__qr-max-rotations__retry": {
+    "messageformat": "I-refresh ang code"
+  },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "Humingi ng tulong"
   },
@@ -1201,6 +1255,9 @@
   },
   "icu:Preferences--device-name": {
     "messageformat": "Device name"
+  },
+  "icu:Preferences--device-name__description": {
+    "messageformat": "Para palitan ang pangalan ng device na ito, buksan ang Signal sa phone mo at pumunta sa Settings > Linked devices"
   },
   "icu:chooseDeviceName": {
     "messageformat": "Choose this device's name"
@@ -1578,10 +1635,10 @@
     "messageformat": "Gusto mo bang i-burahin ang lahat ng data?"
   },
   "icu:deleteAllDataBody": {
-    "messageformat": "Gusto mo bang burahin ang lahat ng data at messages mula sa version na ito ng Signal Desktop? Pwede mong palaging i-relink ang desktop na ito, pero hindi na maibabalik ang messages mo. Hindi mabubura ang iyong Signal account at data nito sa phone mo o ibang linked devices."
+    "messageformat": "Gusto mo bang burahin ang lahat ng data at messages mula sa version na ito ng Signal Desktop? Hindi mabubura ang iyong Signal account at data nito sa phone mo o ibang linked devices."
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "Disconnecting and deleting all data"
+    "messageformat": "Dini-disconnect at binubura ang lahat ng data…"
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "Mayroon kang lumang data mula sa lumang installation ng Signal Desktop. Mabubura ito kapag nagpatuloy ka at magsisimula ka ulit sa simula."
@@ -2789,6 +2846,12 @@
   "icu:CallControls__MutedToast--unmuted": {
     "messageformat": "Naka-on ang mic"
   },
+  "icu:CallControls__LowerHandSuggestionToast": {
+    "messageformat": "Gusto mo bang ibaba ang iyong kamay?"
+  },
+  "icu:CallControls__LowerHandSuggestionToast--button": {
+    "messageformat": "Ibaba"
+  },
   "icu:CallControls__RingingToast--ringing-on": {
     "messageformat": "Naka-on ang pag-ring"
   },
@@ -3566,6 +3629,9 @@
   "icu:next": {
     "messageformat": "Susunod"
   },
+  "icu:ClearingData__description": {
+    "messageformat": "Maaari itong tumagal nang ilang minuto"
+  },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "Mag-donate sa Signal"
   },
@@ -3593,29 +3659,32 @@
   "icu:BackupImportScreen__progressbar-hint--processing": {
     "messageformat": "Tinatapos ang paglilipat ng message..."
   },
+  "icu:BackupImportScreen__progressbar-hint--canceling": {
+    "messageformat": "Kina-cancel..."
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "Naghahandang mag-download..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "Maaaring tumagal ito nang ilang minuto depende sa laki ng iyong backup"
+    "messageformat": "Maaari itong tumagal nang ilang minuto"
   },
   "icu:BackupImportScreen__cancel": {
-    "messageformat": "I-cancel ang transfer"
+    "messageformat": "I-cancel"
   },
   "icu:BackupImportScreen__security-description": {
     "messageformat": "Protektado ng end-to-end encryption ang messages at chat info, kasama ang proseso ng pag-sync. <learnMoreLink>Matuto pa</learnMoreLink>"
   },
   "icu:BackupImportScreen__cancel-confirmation__title": {
-    "messageformat": "Gusto mo bang i-cancel ang transfer?"
+    "messageformat": "I-cancel ang pag-link ng device?"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "Hindi pa tapos ang pag-restore ng messages at media mo. Kapag kinancel mo ito, maaari mong ulitin ang pag-transfer mula sa Settings."
+    "messageformat": "Kapag pinili mong mag-cancel, hindi na mali-link ang device na ito at walang message o media ang malilipat."
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
-    "messageformat": "Ituloy ang pag-transfer"
+    "messageformat": "Ituloy ang pag-link"
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
-    "messageformat": "I-cancel ang transfer"
+    "messageformat": "I-cancel ang pag-link"
   },
   "icu:BackupImportScreen__error__title": {
     "messageformat": "May error sa pag-transfer ng messages mo"
@@ -3624,7 +3693,7 @@
     "messageformat": "Hindi ma-transfer ang messages mo. I-check ang iyong connection at subukan ulit."
   },
   "icu:BackupImportScreen__error-fatal__body": {
-    "messageformat": "Your messages could not be transferred due to an error. Try again by re-linking this desktop."
+    "messageformat": "Hindi mailipat ang messages mo dahil sa error. Subukan ulit sa pamamagitan ng pag-link ulit sa desktop na ito."
   },
   "icu:BackupImportScreen__error__confirm": {
     "messageformat": "Subukang muli"
@@ -4230,7 +4299,7 @@
     "messageformat": "I-reset ang lahat ng Chat Colors"
   },
   "icu:ChatColorPicker__confirm-reset-default": {
-    "messageformat": "I-reset sa default"
+    "messageformat": "I-reset sa default colors"
   },
   "icu:ChatColorPicker__confirm-reset": {
     "messageformat": "I-reset"
@@ -4279,6 +4348,9 @@
   },
   "icu:GradientDial__knob-end": {
     "messageformat": "Gradient end"
+  },
+  "icu:GIF--download": {
+    "messageformat": "Download GIF attachment"
   },
   "icu:customDisappearingTimeOption": {
     "messageformat": "Custom time…"
@@ -4549,6 +4621,12 @@
   },
   "icu:AvatarColorPicker--choose": {
     "messageformat": "Pumili ng color"
+  },
+  "icu:AttachmentDetailPill__retryDownload": {
+    "messageformat": "Subukan ulit ang pag-download"
+  },
+  "icu:AttachmentDetailPill__retryDownloadShort": {
+    "messageformat": "Subukang muli"
   },
   "icu:LeftPaneSetGroupMetadataHelper__avatar-modal-title": {
     "messageformat": "Group Avatar"
@@ -5782,13 +5860,10 @@
     "messageformat": "Dagdag na maliliit na pag-aayos, pag-alis ng bugs, at pagpapaganda ng takbo ng app. Maraming salamat sa paggamit ng Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.36--0": {
-    "messageformat": "Inaayos ng update na ito ang isang screen sharing bug sa macOS Sonoma."
+  "icu:WhatsNew__v7.44--0": {
+    "messageformat": "May inayos kaming minor animation bug sa group calls."
   },
-  "icu:WhatsNew__v7.36--1": {
-    "messageformat": "Hina-highlight na ng Filter by Unread ang piniling chat at nag-u-update habang nagbabasa at tumatanggap ng messages."
-  },
-  "icu:WhatsNew__v7.37--0": {
-    "messageformat": "Now you can easily see the progress of attachment downloads. You can also stop and restart in-progress downloads too. So if a transfer is slowed because you're on the road (in airplane mode?) or the mediocre hotel WiFi is about to implode, you can wait to reload when more available bandwidth is bestowed."
+  "icu:WhatsNew__v7.45--0": {
+    "messageformat": "Stickers should feel sticky, not stuck, so now you can click on a sticker on a newly linked Signal Desktop and that sticker download will automatically get prioritized even when other attachments are downloading too."
   }
 }

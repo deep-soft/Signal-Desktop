@@ -587,6 +587,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--InvalidStorageServiceHeaders": {
+    "messageformat": "Received invalid response from storage service. Please share your logs."
+  },
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
@@ -1121,26 +1124,74 @@
   "icu:lightboxImageAlt": {
     "messageformat": "Obrázok z četu"
   },
+  "icu:lightBoxDownloading": {
+    "messageformat": "Sťahuje sa {downloaded} z {total}"
+  },
   "icu:imageCaptionIconAlt": {
     "messageformat": "Ikona indukujúca, že tento obrázok má popis"
   },
   "icu:imageOpenAlt": {
-    "messageformat": "Open this attachment in a larger view"
+    "messageformat": "Otvoriť prílohu vo väčšom zobrazení"
   },
   "icu:startDownload": {
-    "messageformat": "Start download"
+    "messageformat": "Spustiť sťahovanie"
   },
   "icu:cancelDownload": {
-    "messageformat": "Cancel download"
-  },
-  "icu:retryDownload": {
-    "messageformat": "Retry download"
-  },
-  "icu:retryDownloadShort": {
-    "messageformat": "Retry"
+    "messageformat": "Zrušiť sťahovanie"
   },
   "icu:downloadNItems": {
-    "messageformat": "{count, plural, one {{count,number} item} other {{count,number} items}}"
+    "messageformat": "{count, plural, one {{count,number} položka} few {{count,number} položky} many {{count,number} položiek} other {{count,number} položiek}}"
+  },
+  "icu:mediaNotAvailable": {
+    "messageformat": "Toto médium nie je k dispozícii"
+  },
+  "icu:mediaNotAvailable--short": {
+    "messageformat": "Médium nie je k dispozícii"
+  },
+  "icu:attachmentNoLongerAvailable__learnMore": {
+    "messageformat": "Zistiť viac"
+  },
+  "icu:attachmentNotAvailable__file": {
+    "messageformat": "Súbor nie je k dispozícii"
+  },
+  "icu:attachmentNotAvailable__longMessage": {
+    "messageformat": "Táto správa je neúplná"
+  },
+  "icu:attachmentNotAvailable__sticker": {
+    "messageformat": "Nálepka nie je k dispozícii"
+  },
+  "icu:attachmentNotAvailable__voice": {
+    "messageformat": "Hlasová správa nie je k dispozícii"
+  },
+  "icu:AttachmentNotAvailableModal__title--file": {
+    "messageformat": "Súbor nie je k dispozícii"
+  },
+  "icu:AttachmentNotAvailableModal__title--long-text": {
+    "messageformat": "Celá správa nie je k dispozícii"
+  },
+  "icu:AttachmentNotAvailableModal__title--media": {
+    "messageformat": "Médium nie je k dispozícii"
+  },
+  "icu:AttachmentNotAvailableModal__title--sticker": {
+    "messageformat": "Nálepka nie je k dispozícii"
+  },
+  "icu:AttachmentNotAvailableModal__title--voice-message": {
+    "messageformat": "Hlasová správa nie je k dispozícii"
+  },
+  "icu:AttachmentNotAvailableModal__body--file": {
+    "messageformat": "Tento súbor nebol po prepojení zariadenia prenesený z vášho telefónu. Médiá a súbory, ktoré sú v čase prepojenia zariadenia staršie ako 45 dní, nie je možné synchronizovať."
+  },
+  "icu:AttachmentNotAvailableModal__body--long-text": {
+    "messageformat": "Po prepojení zariadenia nebol z vášho telefónu prenesený celý text tejto správy. Dlhé textové správy, ktoré sú v čase prepojenia zariadenia staršie ako 45 dní, nie je možné synchronizovať."
+  },
+  "icu:AttachmentNotAvailableModal__body--media": {
+    "messageformat": "Toto médium nebolo po prepojení zariadenia prenesené z vášho telefónu. Médiá, ktoré sú v čase prepojenia zariadenia staršie ako 45 dní, nie je možné synchronizovať."
+  },
+  "icu:AttachmentNotAvailableModal__body--sticker": {
+    "messageformat": "Táto nálepka nebola po prepojení zariadenia prenesená z vášho telefónu. Médiá a súbory, ktoré sú v čase prepojenia zariadenia staršie ako 45 dní, nie je možné synchronizovať."
+  },
+  "icu:AttachmentNotAvailableModal__body--voice-message": {
+    "messageformat": "Táto hlasová správa nebola po prepojení zariadenia prenesená z vášho telefónu. Médiá a súbory, ktoré sú v čase prepojenia zariadenia staršie ako 45 dní, nie je možné synchronizovať."
   },
   "icu:save": {
     "messageformat": "Uložiť"
@@ -1184,6 +1235,9 @@
   "icu:Install__qr-failed-load__retry": {
     "messageformat": "Skúsiť znovu"
   },
+  "icu:Install__qr-max-rotations__retry": {
+    "messageformat": "Obnoviť kód"
+  },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "Pomoc"
   },
@@ -1201,6 +1255,9 @@
   },
   "icu:Preferences--device-name": {
     "messageformat": "Názov zariadenia"
+  },
+  "icu:Preferences--device-name__description": {
+    "messageformat": "Ak chcete zmeniť názov tohto zariadenia, otvorte v telefóne Signal a prejdite do časti Nastavenia > Prepojené zariadenia"
   },
   "icu:chooseDeviceName": {
     "messageformat": "Zvoľte názov pre toto zariadenie"
@@ -1578,10 +1635,10 @@
     "messageformat": "Vymazať všetky dáta?"
   },
   "icu:deleteAllDataBody": {
-    "messageformat": "Chcete vymazať všetky údaje a správy z tejto verzie aplikácie Signal Desktop? Aplikáciu môžete vždy znova prepojiť, vaše správy sa však neobnovia. Váš účet Signal a údaje vo vašom telefóne alebo iných prepojených zariadeniach nebudú vymazané."
+    "messageformat": "Chcete vymazať všetky údaje a správy z tejto verzie aplikácie Signal Desktop? Váš účet Signal a údaje vo vašom telefóne alebo iných prepojených zariadeniach nebudú vymazané."
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "Odpojovanie a mazanie dát"
+    "messageformat": "Prebieha odpojenie a odstraňovanie všetkých údajov…"
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "Toto zariadenie obsahuje staré dáta z predošlej inštalácie Signalu. Ak budete pokračovať, zmažú sa a začnete s čistým štítom."
@@ -2789,6 +2846,12 @@
   "icu:CallControls__MutedToast--unmuted": {
     "messageformat": "Mikrofón zapnutý"
   },
+  "icu:CallControls__LowerHandSuggestionToast": {
+    "messageformat": "Znížiť ruku?"
+  },
+  "icu:CallControls__LowerHandSuggestionToast--button": {
+    "messageformat": "Znížiť"
+  },
   "icu:CallControls__RingingToast--ringing-on": {
     "messageformat": "Zvonenie zapnuté"
   },
@@ -3566,6 +3629,9 @@
   "icu:next": {
     "messageformat": "ďalší"
   },
+  "icu:ClearingData__description": {
+    "messageformat": "Môže to trvať pár minút"
+  },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "Prispieť na Signal"
   },
@@ -3593,29 +3659,32 @@
   "icu:BackupImportScreen__progressbar-hint--processing": {
     "messageformat": "Dokončuje sa prenos správ…"
   },
+  "icu:BackupImportScreen__progressbar-hint--canceling": {
+    "messageformat": "Prebieha zrušenie…"
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "Pripravuje sa sťahovanie…"
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "V závislosti od veľkosti zálohy to môže trvať niekoľko minút"
+    "messageformat": "Môže to trvať pár minút"
   },
   "icu:BackupImportScreen__cancel": {
-    "messageformat": "Zrušiť prenos"
+    "messageformat": "Zrušiť"
   },
   "icu:BackupImportScreen__security-description": {
     "messageformat": "Správy a informácie o četoch sú chránené end-to-end šifrovaním vrátane procesu synchronizácie. <learnMoreLink>Zistiť viac</learnMoreLink>"
   },
   "icu:BackupImportScreen__cancel-confirmation__title": {
-    "messageformat": "Zrušiť prenos?"
+    "messageformat": "Zrušiť prepojenie zariadenia?"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "Obnovenie vašich správ a médií sa nedokončilo. Ak sa rozhodnete prenos zrušiť, môžete ho znova začať v Nastaveniach."
+    "messageformat": "Ak sa rozhodnete prepojenie zrušiť, toto zariadenie nebude prepojené a neprenesú sa žiadne správy ani médiá."
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
-    "messageformat": "Pokračovať v prenose"
+    "messageformat": "Pokračovať v prepájaní"
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
-    "messageformat": "Zrušiť prenos"
+    "messageformat": "Zrušiť prepojenie"
   },
   "icu:BackupImportScreen__error__title": {
     "messageformat": "Vyskytla sa chyba pri prenose vašich správ"
@@ -3624,7 +3693,7 @@
     "messageformat": "Vaše správy nebolo možné preniesť. Skontrolujte internetové pripojenie a skúste to znova."
   },
   "icu:BackupImportScreen__error-fatal__body": {
-    "messageformat": "Your messages could not be transferred due to an error. Try again by re-linking this desktop."
+    "messageformat": "Vyskytla sa chyba a vaše správy nebolo možné preniesť. Skúste to znova opätovným prepojením tohto počítača."
   },
   "icu:BackupImportScreen__error__confirm": {
     "messageformat": "Skúsiť znovu"
@@ -4230,7 +4299,7 @@
     "messageformat": "Obnoviť všetky farby četu"
   },
   "icu:ChatColorPicker__confirm-reset-default": {
-    "messageformat": "Obnoviť predvolené"
+    "messageformat": "Obnoviť predvolené farby"
   },
   "icu:ChatColorPicker__confirm-reset": {
     "messageformat": "Resetovať"
@@ -4279,6 +4348,9 @@
   },
   "icu:GradientDial__knob-end": {
     "messageformat": "Koniec prechodu"
+  },
+  "icu:GIF--download": {
+    "messageformat": "Download GIF attachment"
   },
   "icu:customDisappearingTimeOption": {
     "messageformat": "Vlastný čas…"
@@ -4549,6 +4621,12 @@
   },
   "icu:AvatarColorPicker--choose": {
     "messageformat": "Vyberte farbu"
+  },
+  "icu:AttachmentDetailPill__retryDownload": {
+    "messageformat": "Zopakovať sťahovanie"
+  },
+  "icu:AttachmentDetailPill__retryDownloadShort": {
+    "messageformat": "Skúsiť znovu"
   },
   "icu:LeftPaneSetGroupMetadataHelper__avatar-modal-title": {
     "messageformat": "Obrázok skupiny"
@@ -5782,13 +5860,10 @@
     "messageformat": "Malé úpravy, opravy chýb a vylepšenia výkonu. Ďakujeme, že používate Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.36--0": {
-    "messageformat": "Táto aktualizácia opravuje chybu súvisiacu so zdieľaním obrazovky v systéme macOS Sonoma."
+  "icu:WhatsNew__v7.44--0": {
+    "messageformat": "Opravili sme menšiu chybu animácie, ku ktorej dochádzalo počas skupinových hovorov."
   },
-  "icu:WhatsNew__v7.36--1": {
-    "messageformat": "Možnosť Filtrovať podľa neprečítaných správ teraz zvýrazní vybratý čet a aktualizuje sa pri čítaní a prijímaní správ."
-  },
-  "icu:WhatsNew__v7.37--0": {
-    "messageformat": "Now you can easily see the progress of attachment downloads. You can also stop and restart in-progress downloads too. So if a transfer is slowed because you're on the road (in airplane mode?) or the mediocre hotel WiFi is about to implode, you can wait to reload when more available bandwidth is bestowed."
+  "icu:WhatsNew__v7.45--0": {
+    "messageformat": "Stickers should feel sticky, not stuck, so now you can click on a sticker on a newly linked Signal Desktop and that sticker download will automatically get prioritized even when other attachments are downloading too."
   }
 }

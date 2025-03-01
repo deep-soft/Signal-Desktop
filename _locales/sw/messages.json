@@ -587,6 +587,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--InvalidStorageServiceHeaders": {
+    "messageformat": "Received invalid response from storage service. Please share your logs."
+  },
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
@@ -1121,26 +1124,74 @@
   "icu:lightboxImageAlt": {
     "messageformat": "Picha zimetumwa katika gumzo"
   },
+  "icu:lightBoxDownloading": {
+    "messageformat": "Inapakua {downloaded} ya {total}"
+  },
   "icu:imageCaptionIconAlt": {
     "messageformat": "Ikoni inaonyesha kuwa taswira hii ina maelezo mafupi"
   },
   "icu:imageOpenAlt": {
-    "messageformat": "Open this attachment in a larger view"
+    "messageformat": "Fungua kiambatisho hiki katika mwonekano mkubwa zaidi"
   },
   "icu:startDownload": {
-    "messageformat": "Start download"
+    "messageformat": "Anza kupakua"
   },
   "icu:cancelDownload": {
-    "messageformat": "Cancel download"
-  },
-  "icu:retryDownload": {
-    "messageformat": "Retry download"
-  },
-  "icu:retryDownloadShort": {
-    "messageformat": "Retry"
+    "messageformat": "Ghairi upakuaji"
   },
   "icu:downloadNItems": {
-    "messageformat": "{count, plural, one {{count,number} item} other {{count,number} items}}"
+    "messageformat": "{count, plural, one {Kitu {count,number}} other {Vitu {count,number}}}"
+  },
+  "icu:mediaNotAvailable": {
+    "messageformat": "Video hii haipatikani"
+  },
+  "icu:mediaNotAvailable--short": {
+    "messageformat": "Video na picha haipatikani"
+  },
+  "icu:attachmentNoLongerAvailable__learnMore": {
+    "messageformat": "Jifunze zaidi"
+  },
+  "icu:attachmentNotAvailable__file": {
+    "messageformat": "Faili haipatikani"
+  },
+  "icu:attachmentNotAvailable__longMessage": {
+    "messageformat": "Ujumbe huu haujakamilika"
+  },
+  "icu:attachmentNotAvailable__sticker": {
+    "messageformat": "Kibandiko hakipatikani"
+  },
+  "icu:attachmentNotAvailable__voice": {
+    "messageformat": "Ujumbe huu wa sauti haujakamilika"
+  },
+  "icu:AttachmentNotAvailableModal__title--file": {
+    "messageformat": "Faili haipatikani"
+  },
+  "icu:AttachmentNotAvailableModal__title--long-text": {
+    "messageformat": "Ujumbe kamili haupatikani"
+  },
+  "icu:AttachmentNotAvailableModal__title--media": {
+    "messageformat": "Video na picha haipatikani"
+  },
+  "icu:AttachmentNotAvailableModal__title--sticker": {
+    "messageformat": "Kibandiko hakipatikani"
+  },
+  "icu:AttachmentNotAvailableModal__title--voice-message": {
+    "messageformat": "Ujumbe huu wa sauti haujakamilika"
+  },
+  "icu:AttachmentNotAvailableModal__body--file": {
+    "messageformat": "Faili hii haikuhamishwa kutoka kwenye simu yako wakati kifaa hiki kilipounganishwa. Video, picha na faili zenye zaidi ya siku 45 wakati wa kuunganisha kifaa haziwezi kusawazishwa."
+  },
+  "icu:AttachmentNotAvailableModal__body--long-text": {
+    "messageformat": "Nakala kamili katika ujumbe huu haikuhamishwa kutoka kwenye simu yako wakati kifaa hiki kiliunganishwa. Ujumbe mrefu wa maandishi zaidi ya siku 45 wakati wa kuunganisha kifaa hauwezi kusawazishwa."
+  },
+  "icu:AttachmentNotAvailableModal__body--media": {
+    "messageformat": "Faili hii haikuhamishwa kutoka kwenye simu yako wakati kifaa hiki kilipounganishwa. Video na picha zenye zaidi ya siku 45 wakati wa kuunganisha kifaa haziwezi kusawazishwa."
+  },
+  "icu:AttachmentNotAvailableModal__body--sticker": {
+    "messageformat": "Kibandiko hiki hakikuhamishwa kutoka kwenye simu yako wakati kifaa hiki kilipounganishwa. Video, picha na faili zenye zaidi ya siku 45 wakati wa kuunganisha kifaa haziwezi kusawazishwa."
+  },
+  "icu:AttachmentNotAvailableModal__body--voice-message": {
+    "messageformat": "Ujumbe huu wa sauti haukuhamishwa kutoka kwenye simu yako wakati kifaa hiki kilipounganishwa. Video, picha na faili zenye zaidi ya siku 45 wakati wa kuunganisha kifaa haziwezi kusawazishwa."
   },
   "icu:save": {
     "messageformat": "Hifadhi"
@@ -1184,6 +1235,9 @@
   "icu:Install__qr-failed-load__retry": {
     "messageformat": "Jaribu Upya"
   },
+  "icu:Install__qr-max-rotations__retry": {
+    "messageformat": "Onyesha code upya"
+  },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "Pata msaada"
   },
@@ -1201,6 +1255,9 @@
   },
   "icu:Preferences--device-name": {
     "messageformat": "Jina la kifaa"
+  },
+  "icu:Preferences--device-name__description": {
+    "messageformat": "Ili kubadilisha jina la kifaa hiki, fungua ishara kwenye simu yako na nenda kwa mipangilio> Kifaa Kilichounganishwa"
   },
   "icu:chooseDeviceName": {
     "messageformat": "Chagua jina la kifaa hiki"
@@ -1578,10 +1635,10 @@
     "messageformat": "Futa data yote?"
   },
   "icu:deleteAllDataBody": {
-    "messageformat": "Futa data na jumbe zote kutoka kwenye toleo hili la Signal Desktop? Unaweza kuiunganisha tena kompyuta hii wakati wowote, lakini jumbe zako hazitarejeshwa. Akaunti yako ya Signal na data kwenye simu yako au vifaa vingine vilivyounganishwa havitofutwa."
+    "messageformat": "Futa data na jumbe zote kutoka kwenye toleo hili la Signal Desktop? Akaunti yako ya Signal na data kwenye simu yako au vifaa vingine vilivyounganishwa havitofutwa."
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "Inatenganisha na kufuta data yote"
+    "messageformat": "Inatenganisha na kufuta data yote…"
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "Una data nzee kutokana na usanikishaji wa awali wa Signal Desktop. Ukichagua kuendelea, itafutwa na utaanza kutoka mwanzoni."
@@ -2789,6 +2846,12 @@
   "icu:CallControls__MutedToast--unmuted": {
     "messageformat": "Washa mic"
   },
+  "icu:CallControls__LowerHandSuggestionToast": {
+    "messageformat": "Je ushushe mkono wako?"
+  },
+  "icu:CallControls__LowerHandSuggestionToast--button": {
+    "messageformat": "Shusha"
+  },
   "icu:CallControls__RingingToast--ringing-on": {
     "messageformat": "Sauti ya kuitana imewashwa"
   },
@@ -3566,6 +3629,9 @@
   "icu:next": {
     "messageformat": "ijayo"
   },
+  "icu:ClearingData__description": {
+    "messageformat": "Huenda hatua hii ikachukua dakika kadhaa"
+  },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "Changia Signal"
   },
@@ -3593,29 +3659,32 @@
   "icu:BackupImportScreen__progressbar-hint--processing": {
     "messageformat": "Inakamilisha uhamishaji wa ujumbe..."
   },
+  "icu:BackupImportScreen__progressbar-hint--canceling": {
+    "messageformat": "Inaghairi..."
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "Inajiandaa kupakua..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "Hii inaweza kuchukua sekunde kadhaa kulingana na ukubwa wa mchakato wako wa uhifadhi nakala"
+    "messageformat": "Huenda hatua hii ikachukua dakika kadhaa"
   },
   "icu:BackupImportScreen__cancel": {
-    "messageformat": "Ghairi uhamishaji"
+    "messageformat": "Ghairi"
   },
   "icu:BackupImportScreen__security-description": {
     "messageformat": "Maelezo ya ujumbe na gumzo yanalindwa na kusimbwa fiche, ikiwemo mchakato wa ku-sync. <learnMoreLink>Jifunze zaidi</learnMoreLink>"
   },
   "icu:BackupImportScreen__cancel-confirmation__title": {
-    "messageformat": "Je, ghairi uhamishaji?"
+    "messageformat": "Ungependa kughairi kuunganisha kifaa?"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "Jumbe na picha na video zako hazijakamilika kurejeshwa. Ukichagua kughairi, unaweza kuhamisha tena kutoka kwenye Mipangilio."
+    "messageformat": "Ukichagua kughairi, kifaa hiki hakitaunganishwa na hakuna ujumbe au video na picha haitahamishwa."
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
-    "messageformat": "Endelea na uhamishaji"
+    "messageformat": "Endelea kuunganisha"
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
-    "messageformat": "Ghairi uhamishaji"
+    "messageformat": "Ghairi kuunganisha"
   },
   "icu:BackupImportScreen__error__title": {
     "messageformat": "Hitilafu katika uhamishaji wa jumbe zako"
@@ -3624,7 +3693,7 @@
     "messageformat": "Jumbe zako zimeshindwa kuhama. Angalia muunganisho wako wa mtandao kisha ujaribu tena."
   },
   "icu:BackupImportScreen__error-fatal__body": {
-    "messageformat": "Your messages could not be transferred due to an error. Try again by re-linking this desktop."
+    "messageformat": "Jumbe zako hazikuweza kuhamishwa kwa sababu ya hitilafu. Jaribu tena kwa kuunganisha tena eneo-kazi hili."
   },
   "icu:BackupImportScreen__error__confirm": {
     "messageformat": "Jaribu Upya"
@@ -4230,7 +4299,7 @@
     "messageformat": "Weka upya rangi zote za gumzo"
   },
   "icu:ChatColorPicker__confirm-reset-default": {
-    "messageformat": "Weka upya chaguo-msingi"
+    "messageformat": "Weka upya rangi chaguo-msingi"
   },
   "icu:ChatColorPicker__confirm-reset": {
     "messageformat": "Weka upya"
@@ -4279,6 +4348,9 @@
   },
   "icu:GradientDial__knob-end": {
     "messageformat": "Kuisha kwa rangi ya mwinamo"
+  },
+  "icu:GIF--download": {
+    "messageformat": "Download GIF attachment"
   },
   "icu:customDisappearingTimeOption": {
     "messageformat": "Wakati maalum..."
@@ -4549,6 +4621,12 @@
   },
   "icu:AvatarColorPicker--choose": {
     "messageformat": "Chagua rangi"
+  },
+  "icu:AttachmentDetailPill__retryDownload": {
+    "messageformat": "Jaribu kupakua tena"
+  },
+  "icu:AttachmentDetailPill__retryDownloadShort": {
+    "messageformat": "Jaribu Upya"
   },
   "icu:LeftPaneSetGroupMetadataHelper__avatar-modal-title": {
     "messageformat": "Umbo la Kikundi"
@@ -5782,13 +5860,10 @@
     "messageformat": "Mabadiliko madogo, marekebisho ya bugs na uboreshaji wa utendaji. Asante kwa kutumia Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.36--0": {
-    "messageformat": "Sasisho hili hurekebisha hitilafu kwenye macOS Sonoma ambayo ilizuia kushiriki skrini kufanya kazi ipasavyo ikiwa ruhusa ya kushiriki skrini ilikuwa imekataliwa hapo awali — kwa hivyo huhitaji tena kushiriki skrini yako na ujumbe wa hitilafu."
+  "icu:WhatsNew__v7.44--0": {
+    "messageformat": "Tumerekebisha hitilafu ndogo ya uhuishaji wakati wa simu za vikundi. Tunaomba msamaha mapema ikiwa sehemu ya kufurahisha zaidi ya siku yako ilikuwa kubadilisha kwenda kwenye mtazamo wa gridi wakati wa mkutano na kujaribu kupata muda ambapo video squares kutoka kwa watu ambao walijiunga kwa kuchelewa ilificha sehemu ya slaidi ambayo bosi wako alikuwa akiwasilisha."
   },
-  "icu:WhatsNew__v7.36--1": {
-    "messageformat": "Chuja kwa Haijasomwa sasa huangazia gumzo iliyochaguliwa na orodha ya gumzo ambazo hazijasomwa zitasasishwa kiotomatiki ujumbe mpya unapofika au unapoingia kwenye gumzo moja na kubofya gumzo jingine."
-  },
-  "icu:WhatsNew__v7.37--0": {
-    "messageformat": "Now you can easily see the progress of attachment downloads. You can also stop and restart in-progress downloads too. So if a transfer is slowed because you're on the road (in airplane mode?) or the mediocre hotel WiFi is about to implode, you can wait to reload when more available bandwidth is bestowed."
+  "icu:WhatsNew__v7.45--0": {
+    "messageformat": "Stickers should feel sticky, not stuck, so now you can click on a sticker on a newly linked Signal Desktop and that sticker download will automatically get prioritized even when other attachments are downloading too."
   }
 }

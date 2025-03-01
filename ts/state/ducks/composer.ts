@@ -69,7 +69,7 @@ import { resolveAttachmentDraftData } from '../../util/resolveAttachmentDraftDat
 import { resolveDraftAttachmentOnDisk } from '../../util/resolveDraftAttachmentOnDisk';
 import { shouldShowInvalidMessageToast } from '../../util/shouldShowInvalidMessageToast';
 import { writeDraftAttachment } from '../../util/writeDraftAttachment';
-import { __DEPRECATED$getMessageById } from '../../messages/getMessageById';
+import { getMessageById } from '../../messages/getMessageById';
 import { canReply, isNormalBubble } from '../selectors/message';
 import { getAuthorId } from '../../messages/helpers';
 import { getConversationSelector } from '../selectors/conversations';
@@ -730,9 +730,7 @@ export function setQuoteByMessageId(
       return;
     }
 
-    const message = messageId
-      ? await __DEPRECATED$getMessageById(messageId, 'setQuoteByMessageId')
-      : undefined;
+    const message = messageId ? await getMessageById(messageId) : undefined;
     const state = getState();
 
     if (
@@ -967,10 +965,6 @@ function onEditorStateChange({
       return;
     }
 
-    if (messageText.length && conversation.throttledBumpTyping) {
-      conversation.throttledBumpTyping();
-    }
-
     debouncedSaveDraft(conversationId, messageText, bodyRanges);
 
     // If we have attachments, don't add link preview
@@ -998,9 +992,11 @@ function onEditorStateChange({
 function processAttachments({
   conversationId,
   files,
+  flags,
 }: {
   conversationId: string;
   files: ReadonlyArray<File>;
+  flags: number | null;
 }): ThunkAction<
   void,
   RootStateType,
@@ -1066,6 +1062,7 @@ function processAttachments({
         try {
           const attachment = await processAttachment(file, {
             generateScreenshot: true,
+            flags,
           });
           if (!attachment) {
             removeAttachment(conversationId, webUtils.getPathForFile(file))(
@@ -1330,6 +1327,10 @@ function saveDraft(
     if (!activeAt) {
       activeAt = now;
       timestamp = now;
+    }
+
+    if (messageText.length && conversation.throttledBumpTyping) {
+      conversation.throttledBumpTyping();
     }
 
     conversation.set({

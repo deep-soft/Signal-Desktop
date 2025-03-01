@@ -587,6 +587,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--InvalidStorageServiceHeaders": {
+    "messageformat": "Received invalid response from storage service. Please share your logs."
+  },
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
@@ -1121,26 +1124,74 @@
   "icu:lightboxImageAlt": {
     "messageformat": "Slika, poslana v klepetu"
   },
+  "icu:lightBoxDownloading": {
+    "messageformat": "Prenos {downloaded} od {total}"
+  },
   "icu:imageCaptionIconAlt": {
     "messageformat": "Ikona, ki označuje, da ima ta slika besedilo"
   },
   "icu:imageOpenAlt": {
-    "messageformat": "Open this attachment in a larger view"
+    "messageformat": "Odprite to priponko v večjem pogledu"
   },
   "icu:startDownload": {
-    "messageformat": "Start download"
+    "messageformat": "Začetek prenosa"
   },
   "icu:cancelDownload": {
-    "messageformat": "Cancel download"
-  },
-  "icu:retryDownload": {
-    "messageformat": "Retry download"
-  },
-  "icu:retryDownloadShort": {
-    "messageformat": "Retry"
+    "messageformat": "Prekliči prenos"
   },
   "icu:downloadNItems": {
-    "messageformat": "{count, plural, one {{count,number} item} other {{count,number} items}}"
+    "messageformat": "{count, plural, one {{count,number} predmet} two {{count,number} predmeta} few {{count,number} predmeti} other {{count,number} predmetov}}"
+  },
+  "icu:mediaNotAvailable": {
+    "messageformat": "Ta medij ni na voljo"
+  },
+  "icu:mediaNotAvailable--short": {
+    "messageformat": "Mediji niso na voljo"
+  },
+  "icu:attachmentNoLongerAvailable__learnMore": {
+    "messageformat": "Preberite več"
+  },
+  "icu:attachmentNotAvailable__file": {
+    "messageformat": "Datoteka ni na voljo"
+  },
+  "icu:attachmentNotAvailable__longMessage": {
+    "messageformat": "To sporočilo je nepopolno"
+  },
+  "icu:attachmentNotAvailable__sticker": {
+    "messageformat": "Nalepka ni na voljo"
+  },
+  "icu:attachmentNotAvailable__voice": {
+    "messageformat": "Glasovno sporočilo ni na voljo"
+  },
+  "icu:AttachmentNotAvailableModal__title--file": {
+    "messageformat": "Datoteka ni na voljo"
+  },
+  "icu:AttachmentNotAvailableModal__title--long-text": {
+    "messageformat": "Celotno sporočilo ni na voljo"
+  },
+  "icu:AttachmentNotAvailableModal__title--media": {
+    "messageformat": "Mediji niso na voljo"
+  },
+  "icu:AttachmentNotAvailableModal__title--sticker": {
+    "messageformat": "Nalepka ni na voljo"
+  },
+  "icu:AttachmentNotAvailableModal__title--voice-message": {
+    "messageformat": "Glasovno sporočilo ni na voljo"
+  },
+  "icu:AttachmentNotAvailableModal__body--file": {
+    "messageformat": "Ta datoteka ni bila prenesena iz telefona, ko je bila ta naprava povezana. Medijev in datotek, ki so v času povezovanja naprave starejši od 45 dni, ni mogoče sinhronizirati."
+  },
+  "icu:AttachmentNotAvailableModal__body--long-text": {
+    "messageformat": "Celotno besedilo tega sporočila ni bilo preneseno iz vašega telefona, ko je bila ta naprava povezana. Dolgih besedilnih sporočil, starejših od 45 dni v času povezovanja naprave, ni mogoče sinhronizirati."
+  },
+  "icu:AttachmentNotAvailableModal__body--media": {
+    "messageformat": "Ta medij ni bil prenesen iz telefona, ko je bila ta naprava povezana. Medijev, ki so v času povezovanja naprave starejši od 45 dni, ni mogoče sinhronizirati."
+  },
+  "icu:AttachmentNotAvailableModal__body--sticker": {
+    "messageformat": "Ta nalepka ni bila prenesena iz telefona, ko je bila ta naprava povezana. Medijev in datotek, ki so v času povezovanja naprave starejši od 45 dni, ni mogoče sinhronizirati."
+  },
+  "icu:AttachmentNotAvailableModal__body--voice-message": {
+    "messageformat": "To glasovno sporočilo ni bilo preneseno iz vašega telefona, ko je bila ta naprava povezana. Medijev in datotek, ki so v času povezovanja naprave starejši od 45 dni, ni mogoče sinhronizirati."
   },
   "icu:save": {
     "messageformat": "Shrani"
@@ -1184,6 +1235,9 @@
   "icu:Install__qr-failed-load__retry": {
     "messageformat": "Ponovno"
   },
+  "icu:Install__qr-max-rotations__retry": {
+    "messageformat": "Osveži kodo"
+  },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "Pomoč"
   },
@@ -1201,6 +1255,9 @@
   },
   "icu:Preferences--device-name": {
     "messageformat": "Ime naprave"
+  },
+  "icu:Preferences--device-name__description": {
+    "messageformat": "Če želite spremeniti ime te naprave, odprite Signal v telefonu in pojdite v Nastavitve > Povezane naprave"
   },
   "icu:chooseDeviceName": {
     "messageformat": "Izberite ime te naprave"
@@ -1578,10 +1635,10 @@
     "messageformat": "Želite izbrisati vse podatke?"
   },
   "icu:deleteAllDataBody": {
-    "messageformat": "Želite izbrisati vse podatke in sporočila iz te različice Signal Desktop? To namizje lahko vedno znova povežete, vendar vaša sporočila ne bodo obnovljena. Vaš račun Signal in podatki v vašem telefonu ali drugih povezanih napravah ne bodo izbrisani."
+    "messageformat": "Želite izbrisati vse podatke in sporočila iz te različice Signal Desktop? Vaš račun v Signalu in podatki v vašem telefonu ali drugih povezanih napravah ne bodo izbrisani."
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "Odjava in brisanje vseh podatkov"
+    "messageformat": "Odjava in brisanje vseh podatkov …"
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "Na napravi imate zastarele podatke iz starejše različice aplikacije Signal Desktop. Če boste nadaljevali, bodo ti izbrisani in boste začeli znova iz nič."
@@ -2789,6 +2846,12 @@
   "icu:CallControls__MutedToast--unmuted": {
     "messageformat": "Mikrofon je vključen"
   },
+  "icu:CallControls__LowerHandSuggestionToast": {
+    "messageformat": "Želite spustiti roko?"
+  },
+  "icu:CallControls__LowerHandSuggestionToast--button": {
+    "messageformat": "Nižje"
+  },
   "icu:CallControls__RingingToast--ringing-on": {
     "messageformat": "Zvonjenje je vključeno"
   },
@@ -3566,6 +3629,9 @@
   "icu:next": {
     "messageformat": "naslednje"
   },
+  "icu:ClearingData__description": {
+    "messageformat": "To lahko traja nekaj minut"
+  },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "Podprite Signal"
   },
@@ -3593,29 +3659,32 @@
   "icu:BackupImportScreen__progressbar-hint--processing": {
     "messageformat": "Zaključevanje prenosa sporočila ..."
   },
+  "icu:BackupImportScreen__progressbar-hint--canceling": {
+    "messageformat": "Preklic ..."
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "Priprava na prenos ..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "To lahko traja nekaj minut, odvisno od velikosti varnostne kopije"
+    "messageformat": "To lahko traja nekaj minut"
   },
   "icu:BackupImportScreen__cancel": {
-    "messageformat": "Prekliči prenos"
+    "messageformat": "Prekliči"
   },
   "icu:BackupImportScreen__security-description": {
     "messageformat": "Sporočila in informacije o klepetu so zaščitene s šifriranjem od konca do konca, vključno s postopkom sinhronizacije. <learnMoreLink>Več o tem</learnMoreLink>"
   },
   "icu:BackupImportScreen__cancel-confirmation__title": {
-    "messageformat": "Želite preklicati prenos?"
+    "messageformat": "Želite preklicati povezovanje naprave?"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "Vaša sporočila in mediji se še niso obnovili. Če se odločite za preklic, lahko prenos ponovno izvedete v nastavitvah."
+    "messageformat": "Če se odločite za preklic, ta naprava ne bo povezana in sporočila ali mediji ne bodo preneseni."
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
-    "messageformat": "Nadaljuj prenos"
+    "messageformat": "Nadaljuj s povezovanjem"
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
-    "messageformat": "Prekliči prenos"
+    "messageformat": "Prekliči povezovanje"
   },
   "icu:BackupImportScreen__error__title": {
     "messageformat": "Napaka pri prenosu sporočil"
@@ -3624,7 +3693,7 @@
     "messageformat": "Vaših sporočil ni bilo mogoče prenesti. Preverite internetno povezavo in poskusite znova."
   },
   "icu:BackupImportScreen__error-fatal__body": {
-    "messageformat": "Your messages could not be transferred due to an error. Try again by re-linking this desktop."
+    "messageformat": "Vaših sporočil ni bilo mogoče prenesti zaradi napake. Poskusite znova s ponovno povezavo tega namizja."
   },
   "icu:BackupImportScreen__error__confirm": {
     "messageformat": "Ponovno"
@@ -4230,7 +4299,7 @@
     "messageformat": "Ponastavi vse barve klepetov"
   },
   "icu:ChatColorPicker__confirm-reset-default": {
-    "messageformat": "Ponastavi"
+    "messageformat": "Ponastavi privzete barve"
   },
   "icu:ChatColorPicker__confirm-reset": {
     "messageformat": "Ponastavi"
@@ -4279,6 +4348,9 @@
   },
   "icu:GradientDial__knob-end": {
     "messageformat": "Prelivajoči se konec"
+  },
+  "icu:GIF--download": {
+    "messageformat": "Download GIF attachment"
   },
   "icu:customDisappearingTimeOption": {
     "messageformat": "Čas po meri ..."
@@ -4549,6 +4621,12 @@
   },
   "icu:AvatarColorPicker--choose": {
     "messageformat": "Izberite barvo"
+  },
+  "icu:AttachmentDetailPill__retryDownload": {
+    "messageformat": "Ponovno poskusi prenesti"
+  },
+  "icu:AttachmentDetailPill__retryDownloadShort": {
+    "messageformat": "Ponovno"
   },
   "icu:LeftPaneSetGroupMetadataHelper__avatar-modal-title": {
     "messageformat": "Avatar skupine"
@@ -5782,13 +5860,10 @@
     "messageformat": "Majhne prilagoditve, popravki napak in izboljšave zmogljivosti. Hvala, da uporabljate Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.36--0": {
-    "messageformat": "Ta posodobitev odpravlja napako pri deljenju zaslona v sistemu macOS Sonoma."
+  "icu:WhatsNew__v7.44--0": {
+    "messageformat": "Odpravili smo manjšo napako pri animaciji med skupinskimi klici. Vnaprej se opravičujemo, če je bil najbolj razburljiv del vašega dneva, ko ste med sestankom preklopili na mrežni pogled in poskušali ujeti trenutek, ko so video kvadrati ljudi, ki so se pridružili pozno, včasih delno zakrili preglednico, ki jo je predstavljal vaš šef."
   },
-  "icu:WhatsNew__v7.36--1": {
-    "messageformat": "Filtriranje po Neprebranih sporočilih zdaj poudari izbrani klepet in se posodobi, ko so sporočila prebrana ali prejeta."
-  },
-  "icu:WhatsNew__v7.37--0": {
-    "messageformat": "Now you can easily see the progress of attachment downloads. You can also stop and restart in-progress downloads too. So if a transfer is slowed because you're on the road (in airplane mode?) or the mediocre hotel WiFi is about to implode, you can wait to reload when more available bandwidth is bestowed."
+  "icu:WhatsNew__v7.45--0": {
+    "messageformat": "Stickers should feel sticky, not stuck, so now you can click on a sticker on a newly linked Signal Desktop and that sticker download will automatically get prioritized even when other attachments are downloading too."
   }
 }

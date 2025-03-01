@@ -9,7 +9,7 @@ import React, {
   useState,
 } from 'react';
 import classNames from 'classnames';
-import { noop } from 'lodash';
+import { noop, orderBy } from 'lodash';
 
 import type { DraftBodyRanges } from '../types/BodyRange';
 import type { LocalizerType } from '../types/Util';
@@ -69,10 +69,12 @@ const MESSAGE_DEFAULT_PROPS = {
   scrollToQuotedMessage: shouldNeverBeCalled,
   showConversation: noop,
   showAttachmentDownloadStillInProgressToast: shouldNeverBeCalled,
+  showAttachmentNotAvailableModal: shouldNeverBeCalled,
   showExpiredIncomingTapToViewToast: shouldNeverBeCalled,
   showExpiredOutgoingTapToViewToast: shouldNeverBeCalled,
   showLightbox: shouldNeverBeCalled,
   showLightboxForViewOnceMedia: shouldNeverBeCalled,
+  showMediaNoLongerAvailableToast: shouldNeverBeCalled,
   startConversation: shouldNeverBeCalled,
   theme: ThemeType.dark,
   viewStory: shouldNeverBeCalled,
@@ -107,6 +109,7 @@ export type PropsType = {
   onSetSkinTone: (tone: number) => unknown;
   onTextTooLong: () => unknown;
   onUseEmoji: (_: EmojiPickDataType) => unknown;
+  ourConversationId: string | undefined;
   preferredReactionEmoji: ReadonlyArray<string>;
   recentEmojis?: ReadonlyArray<string>;
   renderEmojiPicker: (props: RenderEmojiPickerProps) => JSX.Element;
@@ -138,6 +141,7 @@ export function StoryViewsNRepliesModal({
   onSetSkinTone,
   onTextTooLong,
   onUseEmoji,
+  ourConversationId,
   preferredReactionEmoji,
   recentEmojis,
   renderEmojiPicker,
@@ -174,6 +178,10 @@ export function StoryViewsNRepliesModal({
       ? StoryViewsNRepliesTab.Replies
       : StoryViewsNRepliesTab.Views;
   }, [viewTarget]);
+
+  const sortedViews = useMemo(() => {
+    return orderBy(views, 'updatedAt', 'desc');
+  }, [views]);
 
   const onTabChange = (tab: string) => {
     onChangeViewTarget(
@@ -254,6 +262,7 @@ export function StoryViewsNRepliesModal({
                 onReply(...args);
               }}
               onTextTooLong={onTextTooLong}
+              ourConversationId={ourConversationId}
               placeholder={
                 group
                   ? i18n('icu:StoryViewer__reply-group')
@@ -361,10 +370,10 @@ export function StoryViewsNRepliesModal({
         {i18n('icu:StoryViewsNRepliesModal__read-receipts-off')}
       </div>
     );
-  } else if (views.length) {
+  } else if (sortedViews.length) {
     viewsElement = (
       <div className="StoryViewsNRepliesModal__views">
-        {views.map(view => (
+        {sortedViews.map(view => (
           <div
             className="StoryViewsNRepliesModal__view"
             key={view.recipient.id}

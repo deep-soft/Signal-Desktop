@@ -6,7 +6,56 @@ import type { AttachmentDownloadJobTypeType } from '../types/AttachmentDownload'
 
 import type { AttachmentType } from '../types/Attachment';
 import { getAttachmentSignatureSafe, isDownloaded } from '../types/Attachment';
-import { __DEPRECATED$getMessageById } from '../messages/getMessageById';
+import { getMessageById } from '../messages/getMessageById';
+import { trimMessageWhitespace } from '../types/BodyRange';
+
+export async function markAttachmentAsCorrupted(
+  messageId: string,
+  attachment: AttachmentType
+): Promise<void> {
+  const message = await getMessageById(messageId);
+
+  if (!message) {
+    return;
+  }
+
+  if (!attachment.path) {
+    throw new Error(
+      "Attachment can't be marked as corrupted because it wasn't loaded"
+    );
+  }
+
+  // We intentionally don't check in quotes/stickers/contacts/... here,
+  // because this function should be called only for something that can
+  // be displayed as a generic attachment.
+  const attachments: ReadonlyArray<AttachmentType> =
+    message.get('attachments') || [];
+
+  let changed = false;
+  const newAttachments = attachments.map(existing => {
+    if (existing.path !== attachment.path) {
+      return existing;
+    }
+    changed = true;
+
+    return {
+      ...existing,
+      isCorrupted: true,
+    };
+  });
+
+  if (!changed) {
+    throw new Error(
+      "Attachment can't be marked as corrupted because it wasn't found"
+    );
+  }
+
+  log.info('markAttachmentAsCorrupted: marking an attachment as corrupted');
+
+  message.set({
+    attachments: newAttachments,
+  });
+}
 
 export async function addAttachmentToMessage(
   messageId: string,
@@ -15,7 +64,7 @@ export async function addAttachmentToMessage(
   { type }: { type: AttachmentDownloadJobTypeType }
 ): Promise<void> {
   const logPrefix = `${jobLogId}/addAttachmentToMessage`;
-  const message = await __DEPRECATED$getMessageById(messageId, logPrefix);
+  const message = await getMessageById(messageId);
 
   if (!message) {
     return;
@@ -67,7 +116,10 @@ export async function addAttachmentToMessage(
 
           return {
             ...edit,
-            body: Bytes.toString(attachmentData),
+            ...trimMessageWhitespace({
+              body: Bytes.toString(attachmentData),
+              bodyRanges: edit.bodyRanges,
+            }),
             bodyAttachment: attachment,
           };
         });
@@ -100,8 +152,11 @@ export async function addAttachmentToMessage(
       }
 
       message.set({
-        body: Bytes.toString(attachmentData),
         bodyAttachment: attachment,
+        ...trimMessageWhitespace({
+          body: Bytes.toString(attachmentData),
+          bodyRanges: message.get('bodyRanges'),
+        }),
       });
     } finally {
       if (attachment.path) {
